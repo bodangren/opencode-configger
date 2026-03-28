@@ -18,6 +18,7 @@ class FieldType(Enum):
     STRING_LIST = "string_list"
     STRING_OR_BOOL = "string_or_bool"
     OBJECT = "object"
+    KEY_VALUE_MAP = "key_value_map"
 
 
 @dataclass
@@ -319,8 +320,8 @@ FORMATTER_ENTRY_FIELDS: list[FieldDef] = [
              description="Formatter command to execute (array)"),
     FieldDef(key="extensions", field_type=FieldType.STRING_LIST,
              description="File extensions to format"),
-    FieldDef(key="environment", field_type=FieldType.OBJECT,
-             description="Environment variables as key/value object"),
+    FieldDef(key="environment", field_type=FieldType.KEY_VALUE_MAP,
+             description="Environment variables as key/value pairs"),
 ]
 
 # ─── MCP Entry Fields (discriminated union on type) ─────────────────
@@ -330,7 +331,7 @@ MCP_LOCAL_FIELDS: list[FieldDef] = [
              description="Connection type", enum_values=["local"]),
     FieldDef(key="command", field_type=FieldType.STRING_LIST,
              description="Command and args combined in one array"),
-    FieldDef(key="environment", field_type=FieldType.OBJECT,
+    FieldDef(key="environment", field_type=FieldType.KEY_VALUE_MAP,
              description="Environment variables for the server"),
     FieldDef(key="enabled", field_type=FieldType.BOOLEAN,
              description="Enable on startup"),
@@ -345,7 +346,7 @@ MCP_REMOTE_FIELDS: list[FieldDef] = [
              description="Server URL"),
     FieldDef(key="enabled", field_type=FieldType.BOOLEAN,
              description="Enable on startup"),
-    FieldDef(key="headers", field_type=FieldType.OBJECT,
+    FieldDef(key="headers", field_type=FieldType.KEY_VALUE_MAP,
              description="HTTP headers"),
     FieldDef(key="oauth", field_type=FieldType.OBJECT,
              description="OAuth config (clientId, clientSecret, scope) or false"),
@@ -563,7 +564,7 @@ LSP_ENTRY_FIELDS: list[FieldDef] = [
              description="File extensions"),
     FieldDef(key="disabled", field_type=FieldType.BOOLEAN,
              description="Disable server"),
-    FieldDef(key="env", field_type=FieldType.OBJECT,
+    FieldDef(key="env", field_type=FieldType.KEY_VALUE_MAP,
              description="Environment variables"),
     FieldDef(key="initialization", field_type=FieldType.OBJECT,
              description="Init options"),
