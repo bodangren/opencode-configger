@@ -359,6 +359,42 @@ class ObjectEditor(ttk.Frame):
             self.var.set("")
 
 
+class SectionFrame(ttk.LabelFrame):
+    """Collapsible LabelFrame that can expand/collapse with a toggle button."""
+
+    def __init__(self, parent: tk.Widget, text: str = "",
+                 collapsed: bool = False, **kwargs):
+        super().__init__(parent, text=f"  {text}", **kwargs)
+        self.section_text = text
+        self._collapsed = collapsed
+
+        self.toggle_btn = ttk.Button(
+            self, text="−", width=2, command=self.toggle,
+        )
+        self.toggle_btn.place(relx=0.0, rely=0.0, x=4, y=-2)
+
+        self.content = ttk.Frame(self)
+        self.content.pack(fill=tk.BOTH, expand=True, padx=4, pady=4)
+
+        if collapsed:
+            self.content.pack_forget()
+            self.toggle_btn.config(text="+")
+
+    def toggle(self) -> None:
+        if self._collapsed:
+            self.content.pack(fill=tk.BOTH, expand=True, padx=4, pady=4)
+            self.toggle_btn.config(text="−")
+            self._collapsed = False
+        else:
+            self.content.pack_forget()
+            self.toggle_btn.config(text="+")
+            self._collapsed = True
+
+    @property
+    def collapsed(self) -> bool:
+        return self._collapsed
+
+
 class RadioGroup(ttk.Frame):
     """Horizontal or vertical radio buttons for small enums (≤5 values)."""
 
