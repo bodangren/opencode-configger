@@ -757,11 +757,96 @@ class SearchableCombo(ttk.Frame):
         self.var.set(str(value) if value is not None else "")
 
 
+class DynamicDictModal(tk.Toplevel):
+    """Modal dialog for adding/editing a dynamic dict entry.
+
+    Contains a name field (for new entries), form fields built from FieldDefs,
+    and OK/Cancel buttons. Returns the entry data on OK.
+    """
+
+    def __init__(self, parent: tk.Widget, title: str,
+                 entry_fields: list[FieldDef],
+                 entry_name: str = "",
+                 entry_data: dict | None = None):
+        super().__init__(parent)
+        self.title(title)
+        self.transient(parent)
+        self.grab_set()
+
+        self.result: dict | None = None
+        self.result_name: str = ""
+        self.entry_fields = entry_fields
+
+        self.geometry("500x500")
+        self.resizable(True, True)
+
+        # Name field (editable only for new entries)
+        name_frame = ttk.Frame(self)
+        name_frame.pack(fill=tk.X, padx=12, pady=(12, 4))
+        ttk.Label(name_frame, text="Name:", width=10).pack(side=tk.LEFT)
+        self.name_var = tk.StringVar(value=entry_name)
+        name_entry = ttk.Entry(name_frame, textvariable=self.name_var, width=30)
+        name_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        if entry_name:
+            name_entry.config(state="readonly")
+
+        # Scrollable form
+        canvas = tk.Canvas(self, highlightthickness=0)
+        scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        form_frame = ttk.Frame(canvas)
+        form_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all")),
+        )
+        canvas.create_window((0, 0), window=form_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(12, 0), pady=4)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y, padx=(0, 12), pady=4)
+
+        self.widgets: dict[str, Any] = {}
+        for fd in entry_fields:
+            w = build_field_widget(form_frame, fd)
+            w.pack(fill=tk.X, pady=2, padx=4)
+            self.widgets[fd.key] = w
+
+        # Pre-populate if editing
+        if entry_data:
+            for fd in entry_fields:
+                val = _get_dotted(entry_data, fd.key)
+                if val is not None:
+                    self.widgets[fd.key].set_value(val)
+
+        # OK / Cancel buttons
+        btn_frame = ttk.Frame(self)
+        btn_frame.pack(fill=tk.X, padx=12, pady=(4, 12))
+        ttk.Button(btn_frame, text="OK", command=self._on_ok, width=10).pack(
+            side=tk.RIGHT, padx=(4, 0))
+        ttk.Button(btn_frame, text="Cancel", command=self._on_cancel, width=10).pack(
+            side=tk.RIGHT)
+
+        self.protocol("WM_DELETE_WINDOW", self._on_cancel)
+
+    def _on_ok(self) -> None:
+        name = self.name_var.get().strip()
+        if not name:
+            return
+        self.result_name = name
+        self.result = {}
+        for fd in self.entry_fields:
+            val = self.widgets[fd.key].get_value()
+            if val is not None:
+                _set_dotted(self.result, fd.key, val)
+        self.destroy()
+
+    def _on_cancel(self) -> None:
+        self.result = None
+        self.destroy()
+
+
 class DynamicDictEditor(ttk.Frame):
     """Editor for dynamic key-value sections (providers, agents, commands, etc.).
 
-    Shows a listbox of keys on the left, and a detail form on the right
-    for the selected key's fields.
+    Shows a listbox of keys on the left. Add/Edit open modal dialogs.
     """
 
     def __init__(self, parent: tk.Widget, section_name: str,
@@ -791,10 +876,12 @@ class DynamicDictEditor(ttk.Frame):
             side=tk.LEFT, padx=(0, 4))
         ttk.Button(btn_frame, text="Add", command=self._add_key, width=5).pack(
             side=tk.LEFT, padx=(0, 4))
+        ttk.Button(btn_frame, text="Edit", command=self._edit_key, width=5).pack(
+            side=tk.LEFT, padx=(0, 4))
         ttk.Button(btn_frame, text="Del", command=self._del_key, width=5).pack(
             side=tk.LEFT)
 
-        # Right panel: detail form
+        # Right panel: detail form (still shown for inline viewing)
         self.detail_frame = ttk.LabelFrame(self, text="Details", padding=8)
         self.detail_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
@@ -818,7 +905,6 @@ class DynamicDictEditor(ttk.Frame):
         entry_data = self.data.get(key, {})
         for fd in self.entry_fields:
             widget = self.widgets[fd.key]
-            # Support dotted keys like "options.baseURL"
             val = _get_dotted(entry_data, fd.key)
             widget.set_value(val)
 
@@ -841,10 +927,46 @@ class DynamicDictEditor(ttk.Frame):
 
     def _add_key(self) -> None:
         key = self.new_key_var.get().strip()
-        if key and key not in self.data:
+        if not key:
+            # Open modal for new entry
+            modal = DynamicDictModal(
+                self, f"Add {self.section_name} Entry",
+                self.entry_fields,
+            )
+            self.wait_window(modal)
+            if modal.result is not None:
+                name = modal.result_name
+                if name not in self.data:
+                    self.data[name] = modal.result
+                    self.key_listbox.insert(tk.END, name)
+                    if self.on_change:
+                        self.on_change()
+            return
+
+        if key not in self.data:
             self.data[key] = {}
             self.key_listbox.insert(tk.END, key)
             self.new_key_var.set("")
+            if self.on_change:
+                self.on_change()
+
+    def _edit_key(self) -> None:
+        sel = self.key_listbox.curselection()
+        if not sel:
+            return
+        key = self.key_listbox.get(sel[0])
+        entry_data = self.data.get(key, {})
+
+        modal = DynamicDictModal(
+            self, f"Edit {self.section_name}: {key}",
+            self.entry_fields,
+            entry_name=key,
+            entry_data=entry_data,
+        )
+        self.wait_window(modal)
+        if modal.result is not None:
+            self.data[key] = modal.result
+            self._on_select(None)
             if self.on_change:
                 self.on_change()
 
@@ -854,7 +976,6 @@ class DynamicDictEditor(ttk.Frame):
             key = self.key_listbox.get(sel[0])
             del self.data[key]
             self.key_listbox.delete(sel[0])
-            # Clear detail fields
             for fd in self.entry_fields:
                 self.widgets[fd.key].set_value(None)
             if self.on_change:

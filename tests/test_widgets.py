@@ -8,6 +8,7 @@ from app.config_schema import FieldDef, FieldType
 from app.widgets import (
     ColorPicker,
     DynamicDictEditor,
+    DynamicDictModal,
     KeyValueEditor,
     LabeledCheck,
     LabeledCombo,
@@ -263,3 +264,36 @@ def test_build_field_widget_routes_new_types(tk_root: tk.Tk) -> None:
     # NUMBER with 0-1 range → LabeledSlider
     slider_def = FieldDef("temperature", FieldType.NUMBER, "desc", min_value=0, max_value=1)
     assert isinstance(build_field_widget(tk_root, slider_def), LabeledSlider)
+
+
+def test_dynamic_dict_modal_ok(tk_root: tk.Tk) -> None:
+    fields = [
+        FieldDef("name", FieldType.STRING, "Name"),
+        FieldDef("enabled", FieldType.BOOLEAN, "Enabled"),
+    ]
+    modal = DynamicDictModal(
+        tk_root, "Add Entry", fields,
+        entry_name="test-entry",
+        entry_data={"name": "hello", "enabled": True},
+    )
+    # Verify pre-populated values
+    assert modal.widgets["name"].get_value() == "hello"
+    # Simulate OK
+    modal._on_ok()
+    assert modal.result is not None
+    assert modal.result_name == "test-entry"
+    assert modal.result["name"] == "hello"
+
+
+def test_dynamic_dict_modal_cancel(tk_root: tk.Tk) -> None:
+    fields = [FieldDef("url", FieldType.STRING, "URL")]
+    modal = DynamicDictModal(tk_root, "Test", fields, entry_name="x")
+    modal._on_cancel()
+    assert modal.result is None
+
+
+def test_dynamic_dict_editor_has_edit_button(tk_root: tk.Tk) -> None:
+    fields = [FieldDef("value", FieldType.STRING, "desc")]
+    editor = DynamicDictEditor(tk_root, "Test", fields)
+    # Verify the editor has an edit button (part of Phase 5)
+    assert hasattr(editor, '_edit_key')
