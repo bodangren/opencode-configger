@@ -918,6 +918,8 @@ def build_field_widget(parent: tk.Widget, field_def: FieldDef,
     """
     if field_def.field_type == FieldType.BOOLEAN:
         return LabeledCheck(parent, field_def, on_change=on_change)
+    elif field_def.field_type == FieldType.ENUM and len(field_def.enum_values) <= 5:
+        return RadioGroup(parent, field_def, on_change=on_change)
     elif field_def.field_type == FieldType.ENUM:
         return LabeledCombo(parent, field_def, on_change=on_change)
     elif field_def.field_type == FieldType.STRING_OR_BOOL:

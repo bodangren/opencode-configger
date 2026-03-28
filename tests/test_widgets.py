@@ -58,7 +58,7 @@ def test_build_field_widget_selects_expected_class(tk_root: tk.Tk) -> None:
     str_def = FieldDef("model", FieldType.STRING, "desc")
 
     assert isinstance(build_field_widget(tk_root, bool_def), LabeledCheck)
-    assert isinstance(build_field_widget(tk_root, enum_def), LabeledCombo)
+    assert isinstance(build_field_widget(tk_root, enum_def), RadioGroup)  # ≤5 values → RadioGroup
     assert isinstance(build_field_widget(tk_root, list_def), StringListEditor)
     assert isinstance(build_field_widget(tk_root, obj_def), ObjectEditor)
     assert isinstance(build_field_widget(tk_root, suggest_def), LabeledSuggest)

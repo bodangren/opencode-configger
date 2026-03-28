@@ -60,6 +60,8 @@ GENERAL_FIELDS: list[FieldDef] = [
         key="default_agent",
         field_type=FieldType.STRING,
         description="Default agent to use when unspecified",
+        suggestions=["build", "plan", "general", "explore",
+                      "title", "summary", "compaction"],
     ),
     FieldDef(
         key="logLevel",

@@ -139,6 +139,7 @@ def test_smoke_all_tabs_render(tk_root: tk.Tk) -> None:
     from app.tabs.agents import AgentsTab
     from app.tabs.commands import CommandsTab
     from app.tabs.formatters import FormattersTab
+    from app.tabs.lsp import LSPTab
     from app.tabs.mcp import MCPServersTab
     from app.tabs.providers import ProvidersTab
     from app.tabs.tools import ToolsTab
@@ -157,6 +158,7 @@ def test_smoke_all_tabs_render(tk_root: tk.Tk) -> None:
         CommandsTab(nb),
         FormattersTab(nb),
         MCPServersTab(nb),
+        LSPTab(nb),
         TuiTab(nb),
     ]
     for i, tab in enumerate(tabs):

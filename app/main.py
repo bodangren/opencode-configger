@@ -24,6 +24,7 @@ from app.tabs.commands import CommandsTab
 from app.tabs.compaction import AdvancedTab
 from app.tabs.formatters import FormattersTab
 from app.tabs.general import GeneralTab
+from app.tabs.lsp import LSPTab
 from app.tabs.mcp import MCPServersTab
 from app.tabs.models import ModelsTab
 from app.tabs.providers import ProvidersTab
@@ -93,6 +94,7 @@ class ConfiggerApp:
         self.commands_tab = CommandsTab(self.notebook, on_change=self._on_change)
         self.formatters_tab = FormattersTab(self.notebook, on_change=self._on_change)
         self.mcp_tab = MCPServersTab(self.notebook, on_change=self._on_change)
+        self.lsp_tab = LSPTab(self.notebook, on_change=self._on_change)
         self.tui_tab = TuiTab(self.notebook, on_change=self._on_change)
         self.models_tab = ModelsTab(self.notebook, on_pick_model=self._apply_model)
 
@@ -105,6 +107,7 @@ class ConfiggerApp:
         self.notebook.add(self.commands_tab, text="Commands")
         self.notebook.add(self.formatters_tab, text="Formatters")
         self.notebook.add(self.mcp_tab, text="MCP")
+        self.notebook.add(self.lsp_tab, text="LSP")
         self.notebook.add(self.tui_tab, text="TUI")
         self.notebook.add(self.models_tab, text="Models")
 
@@ -182,6 +185,7 @@ class ConfiggerApp:
         self.commands_tab.load_config(data)
         self.formatters_tab.load_config(data)
         self.mcp_tab.load_config(data)
+        self.lsp_tab.load_config(data)
 
     def _apply_model(self, model_name: str, target: str) -> None:
         """Apply model chosen in model browser to general settings.
@@ -219,6 +223,7 @@ class ConfiggerApp:
         self.commands_tab.save_config(output)
         self.formatters_tab.save_config(output)
         self.mcp_tab.save_config(output)
+        self.lsp_tab.save_config(output)
         return output
 
     def _load_config_path(self, path: Path) -> bool:
