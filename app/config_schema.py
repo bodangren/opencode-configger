@@ -639,6 +639,16 @@ def validate_field(field_def: FieldDef, value: Any) -> str | None:
         if not isinstance(value, bool):
             return f"{field_def.key} must be a boolean"
 
+    elif field_def.field_type == FieldType.STRING_LIST:
+        if not isinstance(value, list):
+            return f"{field_def.key} must be a list of strings"
+        if not all(isinstance(item, str) for item in value):
+            return f"{field_def.key} must be a list of strings"
+
+    elif field_def.field_type == FieldType.KEY_VALUE_MAP:
+        if not isinstance(value, dict):
+            return f"{field_def.key} must be a key/value map"
+
     return None
 
 
@@ -693,3 +703,142 @@ def remove_nested(data: dict, dotted_key: str) -> None:
         current = current[k]
     if isinstance(current, dict):
         current.pop(keys[-1], None)
+
+
+def _validate_entry_fields(
+    entry_data: dict, field_defs: list[FieldDef], entry_name: str
+) -> list[str]:
+    """Validate a single dynamic dict entry (agent, provider, command, etc.).
+
+    Args:
+        entry_data: The entry dict to validate.
+        field_defs: Field definitions for this entry type.
+        entry_name: Human-readable name for error messages.
+
+    Returns:
+        List of error messages (empty if valid).
+    """
+    errors = []
+    for fd in field_defs:
+        raw_val = _get_entry_value(entry_data, fd.key)
+        err = validate_field(fd, raw_val)
+        if err:
+            errors.append(f"[{entry_name}] {err}")
+    return errors
+
+
+def _get_entry_value(entry_data: dict, key: str) -> Any:
+    """Get a value from an entry dict using dotted key."""
+    parts = key.split('.')
+    current = entry_data
+    for p in parts:
+        if not isinstance(current, dict) or p not in current:
+            return None
+        current = current[p]
+    return current
+
+
+def validate_config(data: dict) -> list[str]:
+    """Validate a full opencode config dict.
+
+    Checks all known sections against their field definitions.
+    Returns a list of error messages; empty list means valid.
+
+    Args:
+        data: The opencode config dict to validate.
+
+    Returns:
+        List of human-readable validation error messages.
+    """
+    errors: list[str] = []
+
+    for fd in GENERAL_FIELDS:
+        val = get_nested(data, fd.full_key)
+        err = validate_field(fd, val)
+        if err:
+            errors.append(err)
+
+    for fd in SERVER_FIELDS:
+        val = get_nested(data, fd.full_key)
+        err = validate_field(fd, val)
+        if err:
+            errors.append(err)
+
+    for fd in COMPACTION_FIELDS:
+        val = get_nested(data, fd.full_key)
+        err = validate_field(fd, val)
+        if err:
+            errors.append(err)
+
+    providers = data.get("provider", {})
+    if isinstance(providers, dict):
+        for name, entry in providers.items():
+            if isinstance(entry, dict):
+                errors.extend(_validate_entry_fields(entry, PROVIDER_ENTRY_FIELDS, f"provider.{name}"))
+
+    agents = data.get("agent", {})
+    if isinstance(agents, dict):
+        for name, entry in agents.items():
+            if isinstance(entry, dict):
+                errors.extend(_validate_entry_fields(entry, AGENT_ENTRY_FIELDS, f"agent.{name}"))
+
+    permission = data.get("permission", {})
+    if isinstance(permission, dict):
+        for tool, val in permission.items():
+            if tool not in PERMISSION_TOOLS:
+                errors.append(f"permission.{tool}: unknown tool '{tool}'")
+            elif tool in PERMISSION_ACTION_ONLY_TOOLS:
+                if val not in PERMISSION_VALUES:
+                    errors.append(f"permission.{tool}: must be one of {PERMISSION_VALUES}")
+            elif tool in PERMISSION_RULE_TOOLS:
+                if isinstance(val, str):
+                    if val not in PERMISSION_VALUES:
+                        errors.append(f"permission.{tool}: must be one of {PERMISSION_VALUES}")
+                elif isinstance(val, dict):
+                    pass
+                else:
+                    errors.append(f"permission.{tool}: must be string or object")
+
+    commands = data.get("command", {})
+    if isinstance(commands, dict):
+        for name, entry in commands.items():
+            if isinstance(entry, dict):
+                errors.extend(_validate_entry_fields(entry, COMMAND_ENTRY_FIELDS, f"command.{name}"))
+
+    formatters = data.get("formatter", {})
+    if isinstance(formatters, dict):
+        for name, entry in formatters.items():
+            if isinstance(entry, dict):
+                errors.extend(_validate_entry_fields(entry, FORMATTER_ENTRY_FIELDS, f"formatter.{name}"))
+
+    mcp = data.get("mcp", {})
+    if isinstance(mcp, dict):
+        for name, entry in mcp.items():
+            if isinstance(entry, dict):
+                mcp_type = entry.get("type", "local")
+                fields = MCP_LOCAL_FIELDS if mcp_type == "local" else MCP_REMOTE_FIELDS
+                errors.extend(_validate_entry_fields(entry, fields, f"mcp.{name}"))
+
+    lsp = data.get("lsp", {})
+    if isinstance(lsp, dict):
+        for name, entry in lsp.items():
+            if isinstance(entry, dict):
+                errors.extend(_validate_entry_fields(entry, LSP_ENTRY_FIELDS, f"lsp.{name}"))
+
+    experimental = data.get("experimental", {})
+    if isinstance(experimental, dict):
+        for fd in EXPERIMENTAL_FIELDS:
+            val = experimental.get(fd.key)
+            err = validate_field(fd, val)
+            if err:
+                errors.append(f"experimental.{err}")
+
+    enterprise = data.get("enterprise", {})
+    if isinstance(enterprise, dict):
+        for fd in ENTERPRISE_FIELDS:
+            val = enterprise.get(fd.key)
+            err = validate_field(fd, val)
+            if err:
+                errors.append(f"enterprise.{err}")
+
+    return errors

@@ -18,6 +18,8 @@ from app.config_io import (
     new_tui_config,
     save_json,
 )
+from app.config_schema import validate_config
+from app.config_io import preview_variable, substitute_variables
 from app.dialogs.file_picker import choose_open_config, choose_save_config
 from app.tabs.agents import AgentsTab
 from app.tabs.commands import CommandsTab
@@ -49,11 +51,52 @@ class ConfiggerApp:
 
         self.root.geometry("1000x700")
         self._build_menu()
+        self._build_status_bar()
         self._build_tabs()
         self._bind_shortcuts()
 
         self._load_default_or_new()
         self._update_title()
+
+    def _build_status_bar(self) -> None:
+        """Create the status bar at the bottom of the window."""
+        self.status_bar = ttk.Frame(self.root, relief=tk.SUNKEN)
+        self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+
+        self.status_path_label = ttk.Label(
+            self.status_bar, text="", anchor="w", padding=(4, 2),
+        )
+        self.status_path_label.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        self.status_dirty_label = ttk.Label(
+            self.status_bar, text="", width=12, anchor="e", padding=(0, 2),
+        )
+        self.status_dirty_label.pack(side=tk.RIGHT, padx=(0, 8))
+
+        self._update_status()
+
+    def _update_status(self) -> None:
+        """Refresh status bar with current file path and dirty state."""
+        if self.current_config_path:
+            path_text = str(self.current_config_path)
+        else:
+            path_text = "Untitled"
+        self.status_path_label.config(text=path_text)
+
+        if self.is_dirty:
+            self.status_dirty_label.config(text="MODIFIED")
+        else:
+            self.status_dirty_label.config(text="Saved")
+
+    def _set_dirty(self, dirty: bool) -> None:
+        """Set dirty state and refresh title and status bar.
+
+        Args:
+            dirty: New dirty state.
+        """
+        self.is_dirty = dirty
+        self._update_title()
+        self._update_status()
 
     def _build_menu(self) -> None:
         """Create the application menu bar."""
@@ -73,8 +116,65 @@ class ConfiggerApp:
         file_menu.add_command(label="Quit", accelerator="Ctrl+Q",
                               command=self.quit_app)
 
+        tools_menu = tk.Menu(menu_bar, tearoff=0)
+        tools_menu.add_command(label="Preview Variables...",
+                               command=self._preview_variables)
+
         menu_bar.add_cascade(label="File", menu=file_menu)
+        menu_bar.add_cascade(label="Tools", menu=tools_menu)
         self.root.config(menu=menu_bar)
+
+    def _preview_variables(self) -> None:
+        """Show a dialog with all variable substitutions in the current config."""
+        data = self._collect_from_tabs()
+        all_vars: dict[str, str] = {}
+
+        def scan_value(key: str, val: Any) -> None:
+            if isinstance(val, str):
+                vars_in_val = preview_variable(val)
+                for raw, resolved in vars_in_val.items():
+                    all_vars[f"{key} = {raw}"] = resolved
+
+        def scan_dict(prefix: str, d: dict) -> None:
+            for k, v in d.items():
+                full_key = f"{prefix}.{k}" if prefix else k
+                if isinstance(v, dict):
+                    scan_dict(full_key, v)
+                elif isinstance(v, str):
+                    scan_value(full_key, v)
+                elif isinstance(v, list):
+                    for i, item in enumerate(v):
+                        if isinstance(item, str):
+                            scan_value(f"{full_key}[{i}]", item)
+
+        scan_dict("", data)
+
+        if not all_vars:
+            messagebox.showinfo("Variable Preview", "No variables found in the current configuration.")
+            return
+
+        lines = []
+        for key_raw, resolved in all_vars.items():
+            lines.append(f"{key_raw}")
+            lines.append(f"  -> {resolved}")
+            lines.append("")
+
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Variable Substitution Preview")
+        dialog.geometry("600x400")
+        dialog.transient(self.root)
+        dialog.grab_set()
+
+        text = tk.Text(dialog, wrap=tk.WORD, font=("Courier New", 10))
+        text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar = ttk.Scrollbar(dialog, orient=tk.VERTICAL, command=text.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        text.config(yscrollcommand=scrollbar.set)
+        text.insert("1.0", "\n".join(lines))
+        text.config(state=tk.DISABLED)
+
+        btn = ttk.Button(dialog, text="Close", command=dialog.destroy, width=15)
+        btn.pack(pady=8)
 
     def _build_tabs(self) -> None:
         """Create notebook and currently implemented tabs."""
@@ -293,7 +393,7 @@ class ConfiggerApp:
         self._load_config_path(selected)
 
     def save_file(self) -> bool:
-        """Save current config to disk.
+        """Save current config to disk after validation.
 
         Returns:
             True when save succeeds, False otherwise.
@@ -302,6 +402,15 @@ class ConfiggerApp:
             return self.save_file_as()
 
         data = self._collect_from_tabs()
+        errors = validate_config(data)
+        if errors:
+            error_text = "\n".join(f"  - {e}" for e in errors)
+            messagebox.showerror(
+                "Validation Error",
+                f"Configuration has the following errors:\n\n{error_text}\n\n"
+                "Please fix these issues before saving.",
+            )
+            return False
         try:
             save_json(self.current_config_path, data)
         except Exception as exc:

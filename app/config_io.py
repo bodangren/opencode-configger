@@ -7,6 +7,9 @@ from pathlib import Path
 from typing import Any
 
 
+_VARIABLE_PATTERN = re.compile(r'\{(env:|file:)([^}]+)\}')
+
+
 def strip_jsonc_comments(text: str) -> str:
     """Remove single-line (//) and multi-line (/* */) comments from JSONC.
 
@@ -137,3 +140,120 @@ def new_tui_config() -> dict[str, Any]:
     return {
         '$schema': 'https://opencode.ai/tui.json',
     }
+
+
+class VariableResolutionError(Exception):
+    """Raised when a variable cannot be resolved."""
+
+
+def resolve_env_var(var_name: str) -> str:
+    """Resolve an environment variable.
+
+    Args:
+        var_name: Name of the environment variable.
+
+    Returns:
+        The variable value as a string.
+
+    Raises:
+        VariableResolutionError: If the variable is not set.
+    """
+    val = os.environ.get(var_name)
+    if val is None:
+        raise VariableResolutionError(f"Environment variable '{var_name}' is not set")
+    return val
+
+
+def resolve_file_var(file_path: str) -> str:
+    """Resolve a {file:...} variable by reading the referenced file.
+
+    Args:
+        file_path: Path to the file (relative or absolute).
+
+    Returns:
+        Contents of the file as a string (truncated to 1KB for preview).
+
+    Raises:
+        VariableResolutionError: If the file cannot be read.
+    """
+    path = Path(file_path)
+    if not path.exists():
+        raise VariableResolutionError(f"File not found: {file_path}")
+    try:
+        content = path.read_text(encoding='utf-8')
+        if len(content) > 1024:
+            content = content[:1024] + "\n... [truncated]"
+        return content
+    except Exception as exc:
+        raise VariableResolutionError(f"Could not read file '{file_path}': {exc}")
+
+
+def substitute_variables(text: str, base_path: Path | None = None) -> str:
+    """Substitute {env:VAR} and {file:path} variables in a string.
+
+    Args:
+        text: String that may contain variable placeholders.
+        base_path: Base path for resolving relative {file:...} paths.
+
+    Returns:
+        String with variables substituted.
+
+    Raises:
+        VariableResolutionError: If a variable cannot be resolved.
+    """
+    def replacer(match: re.Match) -> str:
+        prefix = match.group(1)
+        value = match.group(2)
+        if prefix == "env:":
+            return resolve_env_var(value)
+        elif prefix == "file:":
+            path = Path(value)
+            if not path.is_absolute() and base_path:
+                path = base_path / path
+            return resolve_file_var(str(path))
+        return match.group(0)
+
+    return _VARIABLE_PATTERN.sub(replacer, text)
+
+
+def find_variables(text: str) -> list[tuple[str, str]]:
+    """Find all {env:...} and {file:...} variables in a string.
+
+    Args:
+        text: String to scan.
+
+    Returns:
+        List of (variable_type, variable_value) tuples.
+    """
+    results: list[tuple[str, str]] = []
+    for match in _VARIABLE_PATTERN.finditer(text):
+        results.append((match.group(1).rstrip(":"), match.group(2)))
+    return results
+
+
+def preview_variable(text: str, base_path: Path | None = None) -> dict[str, str]:
+    """Preview variable resolutions for a string.
+
+    Args:
+        text: String containing variables.
+        base_path: Base path for resolving relative file paths.
+
+    Returns:
+        Dict mapping variable raw text to resolved value or error message.
+    """
+    preview: dict[str, str] = {}
+    for match in _VARIABLE_PATTERN.finditer(text):
+        raw = match.group(0)
+        prefix = match.group(1)
+        value = match.group(2)
+        try:
+            if prefix == "env:":
+                preview[raw] = resolve_env_var(value)
+            elif prefix == "file:":
+                path = Path(value)
+                if not path.is_absolute() and base_path:
+                    path = base_path / path
+                preview[raw] = resolve_file_var(str(path))
+        except VariableResolutionError as exc:
+            preview[raw] = f"ERROR: {exc}"
+    return preview

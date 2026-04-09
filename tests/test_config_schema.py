@@ -22,6 +22,7 @@ from app.config_schema import (
     get_nested,
     remove_nested,
     set_nested,
+    validate_config,
     validate_field,
 )
 
@@ -204,3 +205,114 @@ def test_nested_dict_helpers() -> None:
 
     remove_nested(data, "server.port")
     assert get_nested(data, "server.port") is None
+
+
+def test_validate_config_empty_is_valid() -> None:
+    assert validate_config({}) == []
+
+
+def test_validate_config_general_invalid_enum() -> None:
+    data = {"logLevel": "INVALID"}
+    errors = validate_config(data)
+    assert any("logLevel" in e and "must be one of" in e for e in errors)
+
+
+def test_validate_config_server_port_out_of_range() -> None:
+    data = {"server": {"port": 99999}}
+    errors = validate_config(data)
+    assert any("port" in e and "<=" in e for e in errors)
+
+
+def test_validate_config_valid_minimal() -> None:
+    data = {
+        "$schema": "https://opencode.ai/config.json",
+        "model": "test/model",
+        "logLevel": "INFO",
+        "share": "manual",
+        "server": {"port": 8080},
+        "snapshot": True,
+    }
+    assert validate_config(data) == []
+
+
+def test_validate_config_unknown_permission_tool() -> None:
+    data = {"permission": {"unknown_tool_xyz": "allow"}}
+    errors = validate_config(data)
+    assert any("unknown_tool_xyz" in e for e in errors)
+
+
+def test_validate_config_provider_valid() -> None:
+    data = {
+        "provider": {
+            "my_provider": {
+                "options": {"apiKey": "sk-test"},
+                "options": {"baseURL": "https://api.test.com"},
+            }
+        }
+    }
+    assert validate_config(data) == []
+
+
+def test_validate_config_agent_color_enum() -> None:
+    data = {
+        "agent": {
+            "test": {
+                "color": "invalid_color",
+            }
+        }
+    }
+    errors = validate_config(data)
+    assert any("color" in e and "must be one of" in e for e in errors)
+
+
+def test_validate_config_mcp_local_command_string_list() -> None:
+    data = {
+        "mcp": {
+            "local_mcp": {
+                "type": "local",
+                "command": "npx",
+                "args": ["-y"],
+            }
+        }
+    }
+    errors = validate_config(data)
+    assert any("command" in e for e in errors)
+
+
+def test_validate_config_mcp_remote() -> None:
+    data = {
+        "mcp": {
+            "remote_mcp": {
+                "type": "remote",
+                "url": "https://example.com/mcp",
+            }
+        }
+    }
+    assert validate_config(data) == []
+
+
+def test_validate_config_experimental_fields() -> None:
+    data = {
+        "experimental": {
+            "disable_paste_summary": True,
+            "mcp_timeout": 30000,
+        }
+    }
+    assert validate_config(data) == []
+
+
+def test_validate_config_enterprise_url() -> None:
+    data = {"enterprise": {"url": "https://enterprise.example.com"}}
+    assert validate_config(data) == []
+
+
+def test_validate_config_lsp_valid() -> None:
+    data = {
+        "lsp": {
+            "pyright": {
+                "command": ["npx", "pyright"],
+                "extensions": [".py"],
+            }
+        }
+    }
+    assert validate_config(data) == []

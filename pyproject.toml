@@ -1,0 +1,16 @@
+[project]
+name = "opencode-configger"
+version = "0.1.0"
+description = "GUI configuration utility for OpenCode"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov"]
+theme = ["ttkbootstrap"]
+
+[project.scripts]
+opencode-configger = "app.main:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
