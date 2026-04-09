@@ -1,0 +1,22 @@
+[0m
+> build · minimax-m2.7
+[0m
+[0m→ [0mRead conductor/autonomous_prompt.md
+[0m→ [0mSkill "conductor"
+[0m→ [0mRead conductor/tracks.md
+[0m→ [0mRead conductor/tech-debt.md
+[0m✗ [0mread failed
+[91m[1mError: [0mFile not found: /home/daniel-bo/Desktop/opencode-configger/conductor/current_directive.md
+[0m→ [0mRead conductor/lessons-learned.md
+[0m
+[0m$ [0mgit status
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	conductor/
+	pyproject.toml
+	requirements.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+[0m
+[0m→ [0mRead conductor/tracks/ux_overhaul_20260328/plan.md

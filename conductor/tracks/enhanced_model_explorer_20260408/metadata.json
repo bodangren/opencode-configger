@@ -1,0 +1,11 @@
+{
+  "track_id": "enhanced_model_explorer_20260408",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-04-08T12:00:00Z",
+  "updated_at": "2026-04-08T12:00:00Z",
+  "description": "Advanced model picker with search, provider filtering, and live provider API integration to show available models.",
+  "estimated_tasks": 7,
+  "actual_tasks": null,
+  "deviation_notes": ""
+}
