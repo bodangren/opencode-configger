@@ -16,3 +16,4 @@
 ## Planning Improvements
 <!-- Notes on where estimates were wrong and why -->
 - Phase 6 (Polish) tasks were smaller than Phase 1-5 (Schema + Widgets) — 4 tasks completed in one session vs multi-session phases earlier.
+- Phase 6.1-6.3 (validation, status bar, variable preview) were already implemented before Phase 6 started — plan was ahead of marks.

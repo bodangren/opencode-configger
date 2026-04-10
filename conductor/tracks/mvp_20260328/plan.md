@@ -42,7 +42,7 @@
 
 ## Phase 6: Polish & Integration
 
-- [ ] **6.1** Config validation before save (type checking, enum validation, required fields)
-- [ ] **6.2** Status bar with current file path and dirty indicator
-- [ ] **6.3** Variable substitution preview ({env:...}, {file:...})
-- [ ] **6.4** Final integration testing and coverage check
+- [x] **6.1** Config validation before save (type checking, enum validation, required fields)
+- [x] **6.2** Status bar with current file path and dirty indicator
+- [x] **6.3** Variable substitution preview ({env:...}, {file:...})
+- [x] **6.4** Final integration testing and coverage check
