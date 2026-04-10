@@ -4,7 +4,7 @@ This file tracks all major tracks for the project.
 
 ---
 
-- [ ] **Track: MVP — Core Config Editor**
+- [x] **Track: MVP — Core Config Editor**
   *Link: [./tracks/mvp_20260328/](./tracks/mvp_20260328/)*
 - [x] **Track: UX Overhaul — Schema Correction & Modern Widgets**
   *Link: [./tracks/ux_overhaul_20260328/](./tracks/ux_overhaul_20260328/)*
