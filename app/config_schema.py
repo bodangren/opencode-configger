@@ -4,6 +4,7 @@ Each schema entry defines: key, type, default, description, enum values,
 and any constraints needed for validation and form generation.
 """
 
+import re
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
@@ -33,6 +34,7 @@ class FieldDef:
     min_value: float | None = None
     max_value: float | None = None
     required: bool = False
+    pattern: str | None = None
     parent: str = ""  # dot-separated parent path, e.g. "server"
     suggestions: list[str] = field(default_factory=list)
 
@@ -648,6 +650,14 @@ def validate_field(field_def: FieldDef, value: Any) -> str | None:
     elif field_def.field_type == FieldType.KEY_VALUE_MAP:
         if not isinstance(value, dict):
             return f"{field_def.key} must be a key/value map"
+
+    elif field_def.field_type == FieldType.STRING:
+        if field_def.pattern is not None:
+            try:
+                if not re.match(field_def.pattern, str(value)):
+                    return f"{field_def.key} does not match required pattern"
+            except re.error:
+                pass
 
     return None
 

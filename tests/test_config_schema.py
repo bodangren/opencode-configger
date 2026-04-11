@@ -41,6 +41,20 @@ def test_validate_field_integer_bounds() -> None:
     assert "must be an integer" in validate_field(field, "abc")
 
 
+def test_validate_field_pattern() -> None:
+    field = FieldDef(
+        key="hostname",
+        field_type=FieldType.STRING,
+        description="Hostname",
+        pattern=r"^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$",
+    )
+    assert validate_field(field, "localhost") is None
+    assert validate_field(field, "example.com") is None
+    assert validate_field(field, "sub.domain.example.com") is None
+    assert "does not match required pattern" in validate_field(field, "-invalid.com")
+    assert "does not match required pattern" in validate_field(field, "has spaces.com")
+
+
 def test_validate_field_enum_and_required() -> None:
     field = FieldDef(
         key="share",

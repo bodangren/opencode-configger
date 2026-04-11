@@ -2,9 +2,9 @@
 
 ## Phase 1: Constraint Model
 
-- [ ] Task: Extend `FieldDef` with constraint attributes.
-  - [ ] Add `min`, `max`, `required`, `pattern`, `choices` optional fields to `FieldDef` dataclass in `config_schema.py`.
-  - [ ] Update all existing `FieldDef` instances to include constraints where applicable (e.g., `port` gets `min=1, max=65535`).
+- [x] Task: Extend `FieldDef` with constraint attributes.
+  - [x] Add `min`, `max`, `required`, `pattern`, `choices` optional fields to `FieldDef` dataclass in `config_schema.py`.
+  - [x] Update all existing `FieldDef` instances to include constraints where applicable (e.g., `port` gets `min=1, max=65535`).
 - [ ] Task: Implement `validate_field(field_def, value) -> (bool, str)`.
   - [ ] Handle each constraint type independently.
   - [ ] Return `(True, "")` for valid values; `(False, "<human message>")` for invalid.
