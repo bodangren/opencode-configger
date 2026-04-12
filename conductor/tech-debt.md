@@ -8,3 +8,6 @@
 
 | Date | Track | Item | Severity | Status | Notes |
 |------|-------|------|----------|--------|-------|
+| 2026-04-12 | Schema Validation | Error tooltip re-shows on every show_error call | Low | Open | ToolTip._hide is called but tooltip instance persists; acceptable for MVP |
+
+
