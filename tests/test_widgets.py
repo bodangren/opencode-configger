@@ -297,3 +297,57 @@ def test_dynamic_dict_editor_has_edit_button(tk_root: tk.Tk) -> None:
     editor = DynamicDictEditor(tk_root, "Test", fields)
     # Verify the editor has an edit button (part of Phase 5)
     assert hasattr(editor, '_edit_key')
+
+
+def test_labeled_entry_show_error_and_clear_error(tk_root: tk.Tk) -> None:
+    field = FieldDef("model", FieldType.STRING, "Model")
+    widget = LabeledEntry(tk_root, field)
+
+    assert widget._entry_frame.cget("highlightthickness") == 0
+    widget.show_error("invalid model")
+    assert widget._entry_frame.cget("highlightthickness") == 2
+    assert widget._error_tooltip is not None
+
+    widget.clear_error()
+    assert widget._entry_frame.cget("highlightthickness") == 0
+    assert widget._error_tooltip is None
+
+
+def test_labeled_spinbox_show_error_and_clear_error(tk_root: tk.Tk) -> None:
+    field = FieldDef("port", FieldType.INTEGER, "Port", min_value=0, max_value=65535)
+    widget = LabeledSpinbox(tk_root, field)
+
+    assert widget._spinbox_frame.cget("highlightthickness") == 0
+    widget.show_error("port out of range")
+    assert widget._spinbox_frame.cget("highlightthickness") == 2
+    assert widget._error_tooltip is not None
+
+    widget.clear_error()
+    assert widget._spinbox_frame.cget("highlightthickness") == 0
+    assert widget._error_tooltip is None
+
+
+def test_labeled_combo_show_error_and_clear_error(tk_root: tk.Tk) -> None:
+    field = FieldDef("share", FieldType.ENUM, "Share mode", enum_values=["manual", "auto", "disabled"])
+    widget = LabeledCombo(tk_root, field)
+
+    assert widget._combo_frame.cget("highlightthickness") == 0
+    widget.show_error("invalid choice")
+    assert widget._combo_frame.cget("highlightthickness") == 2
+    assert widget._error_tooltip is not None
+
+    widget.clear_error()
+    assert widget._combo_frame.cget("highlightthickness") == 0
+    assert widget._error_tooltip is None
+
+
+def test_labeled_check_show_error_and_clear_error(tk_root: tk.Tk) -> None:
+    field = FieldDef("snapshot", FieldType.BOOLEAN, "Snapshot")
+    widget = LabeledCheck(tk_root, field)
+
+    assert widget._error_tooltip is None
+    widget.show_error("required field")
+    assert widget._error_tooltip is not None
+
+    widget.clear_error()
+    assert widget._error_tooltip is None

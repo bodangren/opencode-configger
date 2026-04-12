@@ -15,12 +15,12 @@
 
 ## Phase 2: Widget Error States
 
-- [ ] Task: Add error-state display to base widget class in `widgets.py`.
-  - [ ] `show_error(message)` — applies red border, shows tooltip.
-  - [ ] `clear_error()` — restores normal border.
-  - [ ] Wire validation callback into each widget's change event.
-- [ ] Task: Apply error-state to one widget of each type (text, spinbox, dropdown, checkbox).
-- [ ] Task: Write widget tests covering error and clear-error transitions.
+- [x] Task: Add error-state display to base widget class in `widgets.py`.
+  - [x] `show_error(message)` — applies red border, shows tooltip.
+  - [x] `clear_error()` — restores normal border.
+  - [x] Wire validation callback into each widget's change event.
+- [x] Task: Apply error-state to one widget of each type (text, spinbox, dropdown, checkbox).
+- [x] Task: Write widget tests covering error and clear-error transitions.
 - [ ] Task: Conductor — User Manual Verification 'Phase 2: Widget Error States' (Protocol in workflow.md)
 
 ## Phase 3: Save Guard & Status Bar

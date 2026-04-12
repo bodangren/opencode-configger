@@ -53,9 +53,13 @@ class LabeledEntry(ttk.Frame):
         self.label = ttk.Label(self, text=field_def.key, width=20, anchor="w")
         self.label.pack(side=tk.LEFT, padx=(0, 8))
 
+        self._entry_frame = tk.Frame(self, highlightbackground="#cc0000", highlightthickness=0)
+        self._entry_frame.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self._entry_frame.pack_propagate(False)
+
         self.var = tk.StringVar()
-        self.entry = ttk.Entry(self, textvariable=self.var, width=40)
-        self.entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.entry = ttk.Entry(self._entry_frame, textvariable=self.var, width=40)
+        self.entry.pack(fill=tk.X, expand=True)
 
         if field_def.default is not None:
             self.entry.config(
@@ -71,6 +75,20 @@ class LabeledEntry(ttk.Frame):
             ToolTip(self.label, f"{field_def.description}\nDefault: {field_def.default}")
         else:
             ToolTip(self.label, field_def.description)
+
+        self._error_tooltip: ToolTip | None = None
+
+    def show_error(self, message: str) -> None:
+        self._entry_frame.config(highlightthickness=2)
+        if self._error_tooltip:
+            self._error_tooltip._hide(None)
+        self._error_tooltip = ToolTip(self.entry, message)
+
+    def clear_error(self) -> None:
+        self._entry_frame.config(highlightthickness=0)
+        if self._error_tooltip:
+            self._error_tooltip._hide(None)
+            self._error_tooltip = None
 
     def get_value(self) -> str | None:
         val = self.var.get().strip()
@@ -92,19 +110,37 @@ class LabeledCombo(ttk.Frame):
         self.label = ttk.Label(self, text=field_def.key, width=20, anchor="w")
         self.label.pack(side=tk.LEFT, padx=(0, 8))
 
+        self._combo_frame = tk.Frame(self, highlightbackground="#cc0000", highlightthickness=0)
+        self._combo_frame.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self._combo_frame.pack_propagate(False)
+
         values = [""] + field_def.enum_values
         self.var = tk.StringVar()
         self.combo = ttk.Combobox(
-            self, textvariable=self.var, values=values,
+            self._combo_frame, textvariable=self.var, values=values,
             state="readonly", width=37,
         )
-        self.combo.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.combo.pack(fill=tk.X, expand=True)
 
         if on_change:
             self.combo.bind("<<ComboboxSelected>>", lambda _: on_change())
 
         ToolTip(self.combo, field_def.description)
         ToolTip(self.label, field_def.description)
+
+        self._error_tooltip: ToolTip | None = None
+
+    def show_error(self, message: str) -> None:
+        self._combo_frame.config(highlightthickness=2)
+        if self._error_tooltip:
+            self._error_tooltip._hide(None)
+        self._error_tooltip = ToolTip(self.combo, message)
+
+    def clear_error(self) -> None:
+        self._combo_frame.config(highlightthickness=0)
+        if self._error_tooltip:
+            self._error_tooltip._hide(None)
+            self._error_tooltip = None
 
     def get_value(self) -> str | None:
         val = self.var.get()
@@ -203,6 +239,8 @@ class LabeledCheck(ttk.Frame):
         )
         self.check.pack(side=tk.LEFT)
 
+        self._error_tooltip: ToolTip | None = None
+
         # Track whether the value has been explicitly set vs left as default
         self.is_set = False
 
@@ -215,6 +253,16 @@ class LabeledCheck(ttk.Frame):
         self.is_set = True
         if self.on_change:
             self.on_change()
+
+    def show_error(self, message: str) -> None:
+        if self._error_tooltip:
+            self._error_tooltip._hide(None)
+        self._error_tooltip = ToolTip(self.check, message)
+
+    def clear_error(self) -> None:
+        if self._error_tooltip:
+            self._error_tooltip._hide(None)
+            self._error_tooltip = None
 
     def get_value(self) -> bool | None:
         if not self.is_set:
@@ -442,25 +490,43 @@ class LabeledSpinbox(ttk.Frame):
         ttk.Label(self, text=field_def.key, width=20, anchor="w").pack(
             side=tk.LEFT, padx=(0, 8))
 
+        self._spinbox_frame = tk.Frame(self, highlightbackground="#cc0000", highlightthickness=0)
+        self._spinbox_frame.pack(side=tk.LEFT)
+        self._spinbox_frame.pack_propagate(False)
+
         from_val = int(field_def.min_value) if field_def.min_value is not None else 0
         to_val = int(field_def.max_value) if field_def.max_value is not None else 999999
 
         self.var = tk.StringVar(value="")
         self.spinbox = ttk.Spinbox(
-            self, textvariable=self.var,
+            self._spinbox_frame, textvariable=self.var,
             from_=from_val, to=to_val, width=15,
         )
-        self.spinbox.pack(side=tk.LEFT)
+        self.spinbox.pack()
 
         if on_change:
             self.var.trace_add("write", lambda *_: self._on_edit())
 
         ToolTip(self.spinbox, field_def.description)
 
+        self._error_tooltip: ToolTip | None = None
+
     def _on_edit(self) -> None:
         self.is_set = True
         if self.on_change:
             self.on_change()
+
+    def show_error(self, message: str) -> None:
+        self._spinbox_frame.config(highlightthickness=2)
+        if self._error_tooltip:
+            self._error_tooltip._hide(None)
+        self._error_tooltip = ToolTip(self.spinbox, message)
+
+    def clear_error(self) -> None:
+        self._spinbox_frame.config(highlightthickness=0)
+        if self._error_tooltip:
+            self._error_tooltip._hide(None)
+            self._error_tooltip = None
 
     def get_value(self) -> int | None:
         if not self.is_set:
