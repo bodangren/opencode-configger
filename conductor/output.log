@@ -3,14 +3,12 @@
 [0m
 [0m→ [0mRead conductor/autonomous_prompt.md
 [0m→ [0mSkill "conductor"
+Loading Conductor autonomous mode. Starting with context files:
 [0m→ [0mRead conductor/tracks.md
 [0m→ [0mRead conductor/tech-debt.md
 [0m→ [0mRead conductor/lessons-learned.md
 [0m✗ [0mread failed
 [91m[1mError: [0mFile not found: /home/daniel-bo/Desktop/opencode-configger/conductor/current_directive.md
-[0m
-[0m$ [0mgit log -1 --oneline
-c96dd3c mark MVP track complete
 [0m
 [0m$ [0mgit status
 On branch master
@@ -21,3 +19,4 @@ Changes not staged for commit:
 
 no changes added to commit (use "git add" and/or "git commit -a")
 [0m
+Dirty workspace. Committing and checking for in-progress work:
