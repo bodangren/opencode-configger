@@ -1,6 +1,8 @@
 """Tests for static configuration tabs."""
 
 import tkinter as tk
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import pytest
 
@@ -166,3 +168,92 @@ def test_smoke_all_tabs_render(tk_root: tk.Tk) -> None:
 
     tk_root.update_idletasks()
     assert nb.index("end") == len(tabs)
+
+
+def test_save_button_disabled_when_invalid_config(tk_root: tk.Tk) -> None:
+    """Integration test: load an invalid config, confirm Save button is disabled."""
+    from app.main import ConfiggerApp
+
+    app = ConfiggerApp(tk_root)
+
+    invalid_data = {
+        "$schema": "https://opencode.ai/config.json",
+        "model": "test/model",
+        "logLevel": "INFO",
+        "share": "manual",
+        "server": {"port": 99999},
+        "snapshot": True,
+    }
+    app.opencode_data = invalid_data
+    app._load_tabs(invalid_data)
+
+    assert app.save_btn.cget("state") == tk.DISABLED
+
+
+def test_save_button_enabled_when_valid_config(tk_root: tk.Tk) -> None:
+    """Integration test: load a valid config, confirm Save button is enabled."""
+    from app.main import ConfiggerApp
+
+    app = ConfiggerApp(tk_root)
+
+    valid_data = {
+        "$schema": "https://opencode.ai/config.json",
+        "model": "test/model",
+        "logLevel": "INFO",
+        "share": "manual",
+        "server": {"port": 8080},
+        "snapshot": True,
+    }
+    app.opencode_data = valid_data
+    app._load_tabs(valid_data)
+
+    assert app.save_btn.cget("state") == tk.NORMAL
+
+
+def test_status_bar_shows_error_count(tk_root: tk.Tk) -> None:
+    """Status bar shows error count when config is invalid."""
+    from app.main import ConfiggerApp
+
+    app = ConfiggerApp(tk_root)
+
+    invalid_data = {
+        "$schema": "https://opencode.ai/config.json",
+        "model": "test/model",
+        "logLevel": "INFO",
+        "share": "manual",
+        "server": {"port": 99999},
+        "snapshot": True,
+    }
+    app.opencode_data = invalid_data
+    app._load_tabs(invalid_data)
+
+    assert "error" in app.status_error_label.cget("text").lower()
+
+
+def test_validation_state_updates_on_field_change(tk_root: tk.Tk) -> None:
+    """Validation state updates when a field is changed via on_change callback."""
+    from app.main import ConfiggerApp
+
+    app = ConfiggerApp(tk_root)
+
+    app.opencode_data = {
+        "$schema": "https://opencode.ai/config.json",
+        "model": "test/model",
+        "logLevel": "INFO",
+        "share": "manual",
+        "server": {"port": 8080},
+        "snapshot": True,
+    }
+    app._load_tabs(app.opencode_data)
+
+    assert app.save_btn.cget("state") == tk.NORMAL
+
+    app.server_tab.widgets["port"].set_value("99999")
+    app.server_tab._handle_change()
+
+    assert app.save_btn.cget("state") == tk.DISABLED
+
+    app.server_tab.widgets["port"].set_value("8080")
+    app.server_tab._handle_change()
+
+    assert app.save_btn.cget("state") == tk.NORMAL

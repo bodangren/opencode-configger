@@ -13,10 +13,12 @@ class GeneralTab(ttk.Frame):
 
     def __init__(self, parent: tk.Widget, on_change: Callable | None = None,
                  on_pick_model_request: Callable[[str], None] | None = None,
+                 on_validate_field: Callable[[str, str | None], None] | None = None,
                  **kwargs):
         super().__init__(parent, **kwargs)
         self.on_change = on_change
         self.on_pick_model_request = on_pick_model_request
+        self.on_validate_field = on_validate_field
         self.widgets: dict[str, Any] = {}
 
         ttk.Label(self, text="General Settings",
@@ -27,7 +29,7 @@ class GeneralTab(ttk.Frame):
         form.pack(fill=tk.BOTH, expand=True, padx=8)
 
         for fd in GENERAL_FIELDS:
-            w = build_field_widget(form, fd, on_change=on_change)
+            w = build_field_widget(form, fd, on_change=self._handle_change)
             w.pack(fill=tk.X, pady=3)
             self.widgets[fd.key] = w
 
@@ -47,6 +49,10 @@ class GeneralTab(ttk.Frame):
     def _request_model_pick(self, target: str) -> None:
         if self.on_pick_model_request:
             self.on_pick_model_request(target)
+
+    def _handle_change(self) -> None:
+        if self.on_change:
+            self.on_change()
 
     def load_config(self, data: dict) -> None:
         """Load config values into the form widgets."""
@@ -86,5 +92,4 @@ class GeneralTab(ttk.Frame):
         """
         if key in self.widgets:
             self.widgets[key].set_value(value)
-            if self.on_change:
-                self.on_change()
+            self._handle_change()

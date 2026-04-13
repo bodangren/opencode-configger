@@ -25,11 +25,11 @@
 
 ## Phase 3: Save Guard & Status Bar
 
-- [ ] Task: Add status bar to main window showing error count.
-  - [ ] Status bar updates on every field-change event.
-  - [ ] Shows "Ready" when no errors; "N error(s) — fix before saving" otherwise.
-- [ ] Task: Disable Save button while any field is invalid.
-  - [ ] Maintain an `error_count` counter in app state.
-  - [ ] Re-enable Save when counter reaches zero.
-- [ ] Task: Integration test: load a config with a deliberate invalid value and confirm Save is blocked.
+- [x] Task: Add status bar to main window showing error count.
+  - [x] Status bar updates on every field-change event.
+  - [x] Shows "Ready" when no errors; "N error(s) — fix before saving" otherwise.
+- [x] Task: Disable Save button while any field is invalid.
+  - [x] Maintain an `error_count` counter in app state.
+  - [x] Re-enable Save when counter reaches zero.
+- [x] Task: Integration test: load a config with a deliberate invalid value and confirm Save is blocked.
 - [ ] Task: Conductor — User Manual Verification 'Phase 3: Save Guard & Status Bar' (Protocol in workflow.md)

@@ -48,15 +48,25 @@ class ConfiggerApp:
         self.current_config_path: Path | None = None
         self.opencode_data: dict = {}
         self.is_dirty = False
+        self._validation_errors: list[str] = []
 
         self.root.geometry("1000x700")
         self._build_menu()
+        self._build_save_button()
         self._build_status_bar()
         self._build_tabs()
         self._bind_shortcuts()
 
         self._load_default_or_new()
         self._update_title()
+        self._update_validation_state()
+
+    def _build_save_button(self) -> None:
+        """Create a Save button in the button bar."""
+        self.save_btn = ttk.Button(
+            self.root, text="Save", command=self.save_file, width=10,
+        )
+        self.save_btn.place(relx=1.0, rely=1.0, x=-8, y=-2, anchor="se")
 
     def _build_status_bar(self) -> None:
         """Create the status bar at the bottom of the window."""
@@ -67,6 +77,12 @@ class ConfiggerApp:
             self.status_bar, text="", anchor="w", padding=(4, 2),
         )
         self.status_path_label.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        self.status_error_label = ttk.Label(
+            self.status_bar, text="", anchor="e", padding=(0, 2),
+            foreground="#cc0000",
+        )
+        self.status_error_label.pack(side=tk.RIGHT, padx=(0, 8))
 
         self.status_dirty_label = ttk.Label(
             self.status_bar, text="", width=12, anchor="e", padding=(0, 2),
@@ -97,6 +113,21 @@ class ConfiggerApp:
         self.is_dirty = dirty
         self._update_title()
         self._update_status()
+
+    def _update_validation_state(self) -> None:
+        """Run validation and update save button state + status bar."""
+        data = self._collect_from_tabs()
+        self._validation_errors = validate_config(data)
+        error_count = len(self._validation_errors)
+
+        if error_count == 0:
+            self.status_error_label.config(text="")
+            self.save_btn.config(state=tk.NORMAL)
+        else:
+            self.status_error_label.config(
+                text=f"{error_count} error{'s' if error_count > 1 else ''} — fix before saving"
+            )
+            self.save_btn.config(state=tk.DISABLED)
 
     def _build_menu(self) -> None:
         """Create the application menu bar."""
@@ -240,6 +271,7 @@ class ConfiggerApp:
     def _on_change(self) -> None:
         """Mark document as modified when any field changes."""
         self._set_dirty(True)
+        self._update_validation_state()
 
     def _load_default_or_new(self) -> None:
         """Load default config if found, otherwise initialize a new one."""
@@ -269,6 +301,7 @@ class ConfiggerApp:
             self.tui_tab.load_config(new_tui_config())
 
         self._set_dirty(False)
+        self._update_validation_state()
 
     def _load_tabs(self, data: dict) -> None:
         """Load config data into all instantiated tabs.
@@ -286,6 +319,7 @@ class ConfiggerApp:
         self.formatters_tab.load_config(data)
         self.mcp_tab.load_config(data)
         self.lsp_tab.load_config(data)
+        self._update_validation_state()
 
     def _apply_model(self, model_name: str, target: str) -> None:
         """Apply model chosen in model browser to general settings.
@@ -352,6 +386,7 @@ class ConfiggerApp:
         self.opencode_data = data
         self._load_tabs(data)
         self._set_dirty(False)
+        self._update_validation_state()
         return True
 
     def _confirm_discard(self) -> bool:

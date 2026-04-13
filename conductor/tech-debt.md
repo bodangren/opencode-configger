@@ -9,5 +9,6 @@
 | Date | Track | Item | Severity | Status | Notes |
 |------|-------|------|----------|--------|-------|
 | 2026-04-12 | Schema Validation | Error tooltip re-shows on every show_error call | Low | Open | ToolTip._hide is called but tooltip instance persists; acceptable for MVP |
+| 2026-04-13 | Schema Validation Phase 3 | Status bar error label placeholder — no entry widget to wire per-field validation directly | Low | Open | Validation is full-config only; per-field inline errors not yet wired to status bar |
 
 
