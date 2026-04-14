@@ -11,11 +11,11 @@ This file tracks all major tracks for the project.
 
 ---
 
-## Future Roadmap
-
-- [ ] **Track: Schema Validation & Feedback**
+- [x] **Track: Schema Validation & Feedback**
   *Link: [./tracks/schema_validation_feedback_20260408/](./tracks/schema_validation_feedback_20260408/)*
   Implement real-time validation against the defined 'FieldDef' constraints (min/max, required) with visual error indicators in the GUI.
+
+## Future Roadmap
 
 - [ ] **Track: Dynamic Extension Discovery**
   *Link: [./tracks/dynamic_extension_discovery_20260408/](./tracks/dynamic_extension_discovery_20260408/)*
