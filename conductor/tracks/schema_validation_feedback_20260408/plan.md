@@ -11,7 +11,8 @@
 - [x] Task: Write unit tests for `validate_field`.
   - [x] One test per constraint type (min, max, required, pattern, choices).
   - [x] Edge cases: None value on required field, value at exact boundary.
-- [ ] Task: Conductor — User Manual Verification 'Phase 1: Constraint Model' (Protocol in workflow.md)
+- [x] Task: Conductor — User Manual Verification 'Phase 1: Constraint Model' (Protocol in workflow.md)
+  [checkpoint: 1c42c3f]
 
 ## Phase 2: Widget Error States
 
