@@ -34,4 +34,5 @@
   - [x] Maintain an `error_count` counter in app state.
   - [x] Re-enable Save when counter reaches zero.
 - [x] Task: Integration test: load a config with a deliberate invalid value and confirm Save is blocked.
-- [ ] Task: Conductor — User Manual Verification 'Phase 3: Save Guard & Status Bar' (Protocol in workflow.md)
+- [x] Task: Conductor — User Manual Verification 'Phase 3: Save Guard & Status Bar' (Protocol in workflow.md)
+  [checkpoint: 1c42c3f]
