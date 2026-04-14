@@ -22,7 +22,8 @@
   - [x] Wire validation callback into each widget's change event.
 - [x] Task: Apply error-state to one widget of each type (text, spinbox, dropdown, checkbox).
 - [x] Task: Write widget tests covering error and clear-error transitions.
-- [ ] Task: Conductor — User Manual Verification 'Phase 2: Widget Error States' (Protocol in workflow.md)
+- [x] Task: Conductor — User Manual Verification 'Phase 2: Widget Error States' (Protocol in workflow.md)
+  [checkpoint: 1c42c3f]
 
 ## Phase 3: Save Guard & Status Bar
 
