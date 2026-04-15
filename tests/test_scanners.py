@@ -104,6 +104,19 @@ class TestMcpScanner:
         }
         assert scanner.scan(config) == []
 
+    def test_scan_stdio_no_command(self, scanner: McpScanner) -> None:
+        config = {
+            "mcp": {
+                "no-cmd-server": {
+                    "type": "stdio",
+                }
+            }
+        }
+        desc = scanner.scan(config)
+        assert len(desc) == 1
+        assert desc[0].server_name == "no-cmd-server"
+        assert desc[0].config_keys == []
+
     def test_scan_stdio_timeout(self, scanner: McpScanner) -> None:
         import subprocess
 
@@ -173,11 +186,28 @@ class TestMcpScanner:
             names = {d.server_name for d in desc}
             assert names == {"server-a", "server-b"}
 
-    def test_parse_config_flags_duplicates(self, scanner: McpScanner) -> None:
-        output = "--config-key val\n--config-key val\n"
-        keys = scanner._parse_config_flags(output)
-        assert keys.count("key") == 1
+    def test_scan_stdio_exception(self, scanner: McpScanner) -> None:
+        config = {
+            "mcp": {
+                "failing-server": {
+                    "type": "stdio",
+                    "command": "failing-server",
+                    "args": [],
+                }
+            }
+        }
+        with patch("subprocess.run") as mock_run:
+            mock_run.side_effect = OSError("spawn failed")
+            desc = scanner.scan(config)
+            assert len(desc) == 1
+            assert desc[0].server_name == "failing-server"
+            assert desc[0].config_keys == []
 
     def test_scan_invalid_server_config(self, scanner: McpScanner) -> None:
         config = {"mcp": {"bad": "not-a-dict"}}
         assert scanner.scan(config) == []
+
+    def test_parse_config_flags_duplicates(self, scanner: McpScanner) -> None:
+        output = "--config-key val\n--config-key val\n"
+        keys = scanner._parse_config_flags(output)
+        assert keys.count("key") == 1
