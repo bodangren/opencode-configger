@@ -25,6 +25,7 @@ from app.tabs.agents import AgentsTab
 from app.tabs.commands import CommandsTab
 from app.tabs.compaction import AdvancedTab
 from app.tabs.formatters import FormattersTab
+from app.tabs.extensions import ExtensionsTab
 from app.tabs.general import GeneralTab
 from app.tabs.lsp import LSPTab
 from app.tabs.mcp import MCPServersTab
@@ -228,6 +229,7 @@ class ConfiggerApp:
         self.lsp_tab = LSPTab(self.notebook, on_change=self._on_change)
         self.tui_tab = TuiTab(self.notebook, on_change=self._on_change)
         self.models_tab = ModelsTab(self.notebook, on_pick_model=self._apply_model)
+        self.extensions_tab = ExtensionsTab(self.notebook, on_change=self._on_change)
 
         self.notebook.add(self.general_tab, text="General")
         self.notebook.add(self.server_tab, text="Server")
@@ -241,6 +243,7 @@ class ConfiggerApp:
         self.notebook.add(self.lsp_tab, text="LSP")
         self.notebook.add(self.tui_tab, text="TUI")
         self.notebook.add(self.models_tab, text="Models")
+        self.notebook.add(self.extensions_tab, text="Extensions")
 
     def _bind_shortcuts(self) -> None:
         """Bind keyboard shortcuts for file actions."""
