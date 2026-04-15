@@ -259,8 +259,7 @@ def test_validate_config_provider_valid() -> None:
     data = {
         "provider": {
             "my_provider": {
-                "options": {"apiKey": "sk-test"},
-                "options": {"baseURL": "https://api.test.com"},
+                "options": {"apiKey": "sk-test", "baseURL": "https://api.test.com"},
             }
         }
     }
