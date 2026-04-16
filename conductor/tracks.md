@@ -17,7 +17,7 @@ This file tracks all major tracks for the project.
 
 ## Future Roadmap
 
-- [ ] **Track: Dynamic Extension Discovery**
+- [x] **Track: Dynamic Extension Discovery**
   *Link: [./tracks/dynamic_extension_discovery_20260408/](./tracks/dynamic_extension_discovery_20260408/)*
   Enable the GUI to scan for and integrate configuration requirements from OpenCode plugins or MCP servers dynamically.
 
