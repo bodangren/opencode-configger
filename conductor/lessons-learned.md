@@ -21,6 +21,7 @@
 - Validation state (_validation_errors) maintained in main.py and updated via _update_validation_state() on every change, load, and after _collect_from_tabs.
 - Extensions tab runs scanners synchronously on the main thread (3s timeout per plugin/MCP is fast enough to not block UI significantly).
 - CollapsibleSection uses +/– prefix on header label to indicate expand/collapse state.
+- ToolTip bindings (<Enter>, <Leave>) persist after _hide; creating new ToolTip instances on each show_error caused rogue tooltips on hover. Fix: reuse single instance with set_text + show instead of creating new.
 
 ## Planning Improvements
 - Phase 3 (Save Guard & Status Bar): 3 tasks completed in one session — status bar label, save button disable/enable, and integration tests.

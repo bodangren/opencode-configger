@@ -40,6 +40,15 @@ class ToolTip:
             self.tip_window.destroy()
             self.tip_window = None
 
+    def set_text(self, text: str) -> None:
+        self.text = text
+        if self.tip_window:
+            label = self.tip_window.winfo_children()[0]
+            label.config(text=text)
+
+    def show(self) -> None:
+        self._show(None)
+
 
 class LabeledEntry(ttk.Frame):
     """A labeled text entry with optional tooltip and placeholder."""
@@ -82,7 +91,10 @@ class LabeledEntry(ttk.Frame):
         self._entry_frame.config(highlightthickness=2)
         if self._error_tooltip:
             self._error_tooltip._hide(None)
-        self._error_tooltip = ToolTip(self.entry, message)
+            self._error_tooltip.set_text(message)
+            self._error_tooltip.show()
+        else:
+            self._error_tooltip = ToolTip(self.entry, message)
 
     def clear_error(self) -> None:
         self._entry_frame.config(highlightthickness=0)
@@ -134,7 +146,10 @@ class LabeledCombo(ttk.Frame):
         self._combo_frame.config(highlightthickness=2)
         if self._error_tooltip:
             self._error_tooltip._hide(None)
-        self._error_tooltip = ToolTip(self.combo, message)
+            self._error_tooltip.set_text(message)
+            self._error_tooltip.show()
+        else:
+            self._error_tooltip = ToolTip(self.combo, message)
 
     def clear_error(self) -> None:
         self._combo_frame.config(highlightthickness=0)
@@ -257,7 +272,10 @@ class LabeledCheck(ttk.Frame):
     def show_error(self, message: str) -> None:
         if self._error_tooltip:
             self._error_tooltip._hide(None)
-        self._error_tooltip = ToolTip(self.check, message)
+            self._error_tooltip.set_text(message)
+            self._error_tooltip.show()
+        else:
+            self._error_tooltip = ToolTip(self.check, message)
 
     def clear_error(self) -> None:
         if self._error_tooltip:
@@ -520,7 +538,10 @@ class LabeledSpinbox(ttk.Frame):
         self._spinbox_frame.config(highlightthickness=2)
         if self._error_tooltip:
             self._error_tooltip._hide(None)
-        self._error_tooltip = ToolTip(self.spinbox, message)
+            self._error_tooltip.set_text(message)
+            self._error_tooltip.show()
+        else:
+            self._error_tooltip = ToolTip(self.spinbox, message)
 
     def clear_error(self) -> None:
         self._spinbox_frame.config(highlightthickness=0)
