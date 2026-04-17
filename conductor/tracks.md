@@ -21,6 +21,10 @@ This file tracks all major tracks for the project.
   *Link: [./tracks/dynamic_extension_discovery_20260408/](./tracks/dynamic_extension_discovery_20260408/)*
   Enable the GUI to scan for and integrate configuration requirements from OpenCode plugins or MCP servers dynamically.
 
+- [x] **Track: Tooltip Fix — Error tooltip re-show bug**
+  *Link: [./tracks/tooltip_fix_20260417/](./tracks/tooltip_fix_20260417/)*
+  Fix error tooltip re-showing on every show_error call by reusing single ToolTip instance.
+
 - [ ] **Track: Configuration Versioning & Migration**
   *Link: [./tracks/config_versioning_migration_20260408/](./tracks/config_versioning_migration_20260408/)*
   Add logic to handle 'breaking changes' in config schemas, providing automated migration paths for older config files.
