@@ -1,0 +1,11 @@
+{
+  "track_id": "config_import_export_20260423",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-04-23T00:00:00Z",
+  "updated_at": "2026-04-23T00:00:00Z",
+  "description": "Import/export configurations for sharing and migration with secrets masking, schema validation, and merge strategies.",
+  "estimated_tasks": 10,
+  "actual_tasks": null,
+  "deviation_notes": ""
+}
