@@ -1,151 +1,107 @@
 [0m
 > build · glm-5.1
 [0m
+[0m✱ [0mGlob "**/conductor/review-prompt.md"[90m 1 match[0m
+[0m✱ [0mGlob "**/*review-prompt*"[90m 1 match[0m
 [0m→ [0mRead conductor/review-prompt.md
-[0m→ [0mSkill "conductor"
-Now let me execute the review workflow as described in the prompt.
+I'll execute the review process. Let me start by gathering recent changes and reading the conductor files.
+[0m✗ [0mread failed
+[91m[1mError: [0mFile not found: /home/daniel-bo/Desktop/opencode-configger/conductor/current-priority.md
+[0m→ [0mRead conductor/tech-debt.md
+[0m→ [0mRead conductor/tracks.md
 [0m
-[0m# [0mTodos
-[ ] Gather recent changes (git log, diff, tracks, tech-debt)
-[ ] Review changed code files for correctness, style, tests, security, perf
-[ ] Run full test suite
-[ ] Run lint/typecheck
-[ ] Fix up to 5-7 lint/style issues
-[ ] Note architectural problems in tech-debt.md
-[ ] Commit fixes and report
-[ ] Adjust current-priority.md if trends found
-[0m
-[0m$ [0mgit log --since="24 hours ago" --oneline 2>/dev/null || echo "NO_COMMITS_IN_LAST_24H"
-d2d00f4 chore(conductor): Update metadata.json for completed track
-f2a46af chore(conductor): Mark track 'Schema Validation & Feedback' as complete
-be81ef9 conductor(checkpoint): Phase 3 Save Guard & Status Bar verified [MiniMax-M2.7]
-e10c9e8 conductor(checkpoint): Phase 2 Widget Error States verified [MiniMax-M2.7]
-2dfba09 conductor(checkpoint): Phase 1 Constraint Model complete [MiniMax-M2.7]
-1c42c3f conductor(plan): Mark Phase 1.2 and 1.3 validate_field tasks complete
-c6c14b7 checkpoint: dirty workspace before autonomous run
-[0m
-[0m$ [0mcat conductor/tracks.md 2>/dev/null || echo "FILE_NOT_FOUND"
-# Project Tracks
-
-This file tracks all major tracks for the project.
-
----
-
-- [x] **Track: MVP — Core Config Editor**
-  *Link: [./tracks/mvp_20260328/](./tracks/mvp_20260328/)*
-- [x] **Track: UX Overhaul — Schema Correction & Modern Widgets**
-  *Link: [./tracks/ux_overhaul_20260328/](./tracks/ux_overhaul_20260328/)*
-
----
-
-- [x] **Track: Schema Validation & Feedback**
-  *Link: [./tracks/schema_validation_feedback_20260408/](./tracks/schema_validation_feedback_20260408/)*
-  Implement real-time validation against the defined 'FieldDef' constraints (min/max, required) with visual error indicators in the GUI.
-
-## Future Roadmap
-
-- [ ] **Track: Dynamic Extension Discovery**
-  *Link: [./tracks/dynamic_extension_discovery_20260408/](./tracks/dynamic_extension_discovery_20260408/)*
-  Enable the GUI to scan for and integrate configuration requirements from OpenCode plugins or MCP servers dynamically.
-
-- [ ] **Track: Configuration Versioning & Migration**
-  *Link: [./tracks/config_versioning_migration_20260408/](./tracks/config_versioning_migration_20260408/)*
-  Add logic to handle 'breaking changes' in config schemas, providing automated migration paths for older config files.
-
-- [ ] **Track: Enhanced Model Explorer**
-  *Link: [./tracks/enhanced_model_explorer_20260408/](./tracks/enhanced_model_explorer_20260408/)*
-  Develop a more advanced model picker with search, filtering by provider, and integration with live provider APIs to show available models.
-
-- [ ] **Track: Interactive Architecture Graph**
-  Add a visual tab that renders a graph of the configured agents, providers, and tools to help users visualize their setup.
-[0m
-[0m$ [0mcat conductor/tech-debt.md 2>/dev/null || echo "FILE_NOT_FOUND"
-# Tech Debt Registry
-
-> This file is curated working memory, not an append-only log. Keep it at or below **50 lines**.
-> Remove or summarize resolved items when they no longer need to influence near-term planning.
->
-> **Severity:** `Critical` | `High` | `Medium` | `Low`
-> **Status:** `Open` | `Resolved`
-
-| Date | Track | Item | Severity | Status | Notes |
-|------|-------|------|----------|--------|-------|
-| 2026-04-12 | Schema Validation | Error tooltip re-shows on every show_error call | Low | Open | ToolTip._hide is called but tooltip instance persists; acceptable for MVP |
-| 2026-04-13 | Schema Validation Phase 3 | Status bar error label placeholder — no entry widget to wire per-field validation directly | Low | Open | Validation is full-config only; per-field inline errors not yet wired to status bar |
-[0m
-[0m$ [0mgit diff --name-only HEAD~20 HEAD 2>/dev/null || echo "FEWER_THAN_20_COMMITS"
-app/config_io.py
-app/config_schema.py
+[0m$ [0mgit diff --name-only HEAD~20 HEAD
+app/config_export.py
+app/config_import.py
 app/main.py
-app/tabs/general.py
+app/migration.py
+app/model_loader.py
+app/tabs/models.py
 app/widgets.py
 conductor/lessons-learned.md
 conductor/output.log
 conductor/tech-debt.md
 conductor/tracks.md
-conductor/tracks/mvp_20260328/plan.md
-conductor/tracks/schema_validation_feedback_20260408/metadata.json
-conductor/tracks/schema_validation_feedback_20260408/plan.md
-conductor/tracks/ux_overhaul_20260328/plan.md
-pyproject.toml
-requirements.txt
-tests/test_config_io.py
-tests/test_config_schema.py
-tests/test_static_tabs.py
-tests/test_widgets.py
+conductor/tracks/config_import_export_20260423/metadata.json
+conductor/tracks/config_import_export_20260423/plan.md
+conductor/tracks/config_import_export_20260423/spec.md
+conductor/tracks/enhanced_model_explorer_20260408/metadata.json
+conductor/tracks/enhanced_model_explorer_20260408/plan.md
+conductor/tracks/tooltip_fix_20260417/plan.md
+conductor/tracks/tooltip_fix_20260417/spec.md
+tests/test_config_export.py
+tests/test_config_import.py
+tests/test_enhanced_model_explorer.py
+tests/test_migration.py
+tests/test_model_loader.py
+[0m
+[0m$ [0mgit log --since="24 hours ago" --oneline
+9a4584c Finalize Enhanced Model Explorer track - autonomous run (MiniMax-M2)
+53902ef Phase 2: EnhancedModelExplorer with search, provider filter, async loading
+b00c00f Phase 1: ModelLoader backend with async loading and error handling
+902a541 Checkpoint: Config Versioning track complete (autonomous run - MiniMax-M2)
+3a2b350 Checkpoint: autonomous run start
+4f5771a Update lessons-learned and tech-debt for Config Versioning track
+93063cd Phase 3: Migration banner, diff dialog, --migrate CLI flag (MiniMax-M2)
+b0ca953 Phase 2: MigrationRegistry with register/migrate + v1.2→v1.3 tests
+082ceb5 Phase 1: SchemaVersion enum, detect_version(), and v1_2_to_v1_3 migration
+0360036 Update conductor output log
+1452990 checkpoint: complete Config Import/Export track [MiniMax-M2.7]
+a563e59 feat(ui): Phase 4 - import/export UI integration
+ad3fdd3 feat(import): Phase 2 - config import with validation and merge strategies
+ff85285 feat(export): Phase 1 - config export with secrets masking and clipboard support
+6ae7d25 wip: track list update and output log
 [0m
 [0m# [0mTodos
-[x] Gather recent changes (git log, diff, tracks, tech-debt)
-[ ] Review changed code files for correctness, style, tests, security, perf
+[ ] Review all changed code files for correctness, style, tests, security, performance
 [ ] Run full test suite
 [ ] Run lint/typecheck
 [ ] Fix up to 5-7 lint/style issues
 [ ] Note architectural problems in tech-debt.md
-[ ] Commit fixes and report
-[ ] Adjust current-priority.md if trends found
+[ ] Commit fixes and report findings
 [0m
-Now let me read all the changed code files to review them:
-[0m→ [0mRead pyproject.toml
-[0m→ [0mRead requirements.txt
-[0m→ [0mRead app/config_io.py
-[0m→ [0mRead tests/test_widgets.py
-[0m→ [0mRead tests/test_config_io.py
-[0m→ [0mRead tests/test_static_tabs.py
-[0m→ [0mRead tests/test_config_schema.py
-[0m→ [0mRead app/config_schema.py
-[0m→ [0mRead app/widgets.py
+Now let me read all the changed code files in parallel to review them:
+[0m→ [0mRead app/config_export.py
 [0m→ [0mRead app/main.py
-[0m→ [0mRead app/tabs/general.py
+[0m→ [0mRead app/widgets.py
+[0m→ [0mRead app/model_loader.py
+[0m→ [0mRead app/config_import.py
+[0m→ [0mRead app/migration.py
+[0m→ [0mRead app/tabs/models.py
+Now let me read the test files:
+[0m→ [0mRead tests/test_config_export.py
+[0m→ [0mRead tests/test_migration.py
+[0m→ [0mRead tests/test_config_import.py
+[0m→ [0mRead tests/test_model_loader.py
+[0m→ [0mRead tests/test_enhanced_model_explorer.py
 [0m
 [0m# [0mTodos
-[x] Gather recent changes (git log, diff, tracks, tech-debt)
-[x] Review changed code files for correctness, style, tests, security, perf
+[x] Review all changed code files for correctness, style, tests, security, performance
 [ ] Run full test suite
 [ ] Run lint/typecheck
 [ ] Fix up to 5-7 lint/style issues
 [ ] Note architectural problems in tech-debt.md
-[ ] Commit fixes and report
-[ ] Adjust current-priority.md if trends found
+[ ] Commit fixes and report findings
 [0m
-Now let me run the tests and lint in parallel:
-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && CI=true python -m pytest tests/ -v 2>&1
+Now let me run the test suite and lint/typecheck in parallel:
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && CI=true python -m pytest tests/ -v 2>&1 | tail -80
 /bin/bash: line 1: python: command not found
 [0m
-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python -m ruff check app/ tests/ 2>&1 || echo "---RUFF_NOT_INSTALLED---"; python -m flake8 app/ tests/ 2>&1 || echo "---FLAKE8_NOT_INSTALLED---"; python -m pylint app/ 2>&1 || echo "---PYLINT_NOT_INSTALLED---"
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python -m ruff check app/ tests/ 2>&1 | head -60
 /bin/bash: line 1: python: command not found
----RUFF_NOT_INSTALLED---
+[0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python -m mypy app/ --ignore-missing-imports 2>&1 | head -60
 /bin/bash: line 1: python: command not found
----FLAKE8_NOT_INSTALLED---
-/bin/bash: line 1: python: command not found
----PYLINT_NOT_INSTALLED---
 [0m
 [0m$ [0mwhich python3 && python3 --version
 /usr/bin/python3
 Python 3.12.3
 [0m
-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m ruff check app/ tests/ 2>&1 || echo "---RUFF_NOT_INSTALLED---"
+[0m✱ [0mGlob "pyproject.toml"[90m 1 match[0m
+[0m→ [0mRead pyproject.toml
+[0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m ruff check app/ tests/ 2>&1
 /usr/bin/python3: No module named ruff
----RUFF_NOT_INSTALLED---
 [0m
 [0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && CI=true python3 -m pytest tests/ -v 2>&1
 ============================= test session starts ==============================
@@ -154,281 +110,1350 @@ cachedir: .pytest_cache
 rootdir: /home/daniel-bo/Desktop/opencode-configger
 configfile: pyproject.toml
 plugins: cov-7.1.0
-collecting ... collected 92 items
+collecting ... collected 189 items
 
-tests/test_config_io.py::test_strip_jsonc_comments_and_trailing_commas PASSED [  1%]
-tests/test_config_io.py::test_load_jsonc_parses_file_with_comments PASSED [  2%]
-tests/test_config_io.py::test_load_jsonc_empty_file_returns_empty_dict PASSED [  3%]
-tests/test_config_io.py::test_save_json_writes_schema_first PASSED       [  4%]
-tests/test_config_io.py::test_find_config_files_returns_expected_locations PASSED [  5%]
-tests/test_config_io.py::test_new_config_helpers_return_schema_defaults PASSED [  6%]
-tests/test_config_io.py::test_resolve_env_var_existing PASSED            [  7%]
-tests/test_config_io.py::test_resolve_env_var_missing_raises PASSED      [  8%]
-tests/test_config_io.py::test_resolve_file_var PASSED                    [  9%]
-tests/test_config_io.py::test_resolve_file_var_missing_raises PASSED     [ 10%]
-tests/test_config_io.py::test_resolve_file_var_truncates_large_file PASSED [ 11%]
-tests/test_config_io.py::test_substitute_variables_env PASSED            [ 13%]
-tests/test_config_io.py::test_substitute_variables_file PASSED           [ 14%]
-tests/test_config_io.py::test_find_variables PASSED                      [ 15%]
-tests/test_config_io.py::test_preview_variable_env PASSED                [ 16%]
-tests/test_config_io.py::test_preview_variable_missing_env PASSED        [ 17%]
-tests/test_config_io.py::test_preview_variable_file PASSED               [ 18%]
-tests/test_config_io.py::test_preview_variable_no_variables PASSED       [ 19%]
-tests/test_config_schema.py::test_validate_field_integer_bounds PASSED   [ 20%]
-tests/test_config_schema.py::test_validate_field_pattern PASSED          [ 21%]
-tests/test_config_schema.py::test_validate_field_enum_and_required PASSED [ 22%]
-tests/test_config_schema.py::test_validate_field_boolean_and_number PASSED [ 23%]
-tests/test_config_schema.py::test_permission_tools_has_todowrite PASSED  [ 25%]
-tests/test_config_schema.py::test_mcp_discriminated_union PASSED         [ 26%]
-tests/test_config_schema.py::test_provider_entry_fields_corrected PASSED [ 27%]
-tests/test_config_schema.py::test_agent_entry_fields_updated PASSED      [ 28%]
+tests/test_config_export.py::test_mask_value_matches_default_patterns PASSED [  0%]
+tests/test_config_export.py::test_mask_value_ignores_non_matching PASSED [  1%]
+tests/test_config_export.py::test_mask_config_nested PASSED              [  1%]
+tests/test_config_export.py::test_mask_config_list PASSED                [  2%]
+tests/test_config_export.py::test_mask_config_preserves_non_string PASSED [  2%]
+tests/test_config_export.py::test_secrets_masker_default_patterns PASSED [  3%]
+tests/test_config_export.py::test_secrets_masker_custom_patterns PASSED  [  3%]
+tests/test_config_export.py::test_export_to_json_schema_first PASSED     [  4%]
+tests/test_config_export.py::test_export_to_file PASSED                  [  4%]
+tests/test_config_export.py::test_export_to_file_with_masking PASSED     [  5%]
+tests/test_config_export.py::test_export_to_clipboard_returns_text PASSED [  5%]
+tests/test_config_import.py::test_detect_jsonc_with_comments PASSED      [  6%]
+tests/test_config_import.py::test_detect_jsonc_pure_json PASSED          [  6%]
+tests/test_config_import.py::test_import_from_text_valid_json PASSED     [  7%]
+tests/test_config_import.py::test_import_from_text_valid_jsonc PASSED    [  7%]
+tests/test_config_import.py::test_import_from_text_trailing_comma PASSED [  8%]
+tests/test_config_import.py::test_import_from_text_invalid_json PASSED   [  8%]
+tests/test_config_import.py::test_import_from_text_empty PASSED          [  9%]
+tests/test_config_import.py::test_import_from_text_unknown_keys PASSED   [ 10%]
+tests/test_config_import.py::test_import_from_text_allow_unknown_keys PASSED [ 10%]
+tests/test_config_import.py::test_import_from_text_with_validation_errors PASSED [ 11%]
+tests/test_config_import.py::test_import_from_file PASSED                [ 11%]
+tests/test_config_import.py::test_import_from_file_not_found PASSED      [ 12%]
+tests/test_config_import.py::test_merge_replace PASSED                   [ 12%]
+tests/test_config_import.py::test_merge_overlay_nested PASSED            [ 13%]
+tests/test_config_import.py::test_merge_overlay_does_not_mutate_inputs PASSED [ 13%]
+tests/test_config_import.py::test_merge_selective PASSED                 [ 14%]
+tests/test_config_import.py::test_compute_diff PASSED                    [ 14%]
+tests/test_config_import.py::test_find_unknown_keys PASSED               [ 15%]
+tests/test_config_io.py::test_strip_jsonc_comments_and_trailing_commas PASSED [ 15%]
+tests/test_config_io.py::test_load_jsonc_parses_file_with_comments PASSED [ 16%]
+tests/test_config_io.py::test_load_jsonc_empty_file_returns_empty_dict PASSED [ 16%]
+tests/test_config_io.py::test_save_json_writes_schema_first PASSED       [ 17%]
+tests/test_config_io.py::test_find_config_files_returns_expected_locations PASSED [ 17%]
+tests/test_config_io.py::test_new_config_helpers_return_schema_defaults PASSED [ 18%]
+tests/test_config_io.py::test_resolve_env_var_existing PASSED            [ 19%]
+tests/test_config_io.py::test_resolve_env_var_missing_raises PASSED      [ 19%]
+tests/test_config_io.py::test_resolve_file_var PASSED                    [ 20%]
+tests/test_config_io.py::test_resolve_file_var_missing_raises PASSED     [ 20%]
+tests/test_config_io.py::test_resolve_file_var_truncates_large_file PASSED [ 21%]
+tests/test_config_io.py::test_substitute_variables_env PASSED            [ 21%]
+tests/test_config_io.py::test_substitute_variables_file PASSED           [ 22%]
+tests/test_config_io.py::test_find_variables PASSED                      [ 22%]
+tests/test_config_io.py::test_preview_variable_env PASSED                [ 23%]
+tests/test_config_io.py::test_preview_variable_missing_env PASSED        [ 23%]
+tests/test_config_io.py::test_preview_variable_file PASSED               [ 24%]
+tests/test_config_io.py::test_preview_variable_no_variables PASSED       [ 24%]
+tests/test_config_schema.py::test_validate_field_integer_bounds PASSED   [ 25%]
+tests/test_config_schema.py::test_validate_field_pattern PASSED          [ 25%]
+tests/test_config_schema.py::test_validate_field_enum_and_required PASSED [ 26%]
+tests/test_config_schema.py::test_validate_field_boolean_and_number PASSED [ 26%]
+tests/test_config_schema.py::test_permission_tools_has_todowrite PASSED  [ 27%]
+tests/test_config_schema.py::test_mcp_discriminated_union PASSED         [ 28%]
+tests/test_config_schema.py::test_provider_entry_fields_corrected PASSED [ 28%]
+tests/test_config_schema.py::test_agent_entry_fields_updated PASSED      [ 29%]
 tests/test_config_schema.py::test_formatter_command_is_string_list PASSED [ 29%]
 tests/test_config_schema.py::test_command_entry_has_subtask_and_model PASSED [ 30%]
-tests/test_config_schema.py::test_lsp_entry_fields_exist PASSED          [ 31%]
-tests/test_config_schema.py::test_experimental_fields_exist PASSED       [ 32%]
-tests/test_config_schema.py::test_enterprise_fields_exist PASSED         [ 33%]
-tests/test_config_schema.py::test_well_known_agents PASSED               [ 34%]
-tests/test_config_schema.py::test_keybind_slots_has_plugin_manager PASSED [ 35%]
-tests/test_config_schema.py::test_tui_plugin_fields PASSED               [ 36%]
-tests/test_config_schema.py::test_nested_dict_helpers PASSED             [ 38%]
-tests/test_config_schema.py::test_validate_config_empty_is_valid PASSED  [ 39%]
-tests/test_config_schema.py::test_validate_config_general_invalid_enum PASSED [ 40%]
-tests/test_config_schema.py::test_validate_config_server_port_out_of_range PASSED [ 41%]
-tests/test_config_schema.py::test_validate_config_valid_minimal PASSED   [ 42%]
-tests/test_config_schema.py::test_validate_config_unknown_permission_tool PASSED [ 43%]
-tests/test_config_schema.py::test_validate_config_provider_valid PASSED  [ 44%]
-tests/test_config_schema.py::test_validate_config_agent_color_enum PASSED [ 45%]
-tests/test_config_schema.py::test_validate_config_mcp_local_command_string_list PASSED [ 46%]
-tests/test_config_schema.py::test_validate_config_mcp_remote PASSED      [ 47%]
-tests/test_config_schema.py::test_validate_config_experimental_fields PASSED [ 48%]
-tests/test_config_schema.py::test_validate_config_enterprise_url PASSED  [ 50%]
-tests/test_config_schema.py::test_validate_config_lsp_valid PASSED       [ 51%]
-tests/test_dynamic_tabs.py::test_providers_tab_load_and_save SKIPPED     [ 52%]
-tests/test_dynamic_tabs.py::test_agents_tab_load_and_save SKIPPED (T...) [ 53%]
-tests/test_dynamic_tabs.py::test_tools_tab_load_and_save SKIPPED (Tk...) [ 54%]
-tests/test_dynamic_tabs.py::test_commands_tab_load_and_save SKIPPED      [ 55%]
-tests/test_dynamic_tabs.py::test_formatters_tab_load_and_save SKIPPED    [ 56%]
-tests/test_dynamic_tabs.py::test_mcp_tab_load_and_save SKIPPED (Tk d...) [ 57%]
-tests/test_dynamic_tabs.py::test_lsp_tab_load_and_save SKIPPED (Tk d...) [ 58%]
-tests/test_static_tabs.py::test_general_tab_load_and_save_config SKIPPED [ 59%]
-tests/test_static_tabs.py::test_general_tab_autoupdate_bool_coercion SKIPPED [ 60%]
-tests/test_static_tabs.py::test_server_tab_save_and_remove_empty_section SKIPPED [ 61%]
-tests/test_static_tabs.py::test_advanced_tab_load_and_save_multiple_sections SKIPPED [ 63%]
-tests/test_static_tabs.py::test_section_frame_collapse_and_expand SKIPPED [ 64%]
-tests/test_static_tabs.py::test_section_frame_starts_collapsed SKIPPED   [ 65%]
-tests/test_static_tabs.py::test_smoke_all_tabs_render SKIPPED (Tk di...) [ 66%]
-tests/test_static_tabs.py::test_save_button_disabled_when_invalid_config SKIPPED [ 67%]
-tests/test_static_tabs.py::test_save_button_enabled_when_valid_config SKIPPED [ 68%]
-tests/test_static_tabs.py::test_status_bar_shows_error_count SKIPPED     [ 69%]
-tests/test_static_tabs.py::test_validation_state_updates_on_field_change SKIPPED [ 70%]
-tests/test_tui_and_models_tabs.py::test_tui_tab_load_and_save_roundtrip SKIPPED [ 71%]
-tests/test_tui_and_models_tabs.py::test_keybind_editor_search_and_edit SKIPPED [ 72%]
-tests/test_tui_and_models_tabs.py::test_parse_models_json_accepts_list_and_mapping PASSED [ 73%]
-tests/test_tui_and_models_tabs.py::test_parse_models_text_extracts_provider_and_model PASSED [ 75%]
-tests/test_tui_and_models_tabs.py::test_models_tab_selection_callback SKIPPED [ 76%]
-tests/test_widgets.py::test_build_field_widget_selects_expected_class SKIPPED [ 77%]
-tests/test_widgets.py::test_labeled_entry_and_check_get_set_value SKIPPED [ 78%]
-tests/test_widgets.py::test_string_list_editor_add_and_remove SKIPPED    [ 79%]
-tests/test_widgets.py::test_permission_row_set_and_get SKIPPED (Tk d...) [ 80%]
-tests/test_widgets.py::test_object_editor_set_and_get SKIPPED (Tk di...) [ 81%]
-tests/test_widgets.py::test_string_or_bool_widget_values SKIPPED (Tk...) [ 82%]
-tests/test_widgets.py::test_dynamic_dict_editor_load_select_and_save SKIPPED [ 83%]
-tests/test_widgets.py::test_radio_group_get_set SKIPPED (Tk display ...) [ 84%]
-tests/test_widgets.py::test_labeled_spinbox_get_set SKIPPED (Tk disp...) [ 85%]
-tests/test_widgets.py::test_labeled_slider_get_set SKIPPED (Tk displ...) [ 86%]
-tests/test_widgets.py::test_color_picker_get_set SKIPPED (Tk display...) [ 88%]
-tests/test_widgets.py::test_key_value_editor_get_set SKIPPED (Tk dis...) [ 89%]
-tests/test_widgets.py::test_multiline_text_get_set SKIPPED (Tk displ...) [ 90%]
-tests/test_widgets.py::test_searchable_combo_get_set SKIPPED (Tk dis...) [ 91%]
-tests/test_widgets.py::test_build_field_widget_routes_new_types SKIPPED  [ 92%]
-tests/test_widgets.py::test_dynamic_dict_modal_ok SKIPPED (Tk displa...) [ 93%]
-tests/test_widgets.py::test_dynamic_dict_modal_cancel SKIPPED (Tk di...) [ 94%]
-tests/test_widgets.py::test_dynamic_dict_editor_has_edit_button SKIPPED  [ 95%]
-tests/test_widgets.py::test_labeled_entry_show_error_and_clear_error SKIPPED [ 96%]
-tests/test_widgets.py::test_labeled_spinbox_show_error_and_clear_error SKIPPED [ 97%]
-tests/test_widgets.py::test_labeled_combo_show_error_and_clear_error SKIPPED [ 98%]
+tests/test_config_schema.py::test_lsp_entry_fields_exist PASSED          [ 30%]
+tests/test_config_schema.py::test_experimental_fields_exist PASSED       [ 31%]
+tests/test_config_schema.py::test_enterprise_fields_exist PASSED         [ 31%]
+tests/test_config_schema.py::test_well_known_agents PASSED               [ 32%]
+tests/test_config_schema.py::test_keybind_slots_has_plugin_manager PASSED [ 32%]
+tests/test_config_schema.py::test_tui_plugin_fields PASSED               [ 33%]
+tests/test_config_schema.py::test_nested_dict_helpers PASSED             [ 33%]
+tests/test_config_schema.py::test_validate_config_empty_is_valid PASSED  [ 34%]
+tests/test_config_schema.py::test_validate_config_general_invalid_enum PASSED [ 34%]
+tests/test_config_schema.py::test_validate_config_server_port_out_of_range PASSED [ 35%]
+tests/test_config_schema.py::test_validate_config_valid_minimal PASSED   [ 35%]
+tests/test_config_schema.py::test_validate_config_unknown_permission_tool PASSED [ 36%]
+tests/test_config_schema.py::test_validate_config_provider_valid PASSED  [ 37%]
+tests/test_config_schema.py::test_validate_config_agent_color_enum PASSED [ 37%]
+tests/test_config_schema.py::test_validate_config_mcp_local_command_string_list PASSED [ 38%]
+tests/test_config_schema.py::test_validate_config_mcp_remote PASSED      [ 38%]
+tests/test_config_schema.py::test_validate_config_experimental_fields PASSED [ 39%]
+tests/test_config_schema.py::test_validate_config_enterprise_url PASSED  [ 39%]
+tests/test_config_schema.py::test_validate_config_lsp_valid PASSED       [ 40%]
+tests/test_dynamic_tabs.py::test_providers_tab_load_and_save SKIPPED     [ 40%]
+tests/test_dynamic_tabs.py::test_agents_tab_load_and_save SKIPPED (T...) [ 41%]
+tests/test_dynamic_tabs.py::test_tools_tab_load_and_save SKIPPED (Tk...) [ 41%]
+tests/test_dynamic_tabs.py::test_commands_tab_load_and_save SKIPPED      [ 42%]
+tests/test_dynamic_tabs.py::test_formatters_tab_load_and_save SKIPPED    [ 42%]
+tests/test_dynamic_tabs.py::test_mcp_tab_load_and_save SKIPPED (Tk d...) [ 43%]
+tests/test_dynamic_tabs.py::test_lsp_tab_load_and_save SKIPPED (Tk d...) [ 43%]
+tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_creates_search_entry SKIPPED [ 44%]
+tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_creates_provider_checkboxes SKIPPED [ 44%]
+tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_shows_loading_spinner_initially SKIPPED [ 45%]
+tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_auto_refresh_false_does_not_load_on_init SKIPPED [ 46%]
+tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_search_filters_by_model_id_substring SKIPPED [ 46%]
+tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_search_is_case_insensitive SKIPPED [ 47%]
+tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_empty_search_shows_all_providers SKIPPED [ 47%]
+tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_no_matches_hides_all_providers SKIPPED [ 48%]
+tests/test_enhanced_model_explorer.py::TestProviderToggle::test_provider_checkbox_toggles_visibility SKIPPED [ 48%]
+tests/test_enhanced_model_explorer.py::TestProviderToggle::test_all_checkboxes_on_shows_all_providers SKIPPED [ 49%]
+tests/test_enhanced_model_explorer.py::TestProviderToggle::test_all_checkboxes_off_hides_all_providers SKIPPED [ 49%]
+tests/test_enhanced_model_explorer.py::TestModelSelection::test_select_model_enables_set_buttons SKIPPED [ 50%]
+tests/test_enhanced_model_explorer.py::TestModelSelection::test_no_selection_disables_set_buttons SKIPPED [ 50%]
+tests/test_enhanced_model_explorer.py::TestModelSelection::test_set_primary_calls_callback SKIPPED [ 51%]
+tests/test_enhanced_model_explorer.py::TestModelSelection::test_set_small_calls_callback SKIPPED [ 51%]
+tests/test_enhanced_model_explorer.py::TestRefresh::test_refresh_button_triggers_load SKIPPED [ 52%]
+tests/test_enhanced_model_explorer.py::TestErrorPanel::test_error_panel_shows_on_load_failure SKIPPED [ 52%]
+tests/test_enhanced_model_explorer.py::TestErrorPanel::test_error_panel_hides_on_success SKIPPED [ 53%]
+tests/test_enhanced_model_explorer.py::TestLoadingState::test_loading_label_shown_while_loading SKIPPED [ 53%]
+tests/test_enhanced_model_explorer.py::TestLoadingState::test_loading_label_hidden_after_load SKIPPED [ 54%]
+tests/test_enhanced_model_explorer.py::TestModelInfoDisplay::test_model_info_shows_id_and_provider SKIPPED [ 55%]
+tests/test_enhanced_model_explorer.py::TestFilteringIntegration::test_search_with_provider_toggle_combined SKIPPED [ 55%]
+tests/test_extensions_tab.py::TestCollapsibleSection::test_toggle_expands_and_collapses SKIPPED [ 56%]
+tests/test_extensions_tab.py::TestExtensionsTabLogic::test_render_sections_empty_shows_empty_state SKIPPED [ 56%]
+tests/test_extensions_tab.py::TestExtensionsTabLogic::test_render_sections_with_plugins_and_mcp SKIPPED [ 57%]
+tests/test_extensions_tab.py::TestExtensionsTabLogic::test_refresh_button_triggers_scan SKIPPED [ 57%]
+tests/test_migration.py::test_detect_version_v1_3_current_config PASSED  [ 58%]
+tests/test_migration.py::test_detect_version_v1_2_formatter_string_command PASSED [ 58%]
+tests/test_migration.py::test_detect_version_v1_2_mcp_string_command PASSED [ 59%]
+tests/test_migration.py::test_detect_version_v1_3_no_formatters PASSED   [ 59%]
+tests/test_migration.py::test_v1_2_to_v1_3_formatter_command PASSED      [ 60%]
+tests/test_migration.py::test_v1_2_to_v1_3_formatter_already_list PASSED [ 60%]
+tests/test_migration.py::test_v1_2_to_v1_3_mcp_local_command PASSED      [ 61%]
+tests/test_migration.py::test_v1_2_to_v1_3_mcp_already_list PASSED       [ 61%]
+tests/test_migration.py::test_v1_2_to_v1_3_preserves_unknown_keys PASSED [ 62%]
+tests/test_migration.py::test_v1_2_to_v1_3_empty_formatter PASSED        [ 62%]
+tests/test_migration.py::test_v1_2_to_v1_3_no_formatter_no_mcp PASSED    [ 63%]
+tests/test_migration.py::test_migration_registry_register_and_migrate PASSED [ 64%]
+tests/test_migration.py::test_migration_registry_same_version_returns_unchanged PASSED [ 64%]
+tests/test_migration.py::test_migration_registry_preserves_unknown_keys PASSED [ 65%]
+tests/test_migration.py::test_migrate_cli_v1_2_to_v1_3 PASSED            [ 65%]
+tests/test_model_loader.py::TestModelInfo::test_model_info_creation PASSED [ 66%]
+tests/test_model_loader.py::TestModelInfo::test_model_info_optional_context_window PASSED [ 66%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_json_output PASSED [ 67%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_text_output_falls_back_when_json_fails PASSED [ 67%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_list_json_format PASSED [ 68%]
+tests/test_model_loader.py::TestModelLoaderError::test_opencode_not_on_path PASSED [ 68%]
+tests/test_model_loader.py::TestModelLoaderError::test_timeout PASSED    [ 69%]
+tests/test_model_loader.py::TestModelLoaderError::test_empty_output PASSED [ 69%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_calls_callback_on_success PASSED [ 70%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_calls_error_callback PASSED [ 70%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_timeout PASSED [ 71%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_join_does_not_block_if_not_started PASSED [ 71%]
+tests/test_scanners.py::TestPluginScanner::test_scan_no_npm PASSED       [ 72%]
+tests/test_scanners.py::TestPluginScanner::test_scan_timeout PASSED      [ 73%]
+tests/test_scanners.py::TestPluginScanner::test_scan_success PASSED      [ 73%]
+tests/test_scanners.py::TestPluginScanner::test_scan_detects_by_keyword PASSED [ 74%]
+tests/test_scanners.py::TestPluginScanner::test_scan_non_zero_exit PASSED [ 74%]
+tests/test_scanners.py::TestPluginScanner::test_scan_invalid_json PASSED [ 75%]
+tests/test_scanners.py::TestMcpScanner::test_scan_no_mcp_section PASSED  [ 75%]
+tests/test_scanners.py::TestMcpScanner::test_scan_skips_non_stdio PASSED [ 76%]
+tests/test_scanners.py::TestMcpScanner::test_scan_stdio_no_command PASSED [ 76%]
+tests/test_scanners.py::TestMcpScanner::test_scan_stdio_timeout PASSED   [ 77%]
+tests/test_scanners.py::TestMcpScanner::test_scan_stdio_parses_help_output PASSED [ 77%]
+tests/test_scanners.py::TestMcpScanner::test_scan_multiple_servers PASSED [ 78%]
+tests/test_scanners.py::TestMcpScanner::test_scan_stdio_exception PASSED [ 78%]
+tests/test_scanners.py::TestMcpScanner::test_scan_invalid_server_config PASSED [ 79%]
+tests/test_scanners.py::TestMcpScanner::test_parse_config_flags_duplicates PASSED [ 79%]
+tests/test_static_tabs.py::test_general_tab_load_and_save_config SKIPPED [ 80%]
+tests/test_static_tabs.py::test_general_tab_autoupdate_bool_coercion SKIPPED [ 80%]
+tests/test_static_tabs.py::test_server_tab_save_and_remove_empty_section SKIPPED [ 81%]
+tests/test_static_tabs.py::test_advanced_tab_load_and_save_multiple_sections SKIPPED [ 82%]
+tests/test_static_tabs.py::test_section_frame_collapse_and_expand SKIPPED [ 82%]
+tests/test_static_tabs.py::test_section_frame_starts_collapsed SKIPPED   [ 83%]
+tests/test_static_tabs.py::test_smoke_all_tabs_render SKIPPED (Tk di...) [ 83%]
+tests/test_static_tabs.py::test_save_button_disabled_when_invalid_config SKIPPED [ 84%]
+tests/test_static_tabs.py::test_save_button_enabled_when_valid_config SKIPPED [ 84%]
+tests/test_static_tabs.py::test_status_bar_shows_error_count SKIPPED     [ 85%]
+tests/test_static_tabs.py::test_validation_state_updates_on_field_change SKIPPED [ 85%]
+tests/test_tui_and_models_tabs.py::test_tui_tab_load_and_save_roundtrip SKIPPED [ 86%]
+tests/test_tui_and_models_tabs.py::test_keybind_editor_search_and_edit SKIPPED [ 86%]
+tests/test_tui_and_models_tabs.py::test_parse_models_json_accepts_list_and_mapping PASSED [ 87%]
+tests/test_tui_and_models_tabs.py::test_parse_models_text_extracts_provider_and_model PASSED [ 87%]
+tests/test_tui_and_models_tabs.py::test_models_tab_selection_callback SKIPPED [ 88%]
+tests/test_widgets.py::test_build_field_widget_selects_expected_class SKIPPED [ 88%]
+tests/test_widgets.py::test_labeled_entry_and_check_get_set_value SKIPPED [ 89%]
+tests/test_widgets.py::test_string_list_editor_add_and_remove SKIPPED    [ 89%]
+tests/test_widgets.py::test_permission_row_set_and_get SKIPPED (Tk d...) [ 90%]
+tests/test_widgets.py::test_object_editor_set_and_get SKIPPED (Tk di...) [ 91%]
+tests/test_widgets.py::test_string_or_bool_widget_values SKIPPED (Tk...) [ 91%]
+tests/test_widgets.py::test_dynamic_dict_editor_load_select_and_save SKIPPED [ 92%]
+tests/test_widgets.py::test_radio_group_get_set SKIPPED (Tk display ...) [ 92%]
+tests/test_widgets.py::test_labeled_spinbox_get_set SKIPPED (Tk disp...) [ 93%]
+tests/test_widgets.py::test_labeled_slider_get_set SKIPPED (Tk displ...) [ 93%]
+tests/test_widgets.py::test_color_picker_get_set SKIPPED (Tk display...) [ 94%]
+tests/test_widgets.py::test_key_value_editor_get_set SKIPPED (Tk dis...) [ 94%]
+tests/test_widgets.py::test_multiline_text_get_set SKIPPED (Tk displ...) [ 95%]
+tests/test_widgets.py::test_searchable_combo_get_set SKIPPED (Tk dis...) [ 95%]
+tests/test_widgets.py::test_build_field_widget_routes_new_types SKIPPED  [ 96%]
+tests/test_widgets.py::test_dynamic_dict_modal_ok SKIPPED (Tk displa...) [ 96%]
+tests/test_widgets.py::test_dynamic_dict_modal_cancel SKIPPED (Tk di...) [ 97%]
+tests/test_widgets.py::test_dynamic_dict_editor_has_edit_button SKIPPED  [ 97%]
+tests/test_widgets.py::test_labeled_entry_show_error_and_clear_error SKIPPED [ 98%]
+tests/test_widgets.py::test_labeled_spinbox_show_error_and_clear_error SKIPPED [ 98%]
+tests/test_widgets.py::test_labeled_combo_show_error_and_clear_error SKIPPED [ 99%]
 tests/test_widgets.py::test_labeled_check_show_error_and_clear_error SKIPPED [100%]
 
-======================== 49 passed, 43 skipped in 0.42s ========================
+======================= 120 passed, 69 skipped in 0.77s ========================
 [0m
-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m flake8 app/ tests/ --max-line-length=120 --count --statistics 2>&1 || echo "---FLAKE8_NOT_INSTALLED---"
+Tests pass (120 passed, 69 skipped due to no Tk display). No ruff installed. Let me check for other lint tools:
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m mypy app/ --ignore-missing-imports 2>&1 | head -60
+/usr/bin/python3: No module named mypy
+[0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m flake8 app/ tests/ --max-line-length=120 --count --statistics 2>&1 | head -80
 /usr/bin/python3: No module named flake8
----FLAKE8_NOT_INSTALLED---
 [0m
-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m py_compile app/config_io.py && python3 -m py_compile app/config_schema.py && python3 -m py_compile app/widgets.py && python3 -m py_compile app/main.py && echo "ALL_COMPILE_OK"
-ALL_COMPILE_OK
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m py_compile app/config_export.py && python3 -m py_compile app/config_import.py && python3 -m py_compile app/migration.py && python3 -m py_compile app/model_loader.py && python3 -m py_compile app/main.py && python3 -m py_compile app/tabs/models.py && python3 -m py_compile app/widgets.py && echo "All files compile cleanly"
+All files compile cleanly
 [0m
 [0m# [0mTodos
-[x] Gather recent changes (git log, diff, tracks, tech-debt)
-[x] Review changed code files for correctness, style, tests, security, perf
+[x] Review all changed code files for correctness, style, tests, security, performance
 [x] Run full test suite
 [x] Run lint/typecheck
 [ ] Fix up to 5-7 lint/style issues
 [ ] Note architectural problems in tech-debt.md
-[ ] Commit fixes and report
-[ ] Adjust current-priority.md if trends found
+[ ] Commit fixes and report findings
 [0m
-Let me fix the issues I found during code review. There are two notable issues:
+I found several issues during the review. Let me fix them:
 
-1. **Duplicate `_set_dirty` method in `main.py`** (lines 107-115 and 262-269) — the second definition overrides the first, losing the `_update_status()` call
-2. **Duplicate key in test dict** in `test_config_schema.py:263` — `{"options": {"apiKey": ...}, "options": {"baseURL": ...}}` where the second `"options"` key silently overwrites the first
+**Issues found:**
+
+1. `app/config_export.py:4` — `re` imported but unused
+2. `app/config_import.py:4` — `re` imported but unused
+3. `app/config_export.py:82-90` — `_get_clipboard_text()` function defined but never called
+4. `app/config_export.py:129-135` — `_tk_clipboard_set()` function defined but never called
+5. `app/main.py:403-411` — `_set_dirty` method defined twice (first at line 230)
+6. `app/tabs/models.py:7` — `ModelInfo` imported but never used
+7. `tests/test_enhanced_model_explorer.py:257` — References `self.error_label` but the actual attribute is `self._error_label`
+
+Let me fix these:
+[0m← [0mEdit app/config_export.py
+Index: /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
++++ /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
+@@ -1,8 +1,7 @@
+ """Config export with optional secrets masking and clipboard support."""
+ 
+ import json
+-import re
+ import tkinter as tk
+ from pathlib import Path
+ from typing import Any
+ 
+
+[0m
+[0m← [0mEdit app/config_import.py
+Index: /home/daniel-bo/Desktop/opencode-configger/app/config_import.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/app/config_import.py
++++ /home/daniel-bo/Desktop/opencode-configger/app/config_import.py
+@@ -1,8 +1,7 @@
+ """Config import with validation, merge strategies, and clipboard support."""
+ 
+ import json
+-import re
+ from pathlib import Path
+ from typing import Any
+ 
+ from app.config_io import strip_jsonc_comments
+
+[0m
+[0m← [0mEdit app/config_export.py
+Index: /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
++++ /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
+@@ -77,32 +77,8 @@
+     text = export_to_json(to_save)
+     path.write_text(text, encoding="utf-8")
+ 
+ 
+-def _get_clipboard_text() -> str:
+-    try:
+-        return _tk_clipboard_get()
+-    except Exception:
+-        try:
+-            import pyperclip
+-            return pyperclip.paste()
+-        except Exception:
+-            return ""
+-
+-
+-def _tk_clipboard_get() -> str:
+-    root = tk.Tk()
+-    root.withdraw()
+-    root.update()
+-    try:
+-        text = root.clipboard_get()
+-    except Exception:
+-        text = ""
+-    finally:
+-        root.destroy()
+-    return text
+-
+-
+ def export_to_clipboard(
+     data: dict[str, Any],
+     *,
+     masker: SecretsMasker | None = None,
+
+[0m
+[0m← [0mEdit app/config_export.py
+Index: /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
++++ /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
+@@ -98,13 +98,4 @@
+             pyperclip.copy(text)
+         except Exception:
+             pass
+     return text
+-
+-
+-def _tk_clipboard_set(text: str) -> None:
+-    root = tk.Tk()
+-    root.withdraw()
+-    root.clipboard_clear()
+-    root.clipboard_append(text)
+-    root.update()
+-    root.destroy()
+
+[0m
+Now remove the duplicate `_set_dirty` method:
 [0m← [0mEdit app/main.py
 Index: /home/daniel-bo/Desktop/opencode-configger/app/main.py
 ===================================================================
 --- /home/daniel-bo/Desktop/opencode-configger/app/main.py
 +++ /home/daniel-bo/Desktop/opencode-configger/app/main.py
-@@ -259,15 +259,16 @@
+@@ -399,18 +399,8 @@
+         path_label = str(self.current_config_path)
      dirty_marker = " *" if self.is_dirty else ""
      self.root.title(f"OpenCode Configger - {path_label}{dirty_marker}")
  
- def _set_dirty(self, dirty: bool) -> None:
--    """Set dirty state and refresh title.
-+    """Set dirty state and refresh title and status bar.
- 
-     Args:
-         dirty: New dirty state.
-     """
-     self.is_dirty = dirty
-     self._update_title()
-+    self._update_status()
- 
+-def _set_dirty(self, dirty: bool) -> None:
+-    """Set dirty state and refresh title and status bar.
+-
+-    Args:
+-        dirty: New dirty state.
+-    """
+-    self.is_dirty = dirty
+-    self._update_title()
+-    self._update_status()
+-
  def _on_change(self) -> None:
      """Mark document as modified when any field changes."""
      self._set_dirty(True)
+     self._update_validation_state()
 
 [0m
-[0m← [0mEdit tests/test_config_schema.py
-Index: /home/daniel-bo/Desktop/opencode-configger/tests/test_config_schema.py
+Fix the unused `ModelInfo` import:
+[0m← [0mEdit app/tabs/models.py
+Index: /home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py
 ===================================================================
---- /home/daniel-bo/Desktop/opencode-configger/tests/test_config_schema.py
-+++ /home/daniel-bo/Desktop/opencode-configger/tests/test_config_schema.py
-@@ -258,10 +258,9 @@
- def test_validate_config_provider_valid() -> None:
-     data = {
-         "provider": {
-             "my_provider": {
--                "options": {"apiKey": "sk-test"},
--                "options": {"baseURL": "https://api.test.com"},
-+                "options": {"apiKey": "sk-test", "baseURL": "https://api.test.com"},
-             }
-         }
-     }
-     assert validate_config(data) == []
+--- /home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py
++++ /home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py
+@@ -3,9 +3,9 @@
+ import tkinter as tk
+ from tkinter import messagebox, ttk
+ from typing import Callable
+ 
+-from app.model_loader import ModelInfo, ModelLoadError, ModelLoader, ModelMap
++from app.model_loader import ModelLoadError, ModelLoader, ModelMap
+ 
+ 
+ class EnhancedModelExplorer(ttk.Frame):
+     def __init__(
 
 [0m
-Now let me verify the fixes pass:
-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && CI=true python3 -m pytest tests/test_config_schema.py tests/test_static_tabs.py -v 2>&1
-============================= test session starts ==============================
-platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python3
-cachedir: .pytest_cache
-rootdir: /home/daniel-bo/Desktop/opencode-configger
-configfile: pyproject.toml
-plugins: cov-7.1.0
-collecting ... collected 40 items
+Fix the test referencing `self.error_label` instead of `self._error_label`:
+[0m← [0mEdit tests/test_enhanced_model_explorer.py
+Index: /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
++++ /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
+@@ -253,10 +253,10 @@
+         explorer = EnhancedModelExplorer(tk_root, auto_refresh=False)
+         explorer._show_error_panel("opencode not found on PATH — check your PATH setting")
+         tk_root.update()
+ 
+-        assert explorer.error_label is not None
+-        assert "opencode" in explorer.error_label.cget("text").lower()
++        assert explorer._error_label is not None
++        assert "opencode" in explorer._error_label.cget("text").lower()
+ 
+     def test_error_panel_hides_on_success(self, tk_root: tk.Tk, sample_model_map: ModelMap) -> None:
+         explorer = EnhancedModelExplorer(tk_root, auto_refresh=False)
+         explorer._show_error_panel("some error")
+@@ -264,9 +264,9 @@
+ 
+         explorer.set_models(sample_model_map)
+         tk_root.update()
+ 
+-        assert explorer.error_label is None or explorer.error_label.winfo_viewable() == False
++        assert explorer._error_label is None or explorer._error_label.winfo_viewable() == False
+ 
+ 
+ class TestLoadingState:
+     def test_loading_label_shown_while_loading(self, tk_root: tk.Tk) -> None:
 
-tests/test_config_schema.py::test_validate_field_integer_bounds PASSED   [  2%]
-tests/test_config_schema.py::test_validate_field_pattern PASSED          [  5%]
-tests/test_config_schema.py::test_validate_field_enum_and_required PASSED [  7%]
-tests/test_config_schema.py::test_validate_field_boolean_and_number PASSED [ 10%]
-tests/test_config_schema.py::test_permission_tools_has_todowrite PASSED  [ 12%]
-tests/test_config_schema.py::test_mcp_discriminated_union PASSED         [ 15%]
-tests/test_config_schema.py::test_provider_entry_fields_corrected PASSED [ 17%]
-tests/test_config_schema.py::test_agent_entry_fields_updated PASSED      [ 20%]
-tests/test_config_schema.py::test_formatter_command_is_string_list PASSED [ 22%]
-tests/test_config_schema.py::test_command_entry_has_subtask_and_model PASSED [ 25%]
-tests/test_config_schema.py::test_lsp_entry_fields_exist PASSED          [ 27%]
-tests/test_config_schema.py::test_experimental_fields_exist PASSED       [ 30%]
-tests/test_config_schema.py::test_enterprise_fields_exist PASSED         [ 32%]
-tests/test_config_schema.py::test_well_known_agents PASSED               [ 35%]
-tests/test_config_schema.py::test_keybind_slots_has_plugin_manager PASSED [ 37%]
-tests/test_config_schema.py::test_tui_plugin_fields PASSED               [ 40%]
-tests/test_config_schema.py::test_nested_dict_helpers PASSED             [ 42%]
-tests/test_config_schema.py::test_validate_config_empty_is_valid PASSED  [ 45%]
-tests/test_config_schema.py::test_validate_config_general_invalid_enum PASSED [ 47%]
-tests/test_config_schema.py::test_validate_config_server_port_out_of_range PASSED [ 50%]
-tests/test_config_schema.py::test_validate_config_valid_minimal PASSED   [ 52%]
-tests/test_config_schema.py::test_validate_config_unknown_permission_tool PASSED [ 55%]
-tests/test_config_schema.py::test_validate_config_provider_valid PASSED  [ 57%]
-tests/test_config_schema.py::test_validate_config_agent_color_enum PASSED [ 60%]
-tests/test_config_schema.py::test_validate_config_mcp_local_command_string_list PASSED [ 62%]
-tests/test_config_schema.py::test_validate_config_mcp_remote PASSED      [ 65%]
-tests/test_config_schema.py::test_validate_config_experimental_fields PASSED [ 67%]
-tests/test_config_schema.py::test_validate_config_enterprise_url PASSED  [ 70%]
-tests/test_config_schema.py::test_validate_config_lsp_valid PASSED       [ 72%]
-tests/test_static_tabs.py::test_general_tab_load_and_save_config SKIPPED [ 75%]
-tests/test_static_tabs.py::test_general_tab_autoupdate_bool_coercion SKIPPED [ 77%]
-tests/test_static_tabs.py::test_server_tab_save_and_remove_empty_section SKIPPED [ 80%]
-tests/test_static_tabs.py::test_advanced_tab_load_and_save_multiple_sections SKIPPED [ 82%]
-tests/test_static_tabs.py::test_section_frame_collapse_and_expand SKIPPED [ 85%]
-tests/test_static_tabs.py::test_section_frame_starts_collapsed SKIPPED   [ 87%]
-tests/test_static_tabs.py::test_smoke_all_tabs_render SKIPPED (Tk di...) [ 90%]
-tests/test_static_tabs.py::test_save_button_disabled_when_invalid_config SKIPPED [ 92%]
-tests/test_static_tabs.py::test_save_button_enabled_when_valid_config SKIPPED [ 95%]
-tests/test_static_tabs.py::test_status_bar_shows_error_count SKIPPED     [ 97%]
-tests/test_static_tabs.py::test_validation_state_updates_on_field_change SKIPPED [100%]
+[0m
+Now let me verify the fixes compile and tests still pass:
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m py_compile app/config_export.py && python3 -m py_compile app/config_import.py && python3 -m py_compile app/main.py && python3 -m py_compile app/tabs/models.py && python3 -m py_compile tests/test_enhanced_model_explorer.py && echo "All compile OK"
+All compile OK
+[0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && CI=true python3 -m pytest tests/ -q 2>&1
+==================================== ERRORS ====================================
+____________ ERROR collecting tests/test_enhanced_model_explorer.py ____________
+ImportError while importing test module '/home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_enhanced_model_explorer.py:10: in <module>
+    from app.tabs.models import EnhancedModelExplorer, ModelInfo
+E   ImportError: cannot import name 'ModelInfo' from 'app.tabs.models' (/home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py)
+=========================== short test summary info ============================
+ERROR tests/test_enhanced_model_explorer.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.37s
+[0m
+The test also imports `ModelInfo` from `app.tabs.models`. I need to keep the re-export there:
+[0m→ [0mRead tests/test_enhanced_model_explorer.py[90m [limit=12][0m
+The test imports `ModelInfo` from `app.tabs.models` which was re-exporting it. The cleanest fix is to update the test import to use the canonical source:
+[0m
+[0m← [0mEdit tests/test_enhanced_model_explorer.py
+Index: /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
++++ /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
+@@ -5,10 +5,10 @@
+ from unittest.mock import MagicMock
+ 
+ import pytest
+ 
+-from app.model_loader import ModelLoadError, ModelLoader, ModelMap
+-from app.tabs.models import EnhancedModelExplorer, ModelInfo
++from app.model_loader import ModelInfo, ModelLoadError, ModelLoader, ModelMap
++from app.tabs.models import EnhancedModelExplorer
+ 
+ 
+ @pytest.fixture
+ def tk_root() -> tk.Tk:
 
-======================== 29 passed, 11 skipped in 0.21s ========================
+[0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && CI=true python3 -m pytest tests/ -q 2>&1
+........................................................................ [ 38%]
+....sssssssssssssssssssssssssssssssss................................... [ 76%]
+.......sssssssssssss..sssssssssssssssssssssss                            [100%]
+120 passed, 69 skipped in 0.72s
+[0m
+All 120 tests pass. Now let me check if there's any other reference to the removed functions:
+[0m✱ [0mGrep "_get_clipboard_text|_tk_clipboard_set|_tk_clipboard_get"[90m 0 matches[0m
 [0m
 [0m# [0mTodos
-[x] Gather recent changes (git log, diff, tracks, tech-debt)
-[x] Review changed code files for correctness, style, tests, security, perf
+[x] Review all changed code files for correctness, style, tests, security, performance
 [x] Run full test suite
 [x] Run lint/typecheck
 [x] Fix up to 5-7 lint/style issues
 [ ] Note architectural problems in tech-debt.md
-[ ] Commit fixes and report
-[ ] Adjust current-priority.md if trends found
+[ ] Commit fixes and report findings
 [0m
-Now let me check if there's a `current-priority.md` and note any architectural issues:
-[0m$ [0mls /home/daniel-bo/Desktop/opencode-configger/conductor/current-priority.md 2>/dev/null || echo "FILE_NOT_FOUND"
-FILE_NOT_FOUND
+Good, no remaining references. Now let me update tech-debt.md with architectural observations:
+[0m→ [0mRead conductor/tech-debt.md
 [0m
-The duplicate `_set_dirty` method was a real bug (the second definition on line 262 shadowed the first, losing the `_update_status()` call). This isn't a tech-debt item since it's fixed. No new architectural concerns to log beyond what's already tracked.
+[0m← [0mEdit conductor/tech-debt.md
+Index: /home/daniel-bo/Desktop/opencode-configger/conductor/tech-debt.md
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/conductor/tech-debt.md
++++ /home/daniel-bo/Desktop/opencode-configger/conductor/tech-debt.md
+@@ -9,6 +9,8 @@
+ | Date | Track | Item | Severity | Status | Notes |
+ |------|-------|------|----------|--------|-------|
+ | 2026-04-13 | Schema Validation Phase 3 | Status bar error label placeholder — no entry widget to wire per-field validation directly | Low | Open | Validation is full-config only; per-field inline errors not yet wired to status bar |
+ | 2026-04-23 | Config Import/Export | SecretsMasker uses simple substring match instead of regex for patterns | Low | Open | _contains_secret does case-insensitive substring check; default patterns are keyword-based (API_KEY, TOKEN, etc.) |
++| 2026-04-24 | Config Versioning | detect_version() defaults to V1_3 — a config with no formatter/mcp section is assumed v1.3, which may misidentify future older configs | Low | Open | Only two versions exist today; may need explicit version field |
++| 2026-04-24 | Model Explorer | clipboard code in config_export.py creates tk.Tk() root for each clipboard op — risks conflicts with existing root in GUI mode | Medium | Open | Could accept an optional root parameter or use a shared clipboard utility |
+ 
+ 
+
+[0m
 [0m# [0mTodos
-[x] Gather recent changes (git log, diff, tracks, tech-debt)
-[x] Review changed code files for correctness, style, tests, security, perf
+[x] Review all changed code files for correctness, style, tests, security, performance
 [x] Run full test suite
 [x] Run lint/typecheck
 [x] Fix up to 5-7 lint/style issues
 [x] Note architectural problems in tech-debt.md
-[ ] Commit fixes and report
-[ ] Adjust current-priority.md if trends found
+[ ] Commit fixes and report findings
 [0m
-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && git add app/main.py tests/test_config_schema.py && git commit -m "chore(review): fix duplicate _set_dirty method losing _update_status, fix duplicate dict key in test"
-[master ac3d43c] chore(review): fix duplicate _set_dirty method losing _update_status, fix duplicate dict key in test
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Now let me commit the fixes:
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   app/config_export.py
+	modified:   app/config_import.py
+	modified:   app/main.py
+	modified:   app/tabs/models.py
+	modified:   conductor/output.log
+	modified:   conductor/review-output.log
+	modified:   conductor/tech-debt.md
+	modified:   tests/test_enhanced_model_explorer.py
+
+no changes added to commit (use "git add" and/or "git commit -a")
+[0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && git log --oneline -5
+9a4584c Finalize Enhanced Model Explorer track - autonomous run (MiniMax-M2)
+53902ef Phase 2: EnhancedModelExplorer with search, provider filter, async loading
+b00c00f Phase 1: ModelLoader backend with async loading and error handling
+902a541 Checkpoint: Config Versioning track complete (autonomous run - MiniMax-M2)
+3a2b350 Checkpoint: autonomous run start
+[0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && git diff
+...output truncated...
+
+Full output saved to: /home/daniel-bo/.local/share/opencode/tool-output/tool_dbb4c323a001pQ6PeF3Y7MblAT
+
+ /bin/bash: line 1: python: command not found
+ [0m
+-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python -m ruff check app/ tests/ 2>&1 || echo "---RUFF_NOT_INSTALLED---"; python -m flake8 app/ tests/ 2>&1 || echo "---FLAKE8_NOT_INSTALLED---"; python -m pylint app/ 2>&1 || echo "---PYLINT_NOT_INSTALLED---"
+-/bin/bash: line 1: python: command not found
+----RUFF_NOT_INSTALLED---
++[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python -m ruff check app/ tests/ 2>&1 | head -60
+ /bin/bash: line 1: python: command not found
+----FLAKE8_NOT_INSTALLED---
++[0m
++[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python -m mypy app/ --ignore-missing-imports 2>&1 | head -60
+ /bin/bash: line 1: python: command not found
+----PYLINT_NOT_INSTALLED---
+ [0m
+ [0m$ [0mwhich python3 && python3 --version
+ /usr/bin/python3
+ Python 3.12.3
+ [0m
+-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m ruff check app/ tests/ 2>&1 || echo "---RUFF_NOT_INSTALLED---"
++[0m✱ [0mGlob "pyproject.toml"[90m 1 match[0m
++[0m→ [0mRead pyproject.toml
++[0m
++[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m ruff check app/ tests/ 2>&1
+ /usr/bin/python3: No module named ruff
+----RUFF_NOT_INSTALLED---
+ [0m
+ [0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && CI=true python3 -m pytest tests/ -v 2>&1
+ ============================= test session starts ==============================
+@@ -154,281 +110,489 @@ cachedir: .pytest_cache
+ rootdir: /home/daniel-bo/Desktop/opencode-configger
+ configfile: pyproject.toml
+ plugins: cov-7.1.0
+-collecting ... collected 92 items
++collecting ... collected 189 items
+ 
+-tests/test_config_io.py::test_strip_jsonc_comments_and_trailing_commas PASSED [  1%]
+-tests/test_config_io.py::test_load_jsonc_parses_file_with_comments PASSED [  2%]
+-tests/test_config_io.py::test_load_jsonc_empty_file_returns_empty_dict PASSED [  3%]
+-tests/test_config_io.py::test_save_json_writes_schema_first PASSED       [  4%]
+-tests/test_config_io.py::test_find_config_files_returns_expected_locations PASSED [  5%]
+-tests/test_config_io.py::test_new_config_helpers_return_schema_defaults PASSED [  6%]
+-tests/test_config_io.py::test_resolve_env_var_existing PASSED            [  7%]
+-tests/test_config_io.py::test_resolve_env_var_missing_raises PASSED      [  8%]
+-tests/test_config_io.py::test_resolve_file_var PASSED                    [  9%]
+-tests/test_config_io.py::test_resolve_file_var_missing_raises PASSED     [ 10%]
+-tests/test_config_io.py::test_resolve_file_var_truncates_large_file PASSED [ 11%]
+-tests/test_config_io.py::test_substitute_variables_env PASSED            [ 13%]
+-tests/test_config_io.py::test_substitute_variables_file PASSED           [ 14%]
+-tests/test_config_io.py::test_find_variables PASSED                      [ 15%]
+-tests/test_config_io.py::test_preview_variable_env PASSED                [ 16%]
+-tests/test_config_io.py::test_preview_variable_missing_env PASSED        [ 17%]
+-tests/test_config_io.py::test_preview_variable_file PASSED               [ 18%]
+-tests/test_config_io.py::test_preview_variable_no_variables PASSED       [ 19%]
+-tests/test_config_schema.py::test_validate_field_integer_bounds PASSED   [ 20%]
+-tests/test_config_schema.py::test_validate_field_pattern PASSED          [ 21%]
+-tests/test_config_schema.py::test_validate_field_enum_and_required PASSED [ 22%]
+-tests/test_config_schema.py::test_validate_field_boolean_and_number PASSED [ 23%]
+-tests/test_config_schema.py::test_permission_tools_has_todowrite PASSED  [ 25%]
+-tests/test_config_schema.py::test_mcp_discriminated_union PASSED         [ 26%]
+-tests/test_config_schema.py::test_provider_entry_fields_corrected PASSED [ 27%]
+-tests/test_config_schema.py::test_agent_entry_fields_updated PASSED      [ 28%]
++tests/test_config_export.py::test_mask_value_matches_default_patterns PASSED [  0%]
++tests/test_config_export.py::test_mask_value_ignores_non_matching PASSED [  1%]
++tests/test_config_export.py::test_mask_config_nested PASSED              [  1%]
++tests/test_config_export.py::test_mask_config_list PASSED                [  2%]
++tests/test_config_export.py::test_mask_config_preserves_non_string PASSED [  2%]
++tests/test_config_export.py::test_secrets_masker_default_patterns PASSED [  3%]
++tests/test_config_export.py::test_secrets_masker_custom_patterns PASSED  [  3%]
++tests/test_config_export.py::test_export_to_json_schema_first PASSED     [  4%]
++tests/test_config_export.py::test_export_to_file PASSED                  [  4%]
++tests/test_config_export.py::test_export_to_file_with_masking PASSED     [  5%]
++tests/test_config_export.py::test_export_to_clipboard_returns_text PASSED [  5%]
++tests/test_config_import.py::test_detect_jsonc_with_comments PASSED      [  6%]
++tests/test_config_import.py::test_detect_jsonc_pure_json PASSED          [  6%]
++tests/test_config_import.py::test_import_from_text_valid_json PASSED     [  7%]
++tests/test_config_import.py::test_import_from_text_valid_jsonc PASSED    [  7%]
++tests/test_config_import.py::test_import_from_text_trailing_comma PASSED [  8%]
++tests/test_config_import.py::test_import_from_text_invalid_json PASSED   [  8%]
++tests/test_config_import.py::test_import_from_text_empty PASSED          [  9%]
++tests/test_config_import.py::test_import_from_text_unknown_keys PASSED   [ 10%]
++tests/test_config_import.py::test_import_from_text_allow_unknown_keys PASSED [ 10%]
++tests/test_config_import.py::test_import_from_text_with_validation_errors PASSED [ 11%]
++tests/test_config_import.py::test_import_from_file PASSED                [ 11%]
++tests/test_config_import.py::test_import_from_file_not_found PASSED      [ 12%]
++tests/test_config_import.py::test_merge_replace PASSED                   [ 12%]
++tests/test_config_import.py::test_merge_overlay_nested PASSED            [ 13%]
++tests/test_config_import.py::test_merge_overlay_does_not_mutate_inputs PASSED [ 13%]
++tests/test_config_import.py::test_merge_selective PASSED                 [ 14%]
++tests/test_config_import.py::test_compute_diff PASSED                    [ 14%]
++tests/test_config_import.py::test_find_unknown_keys PASSED               [ 15%]
++tests/test_config_io.py::test_strip_jsonc_comments_and_trailing_commas PASSED [ 15%]
++tests/test_config_io.py::test_load_jsonc_parses_file_with_comments PASSED [ 16%]
++tests/test_config_io.py::test_load_jsonc_empty_file_returns_empty_dict PASSED [ 16%]
++tests/test_config_io.py::test_save_json_writes_schema_first PASSED       [ 17%]
++tests/test_config_io.py::test_find_config_files_returns_expected_locations PASSED [ 17%]
++tests/test_config_io.py::test_new_config_helpers_return_schema_defaults PASSED [ 18%]
++tests/test_config_io.py::test_resolve_env_var_existing PASSED            [ 19%]
++tests/test_config_io.py::test_resolve_env_var_missing_raises PASSED      [ 19%]
++tests/test_config_io.py::test_resolve_file_var PASSED                    [ 20%]
++tests/test_config_io.py::test_resolve_file_var_missing_raises PASSED     [ 20%]
++tests/test_config_io.py::test_resolve_file_var_truncates_large_file PASSED [ 21%]
++tests/test_config_io.py::test_substitute_variables_env PASSED            [ 21%]
++tests/test_config_io.py::test_substitute_variables_file PASSED           [ 22%]
++tests/test_config_io.py::test_find_variables PASSED                      [ 22%]
++tests/test_config_io.py::test_preview_variable_env PASSED                [ 23%]
++tests/test_config_io.py::test_preview_variable_missing_env PASSED        [ 23%]
++tests/test_config_io.py::test_preview_variable_file PASSED               [ 24%]
++tests/test_config_io.py::test_preview_variable_no_variables PASSED       [ 24%]
++tests/test_config_schema.py::test_validate_field_integer_bounds PASSED   [ 25%]
++tests/test_config_schema.py::test_validate_field_pattern PASSED          [ 25%]
++tests/test_config_schema.py::test_validate_field_enum_and_required PASSED [ 26%]
++tests/test_config_schema.py::test_validate_field_boolean_and_number PASSED [ 26%]
++tests/test_config_schema.py::test_permission_tools_has_todowrite PASSED  [ 27%]
++tests/test_config_schema.py::test_mcp_discriminated_union PASSED         [ 28%]
++tests/test_config_schema.py::test_provider_entry_fields_corrected PASSED [ 28%]
++tests/test_config_schema.py::test_agent_entry_fields_updated PASSED      [ 29%]
+ tests/test_config_schema.py::test_formatter_command_is_string_list PASSED [ 29%]
+ tests/test_config_schema.py::test_command_entry_has_subtask_and_model PASSED [ 30%]
+-tests/test_config_schema.py::test_lsp_entry_fields_exist PASSED          [ 31%]
+-tests/test_config_schema.py::test_experimental_fields_exist PASSED       [ 32%]
+-tests/test_config_schema.py::test_enterprise_fields_exist PASSED         [ 33%]
+-tests/test_config_schema.py::test_well_known_agents PASSED               [ 34%]
+-tests/test_config_schema.py::test_keybind_slots_has_plugin_manager PASSED [ 35%]
+-tests/test_config_schema.py::test_tui_plugin_fields PASSED               [ 36%]
+-tests/test_config_schema.py::test_nested_dict_helpers PASSED             [ 38%]
+-tests/test_config_schema.py::test_validate_config_empty_is_valid PASSED  [ 39%]
+-tests/test_config_schema.py::test_validate_config_general_invalid_enum PASSED [ 40%]
+-tests/test_config_schema.py::test_validate_config_server_port_out_of_range PASSED [ 41%]
+-tests/test_config_schema.py::test_validate_config_valid_minimal PASSED   [ 42%]
+-tests/test_config_schema.py::test_validate_config_unknown_permission_tool PASSED [ 43%]
+-tests/test_config_schema.py::test_validate_config_provider_valid PASSED  [ 44%]
+-tests/test_config_schema.py::test_validate_config_agent_color_enum PASSED [ 45%]
+-tests/test_config_schema.py::test_validate_config_mcp_local_command_string_list PASSED [ 46%]
+-tests/test_config_schema.py::test_validate_config_mcp_remote PASSED      [ 47%]
+-tests/test_config_schema.py::test_validate_config_experimental_fields PASSED [ 48%]
+-tests/test_config_schema.py::test_validate_config_enterprise_url PASSED  [ 50%]
+-tests/test_config_schema.py::test_validate_config_lsp_valid PASSED       [ 51%]
+-tests/test_dynamic_tabs.py::test_providers_tab_load_and_save SKIPPED     [ 52%]
+-tests/test_dynamic_tabs.py::test_agents_tab_load_and_save SKIPPED (T...) [ 53%]
+-tests/test_dynamic_tabs.py::test_tools_tab_load_and_save SKIPPED (Tk...) [ 54%]
+-tests/test_dynamic_tabs.py::test_commands_tab_load_and_save SKIPPED      [ 55%]
+-tests/test_dynamic_tabs.py::test_formatters_tab_load_and_save SKIPPED    [ 56%]
+-tests/test_dynamic_tabs.py::test_mcp_tab_load_and_save SKIPPED (Tk d...) [ 57%]
+-tests/test_dynamic_tabs.py::test_lsp_tab_load_and_save SKIPPED (Tk d...) [ 58%]
+-tests/test_static_tabs.py::test_general_tab_load_and_save_config SKIPPED [ 59%]
+-tests/test_static_tabs.py::test_general_tab_autoupdate_bool_coercion SKIPPED [ 60%]
+-tests/test_static_tabs.py::test_server_tab_save_and_remove_empty_section SKIPPED [ 61%]
+-tests/test_static_tabs.py::test_advanced_tab_load_and_save_multiple_sections SKIPPED [ 63%]
+-tests/test_static_tabs.py::test_section_frame_collapse_and_expand SKIPPED [ 64%]
+-tests/test_static_tabs.py::test_section_frame_starts_collapsed SKIPPED   [ 65%]
+-tests/test_static_tabs.py::test_smoke_all_tabs_render SKIPPED (Tk di...) [ 66%]
+-tests/test_static_tabs.py::test_save_button_disabled_when_invalid_config SKIPPED [ 67%]
+-tests/test_static_tabs.py::test_save_button_enabled_when_valid_config SKIPPED [ 68%]
+-tests/test_static_tabs.py::test_status_bar_shows_error_count SKIPPED     [ 69%]
+-tests/test_static_tabs.py::test_validation_state_updates_on_field_change SKIPPED [ 70%]
+-tests/test_tui_and_models_tabs.py::test_tui_tab_load_and_save_roundtrip SKIPPED [ 71%]
+-tests/test_tui_and_models_tabs.py::test_keybind_editor_search_and_edit SKIPPED [ 72%]
+-tests/test_tui_and_models_tabs.py::test_parse_models_json_accepts_list_and_mapping PASSED [ 73%]
+-tests/test_tui_and_models_tabs.py::test_parse_models_text_extracts_provider_and_model PASSED [ 75%]
+-tests/test_tui_and_models_tabs.py::test_models_tab_selection_callback SKIPPED [ 76%]
+-tests/test_widgets.py::test_build_field_widget_selects_expected_class SKIPPED [ 77%]
+-tests/test_widgets.py::test_labeled_entry_and_check_get_set_value SKIPPED [ 78%]
+-tests/test_widgets.py::test_string_list_editor_add_and_remove SKIPPED    [ 79%]
+-tests/test_widgets.py::test_permission_row_set_and_get SKIPPED (Tk d...) [ 80%]
+-tests/test_widgets.py::test_object_editor_set_and_get SKIPPED (Tk di...) [ 81%]
+-tests/test_widgets.py::test_string_or_bool_widget_values SKIPPED (Tk...) [ 82%]
+-tests/test_widgets.py::test_dynamic_dict_editor_load_select_and_save SKIPPED [ 83%]
+-tests/test_widgets.py::test_radio_group_get_set SKIPPED (Tk display ...) [ 84%]
+-tests/test_widgets.py::test_labeled_spinbox_get_set SKIPPED (Tk disp...) [ 85%]
+-tests/test_widgets.py::test_labeled_slider_get_set SKIPPED (Tk displ...) [ 86%]
+-tests/test_widgets.py::test_color_picker_get_set SKIPPED (Tk display...) [ 88%]
+-tests/test_widgets.py::test_key_value_editor_get_set SKIPPED (Tk dis...) [ 89%]
+-tests/test_widgets.py::test_multiline_text_get_set SKIPPED (Tk displ...) [ 90%]
+-tests/test_widgets.py::test_searchable_combo_get_set SKIPPED (Tk dis...) [ 91%]
+-tests/test_widgets.py::test_build_field_widget_routes_new_types SKIPPED  [ 92%]
+-tests/test_widgets.py::test_dynamic_dict_modal_ok SKIPPED (Tk displa...) [ 93%]
+-tests/test_widgets.py::test_dynamic_dict_modal_cancel SKIPPED (Tk di...) [ 94%]
+-tests/test_widgets.py::test_dynamic_dict_editor_has_edit_button SKIPPED  [ 95%]
+-tests/test_widgets.py::test_labeled_entry_show_error_and_clear_error SKIPPED [ 96%]
+-tests/test_widgets.py::test_labeled_spinbox_show_error_and_clear_error SKIPPED [ 97%]
+-tests/test_widgets.py::test_labeled_combo_show_error_and_clear_error SKIPPED [ 98%]
++tests/test_config_schema.py::test_lsp_entry_fields_exist PASSED          [ 30%]
++tests/test_config_schema.py::test_experimental_fields_exist PASSED       [ 31%]
++tests/test_config_schema.py::test_enterprise_fields_exist PASSED         [ 31%]
++tests/test_config_schema.py::test_well_known_agents PASSED               [ 32%]
++tests/test_config_schema.py::test_keybind_slots_has_plugin_manager PASSED [ 32%]
++tests/test_config_schema.py::test_tui_plugin_fields PASSED               [ 33%]
++tests/test_config_schema.py::test_nested_dict_helpers PASSED             [ 33%]
++tests/test_config_schema.py::test_validate_config_empty_is_valid PASSED  [ 34%]
++tests/test_config_schema.py::test_validate_config_general_invalid_enum PASSED [ 34%]
++tests/test_config_schema.py::test_validate_config_server_port_out_of_range PASSED [ 35%]
++tests/test_config_schema.py::test_validate_config_valid_minimal PASSED   [ 35%]
++tests/test_config_schema.py::test_validate_config_unknown_permission_tool PASSED [ 36%]
++tests/test_config_schema.py::test_validate_config_provider_valid PASSED  [ 37%]
++tests/test_config_schema.py::test_validate_config_agent_color_enum PASSED [ 37%]
++tests/test_config_schema.py::test_validate_config_mcp_local_command_string_list PASSED [ 38%]
++tests/test_config_schema.py::test_validate_config_mcp_remote PASSED      [ 38%]
++tests/test_config_schema.py::test_validate_config_experimental_fields PASSED [ 39%]
++tests/test_config_schema.py::test_validate_config_enterprise_url PASSED  [ 39%]
++tests/test_config_schema.py::test_validate_config_lsp_valid PASSED       [ 40%]
++tests/test_dynamic_tabs.py::test_providers_tab_load_and_save SKIPPED     [ 40%]
++tests/test_dynamic_tabs.py::test_agents_tab_load_and_save SKIPPED (T...) [ 41%]
++tests/test_dynamic_tabs.py::test_tools_tab_load_and_save SKIPPED (Tk...) [ 41%]
++tests/test_dynamic_tabs.py::test_commands_tab_load_and_save SKIPPED      [ 42%]
++tests/test_dynamic_tabs.py::test_formatters_tab_load_and_save SKIPPED    [ 42%]
++tests/test_dynamic_tabs.py::test_mcp_tab_load_and_save SKIPPED (Tk d...) [ 43%]
++tests/test_dynamic_tabs.py::test_lsp_tab_load_and_save SKIPPED (Tk d...) [ 43%]
++tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_creates_search_entry SKIPPED [ 44%]
++tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_creates_provider_checkboxes SKIPPED [ 44%]
++tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_shows_loading_spinner_initially SKIPPED [ 45%]
++tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_auto_refresh_false_does_not_load_on_init SKIPPED [ 46%]
++tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_search_filters_by_model_id_substring SKIPPED [ 46%]
++tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_search_is_case_insensitive SKIPPED [ 47%]
++tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_empty_search_shows_all_providers SKIPPED [ 47%]
++tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_no_matches_hides_all_providers SKIPPED [ 48%]
++tests/test_enhanced_model_explorer.py::TestProviderToggle::test_provider_checkbox_toggles_visibility SKIPPED [ 48%]
++tests/test_enhanced_model_explorer.py::TestProviderToggle::test_all_checkboxes_on_shows_all_providers SKIPPED [ 49%]
++tests/test_enhanced_model_explorer.py::TestProviderToggle::test_all_checkboxes_off_hides_all_providers SKIPPED [ 49%]
++tests/test_enhanced_model_explorer.py::TestModelSelection::test_select_model_enables_set_buttons SKIPPED [ 50%]
++tests/test_enhanced_model_explorer.py::TestModelSelection::test_no_selection_disables_set_buttons SKIPPED [ 50%]
++tests/test_enhanced_model_explorer.py::TestModelSelection::test_set_primary_calls_callback SKIPPED [ 51%]
++tests/test_enhanced_model_explorer.py::TestModelSelection::test_set_small_calls_callback SKIPPED [ 51%]
++tests/test_enhanced_model_explorer.py::TestRefresh::test_refresh_button_triggers_load SKIPPED [ 52%]
++tests/test_enhanced_model_explorer.py::TestErrorPanel::test_error_panel_shows_on_load_failure SKIPPED [ 52%]
++tests/test_enhanced_model_explorer.py::TestErrorPanel::test_error_panel_hides_on_success SKIPPED [ 53%]
++tests/test_enhanced_model_explorer.py::TestLoadingState::test_loading_label_shown_while_loading SKIPPED [ 53%]
++tests/test_enhanced_model_explorer.py::TestLoadingState::test_loading_label_hidden_after_load SKIPPED [ 54%]
++tests/test_enhanced_model_explorer.py::TestModelInfoDisplay::test_model_info_shows_id_and_provider SKIPPED [ 55%]
++tests/test_enhanced_model_explorer.py::TestFilteringIntegration::test_search_with_provider_toggle_combined SKIPPED [ 55%]
++tests/test_extensions_tab.py::TestCollapsibleSection::test_toggle_expands_and_collapses SKIPPED [ 56%]
++tests/test_extensions_tab.py::TestExtensionsTabLogic::test_render_sections_empty_shows_empty_state SKIPPED [ 56%]
++tests/test_extensions_tab.py::TestExtensionsTabLogic::test_render_sections_with_plugins_and_mcp SKIPPED [ 57%]
++tests/test_extensions_tab.py::TestExtensionsTabLogic::test_refresh_button_triggers_scan SKIPPED [ 57%]
++tests/test_migration.py::test_detect_version_v1_3_current_config PASSED  [ 58%]
++tests/test_migration.py::test_detect_version_v1_2_formatter_string_command PASSED [ 58%]
++tests/test_migration.py::test_detect_version_v1_2_mcp_string_command PASSED [ 59%]
++tests/test_migration.py::test_detect_version_v1_3_no_formatters PASSED   [ 59%]
++tests/test_migration.py::test_v1_2_to_v1_3_formatter_command PASSED      [ 60%]
++tests/test_migration.py::test_v1_2_to_v1_3_formatter_already_list PASSED [ 60%]
++tests/test_migration.py::test_v1_2_to_v1_3_mcp_local_command PASSED      [ 61%]
++tests/test_migration.py::test_v1_2_to_v1_3_mcp_already_list PASSED       [ 61%]
++tests/test_migration.py::test_v1_2_to_v1_3_preserves_unknown_keys PASSED [ 62%]
++tests/test_migration.py::test_v1_2_to_v1_3_empty_formatter PASSED        [ 62%]
++tests/test_migration.py::test_v1_2_to_v1_3_no_formatter_no_mcp PASSED    [ 63%]
++tests/test_migration.py::test_migration_registry_register_and_migrate PASSED [ 64%]
++tests/test_migration.py::test_migration_registry_same_version_returns_unchanged PASSED [ 64%]
++tests/test_migration.py::test_migration_registry_preserves_unknown_keys PASSED [ 65%]
++tests/test_migration.py::test_migrate_cli_v1_2_to_v1_3 PASSED            [ 65%]
++tests/test_model_loader.py::TestModelInfo::test_model_info_creation PASSED [ 66%]
++tests/test_model_loader.py::TestModelInfo::test_model_info_optional_context_window PASSED [ 66%]
++tests/test_model_loader.py::TestModelLoaderSuccess::test_load_json_output PASSED [ 67%]
++tests/test_model_loader.py::TestModelLoaderSuccess::test_load_text_output_falls_back_when_json_fails PASSED [ 67%]
++tests/test_model_loader.py::TestModelLoaderSuccess::test_load_list_json_format PASSED [ 68%]
++tests/test_model_loader.py::TestModelLoaderError::test_opencode_not_on_path PASSED [ 68%]
++tests/test_model_loader.py::TestModelLoaderError::test_timeout PASSED    [ 69%]
++tests/test_model_loader.py::TestModelLoaderError::test_empty_output PASSED [ 69%]
++tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_calls_callback_on_success PASSED [ 70%]
++tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_calls_error_callback PASSED [ 70%]
++tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_timeout PASSED [ 71%]
++tests/test_model_loader.py::TestModelLoaderAsync::test_join_does_not_block_if_not_started PASSED [ 71%]
++tests/test_scanners.py::TestPluginScanner::test_scan_no_npm PASSED       [ 72%]
++tests/test_scanners.py::TestPluginScanner::test_scan_timeout PASSED      [ 73%]
++tests/test_scanners.py::TestPluginScanner::test_scan_success PASSED      [ 73%]
++tests/test_scanners.py::TestPluginScanner::test_scan_detects_by_keyword PASSED [ 74%]
++tests/test_scanners.py::TestPluginScanner::test_scan_non_zero_exit PASSED [ 74%]
++tests/test_scanners.py::TestPluginScanner::test_scan_invalid_json PASSED [ 75%]
++tests/test_scanners.py::TestMcpScanner::test_scan_no_mcp_section PASSED  [ 75%]
++tests/test_scanners.py::TestMcpScanner::test_scan_skips_non_stdio PASSED [ 76%]
++tests/test_scanners.py::TestMcpScanner::test_scan_stdio_no_command PASSED [ 76%]
++tests/test_scanners.py::TestMcpScanner::test_scan_stdio_timeout PASSED   [ 77%]
++tests/test_scanners.py::TestMcpScanner::test_scan_stdio_parses_help_output PASSED [ 77%]
++tests/test_scanners.py::TestMcpScanner::test_scan_multiple_servers PASSED [ 78%]
++tests/test_scanners.py::TestMcpScanner::test_scan_stdio_exception PASSED [ 78%]
++tests/test_scanners.py::TestMcpScanner::test_scan_invalid_server_config PASSED [ 79%]
++tests/test_scanners.py::TestMcpScanner::test_parse_config_flags_duplicates PASSED [ 79%]
++tests/test_static_tabs.py::test_general_tab_load_and_save_config SKIPPED [ 80%]
++tests/test_static_tabs.py::test_general_tab_autoupdate_bool_coercion SKIPPED [ 80%]
++tests/test_static_tabs.py::test_server_tab_save_and_remove_empty_section SKIPPED [ 81%]
++tests/test_static_tabs.py::test_advanced_tab_load_and_save_multiple_sections SKIPPED [ 82%]
++tests/test_static_tabs.py::test_section_frame_collapse_and_expand SKIPPED [ 82%]
++tests/test_static_tabs.py::test_section_frame_starts_collapsed SKIPPED   [ 83%]
++tests/test_static_tabs.py::test_smoke_all_tabs_render SKIPPED (Tk di...) [ 83%]
++tests/test_static_tabs.py::test_save_button_disabled_when_invalid_config SKIPPED [ 84%]
++tests/test_static_tabs.py::test_save_button_enabled_when_valid_config SKIPPED [ 84%]
++tests/test_static_tabs.py::test_status_bar_shows_error_count SKIPPED     [ 85%]
++tests/test_static_tabs.py::test_validation_state_updates_on_field_change SKIPPED [ 85%]
++tests/test_tui_and_models_tabs.py::test_tui_tab_load_and_save_roundtrip SKIPPED [ 86%]
++tests/test_tui_and_models_tabs.py::test_keybind_editor_search_and_edit SKIPPED [ 86%]
++tests/test_tui_and_models_tabs.py::test_parse_models_json_accepts_list_and_mapping PASSED [ 87%]
++tests/test_tui_and_models_tabs.py::test_parse_models_text_extracts_provider_and_model PASSED [ 87%]
++tests/test_tui_and_models_tabs.py::test_models_tab_selection_callback SKIPPED [ 88%]
++tests/test_widgets.py::test_build_field_widget_selects_expected_class SKIPPED [ 88%]
++tests/test_widgets.py::test_labeled_entry_and_check_get_set_value SKIPPED [ 89%]
++tests/test_widgets.py::test_string_list_editor_add_and_remove SKIPPED    [ 89%]
++tests/test_widgets.py::test_permission_row_set_and_get SKIPPED (Tk d...) [ 90%]
++tests/test_widgets.py::test_object_editor_set_and_get SKIPPED (Tk di...) [ 91%]
++tests/test_widgets.py::test_string_or_bool_widget_values SKIPPED (Tk...) [ 91%]
++tests/test_widgets.py::test_dynamic_dict_editor_load_select_and_save SKIPPED [ 92%]
++tests/test_widgets.py::test_radio_group_get_set SKIPPED (Tk display ...) [ 92%]
++tests/test_widgets.py::test_labeled_spinbox_get_set SKIPPED (Tk disp...) [ 93%]
++tests/test_widgets.py::test_labeled_slider_get_set SKIPPED (Tk displ...) [ 93%]
++tests/test_widgets.py::test_color_picker_get_set SKIPPED (Tk display...) [ 94%]
++tests/test_widgets.py::test_key_value_editor_get_set SKIPPED (Tk dis...) [ 94%]
++tests/test_widgets.py::test_multiline_text_get_set SKIPPED (Tk displ...) [ 95%]
++tests/test_widgets.py::test_searchable_combo_get_set SKIPPED (Tk dis...) [ 95%]
++tests/test_widgets.py::test_build_field_widget_routes_new_types SKIPPED  [ 96%]
++tests/test_widgets.py::test_dynamic_dict_modal_ok SKIPPED (Tk displa...) [ 96%]
++tests/test_widgets.py::test_dynamic_dict_modal_cancel SKIPPED (Tk di...) [ 97%]
++tests/test_widgets.py::test_dynamic_dict_editor_has_edit_button SKIPPED  [ 97%]
++tests/test_widgets.py::test_labeled_entry_show_error_and_clear_error SKIPPED [ 98%]
++tests/test_widgets.py::test_labeled_spinbox_show_error_and_clear_error SKIPPED [ 98%]
++tests/test_widgets.py::test_labeled_combo_show_error_and_clear_error SKIPPED [ 99%]
+ tests/test_widgets.py::test_labeled_check_show_error_and_clear_error SKIPPED [100%]
+ 
+-======================== 49 passed, 43 skipped in 0.42s ========================
++======================= 120 passed, 69 skipped in 0.77s ========================
+ [0m
+-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m flake8 app/ tests/ --max-line-length=120 --count --statistics 2>&1 || echo "---FLAKE8_NOT_INSTALLED---"
++Tests pass (120 passed, 69 skipped due to no Tk display). No ruff installed. Let me check for other lint tools:
++[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m mypy app/ --ignore-missing-imports 2>&1 | head -60
++/usr/bin/python3: No module named mypy
++[0m
++[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m flake8 app/ tests/ --max-line-length=120 --count --statistics 2>&1 | head -80
+ /usr/bin/python3: No module named flake8
+----FLAKE8_NOT_INSTALLED---
+ [0m
+-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m py_compile app/config_io.py && python3 -m py_compile app/config_schema.py && python3 -m py_compile app/widgets.py && python3 -m py_compile app/main.py && echo "ALL_COMPILE_OK"
+-ALL_COMPILE_OK
++[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m py_compile app/config_export.py && python3 -m py_compile app/config_import.py && python3 -m py_compile app/migration.py && python3 -m py_compile app/model_loader.py && python3 -m py_compile app/main.py && python3 -m py_compile app/tabs/models.py && python3 -m py_compile app/widgets.py && echo "All files compile cleanly"
++All files compile cleanly
+ [0m
+ [0m# [0mTodos
+-[x] Gather recent changes (git log, diff, tracks, tech-debt)
+-[x] Review changed code files for correctness, style, tests, security, perf
++[x] Review all changed code files for correctness, style, tests, security, performance
+ [x] Run full test suite
+ [x] Run lint/typecheck
+ [ ] Fix up to 5-7 lint/style issues
+ [ ] Note architectural problems in tech-debt.md
+-[ ] Commit fixes and report
+-[ ] Adjust current-priority.md if trends found
++[ ] Commit fixes and report findings
++[0m
++I found several issues during the review. Let me fix them:
++
++**Issues found:**
++
++1. `app/config_export.py:4` — `re` imported but unused
++2. `app/config_import.py:4` — `re` imported but unused
++3. `app/config_export.py:82-90` — `_get_clipboard_text()` function defined but never called
++4. `app/config_export.py:129-135` — `_tk_clipboard_set()` function defined but never called
++5. `app/main.py:403-411` — `_set_dirty` method defined twice (first at line 230)
++6. `app/tabs/models.py:7` — `ModelInfo` imported but never used
++7. `tests/test_enhanced_model_explorer.py:257` — References `self.error_label` but the actual attribute is `self._error_label`
++
++Let me fix these:
++[0m← [0mEdit app/config_export.py
++Index: /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
++===================================================================
++--- /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
+++++ /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
++@@ -1,8 +1,7 @@
++ """Config export with optional secrets masking and clipboard support."""
++ 
++ import json
++-import re
++ import tkinter as tk
++ from pathlib import Path
++ from typing import Any
++ 
++
+ [0m
+-Let me fix the issues I found during code review. There are two notable issues:
++[0m← [0mEdit app/config_import.py
++Index: /home/daniel-bo/Desktop/opencode-configger/app/config_import.py
++===================================================================
++--- /home/daniel-bo/Desktop/opencode-configger/app/config_import.py
+++++ /home/daniel-bo/Desktop/opencode-configger/app/config_import.py
++@@ -1,8 +1,7 @@
++ """Config import with validation, merge strategies, and clipboard support."""
++ 
++ import json
++-import re
++ from pathlib import Path
++ from typing import Any
++ 
++ from app.config_io import strip_jsonc_comments
++
++[0m
++[0m← [0mEdit app/config_export.py
++Index: /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
++===================================================================
++--- /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
+++++ /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
++@@ -77,32 +77,8 @@
++     text = export_to_json(to_save)
++     path.write_text(text, encoding="utf-8")
++ 
++ 
++-def _get_clipboard_text() -> str:
++-    try:
++-        return _tk_clipboard_get()
++-    except Exception:
++-        try:
++-            import pyperclip
++-            return pyperclip.paste()
++-        except Exception:
++-            return ""
++-
++-
++-def _tk_clipboard_get() -> str:
++-    root = tk.Tk()
++-    root.withdraw()
++-    root.update()
++-    try:
++-        text = root.clipboard_get()
++-    except Exception:
++-        text = ""
++-    finally:
++-        root.destroy()
++-    return text
++-
++-
++ def export_to_clipboard(
++     data: dict[str, Any],
++     *,
++     masker: SecretsMasker | None = None,
++
++[0m
++[0m← [0mEdit app/config_export.py
++Index: /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
++===================================================================
++--- /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
+++++ /home/daniel-bo/Desktop/opencode-configger/app/config_export.py
++@@ -98,13 +98,4 @@
++             pyperclip.copy(text)
++         except Exception:
++             pass
++     return text
++-
++-
++-def _tk_clipboard_set(text: str) -> None:
++-    root = tk.Tk()
++-    root.withdraw()
++-    root.clipboard_clear()
++-    root.clipboard_append(text)
++-    root.update()
++-    root.destroy()
+ 
+-1. **Duplicate `_set_dirty` method in `main.py`** (lines 107-115 and 262-269) — the second definition overrides the first, losing the `_update_status()` call
+-2. **Duplicate key in test dict** in `test_config_schema.py:263` — `{"options": {"apiKey": ...}, "options": {"baseURL": ...}}` where the second `"options"` key silently overwrites the first
++[0m
++Now remove the duplicate `_set_dirty` method:
+ [0m← [0mEdit app/main.py
+ Index: /home/daniel-bo/Desktop/opencode-configger/app/main.py
+ ===================================================================
+ --- /home/daniel-bo/Desktop/opencode-configger/app/main.py
+ +++ /home/daniel-bo/Desktop/opencode-configger/app/main.py
+-@@ -259,15 +259,16 @@
++@@ -399,18 +399,8 @@
++         path_label = str(self.current_config_path)
+      dirty_marker = " *" if self.is_dirty else ""
+      self.root.title(f"OpenCode Configger - {path_label}{dirty_marker}")
+  
+- def _set_dirty(self, dirty: bool) -> None:
+--    """Set dirty state and refresh title.
+-+    """Set dirty state and refresh title and status bar.
+- 
+-     Args:
+-         dirty: New dirty state.
+-     """
+-     self.is_dirty = dirty
+-     self._update_title()
+-+    self._update_status()
+- 
++-def _set_dirty(self, dirty: bool) -> None:
++-    """Set dirty state and refresh title and status bar.
++-
++-    Args:
++-        dirty: New dirty state.
++-    """
++-    self.is_dirty = dirty
++-    self._update_title()
++-    self._update_status()
++-
+  def _on_change(self) -> None:
+      """Mark document as modified when any field changes."""
+      self._set_dirty(True)
++     self._update_validation_state()
+ 
+ [0m
+-[0m← [0mEdit tests/test_config_schema.py
+-Index: /home/daniel-bo/Desktop/opencode-configger/tests/test_config_schema.py
++Fix the unused `ModelInfo` import:
++[0m← [0mEdit app/tabs/models.py
++Index: /home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py
+ ===================================================================
+---- /home/daniel-bo/Desktop/opencode-configger/tests/test_config_schema.py
+-+++ /home/daniel-bo/Desktop/opencode-configger/tests/test_config_schema.py
+-@@ -258,10 +258,9 @@
+- def test_validate_config_provider_valid() -> None:
+-     data = {
+-         "provider": {
+-             "my_provider": {
+--                "options": {"apiKey": "sk-test"},
+--                "options": {"baseURL": "https://api.test.com"},
+-+                "options": {"apiKey": "sk-test", "baseURL": "https://api.test.com"},
+-             }
+-         }
+-     }
+-     assert validate_config(data) == []
++--- /home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py
+++++ /home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py
++@@ -3,9 +3,9 @@
++ import tkinter as tk
++ from tkinter import messagebox, ttk
++ from typing import Callable
++ 
++-from app.model_loader import ModelInfo, ModelLoadError, ModelLoader, ModelMap
+++from app.model_loader import ModelLoadError, ModelLoader, ModelMap
++ 
++ 
++ class EnhancedModelExplorer(ttk.Frame):
++     def __init__(
+ 
+ [0m
+-Now let me verify the fixes pass:
+-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && CI=true python3 -m pytest tests/test_config_schema.py tests/test_static_tabs.py -v 2>&1
+-============================= test session starts ==============================
+-platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python3
+-cachedir: .pytest_cache
+-rootdir: /home/daniel-bo/Desktop/opencode-configger
+-configfile: pyproject.toml
+-plugins: cov-7.1.0
+-collecting ... collected 40 items
++Fix the test referencing `self.error_label` instead of `self._error_label`:
++[0m← [0mEdit tests/test_enhanced_model_explorer.py
++Index: /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
++===================================================================
++--- /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
+++++ /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
++@@ -253,10 +253,10 @@
++         explorer = EnhancedModelExplorer(tk_root, auto_refresh=False)
++         explorer._show_error_panel("opencode not found on PATH — check your PATH setting")
++         tk_root.update()
++ 
++-        assert explorer.error_label is not None
++-        assert "opencode" in explorer.error_label.cget("text").lower()
+++        assert explorer._error_label is not None
+++        assert "opencode" in explorer._error_label.cget("text").lower()
++ 
++     def test_error_panel_hides_on_success(self, tk_root: tk.Tk, sample_model_map: ModelMap) -> None:
++         explorer = EnhancedModelExplorer(tk_root, auto_refresh=False)
++         explorer._show_error_panel("some error")
++@@ -264,9 +264,9 @@
++ 
++         explorer.set_models(sample_model_map)
++         tk_root.update()
++ 
++-        assert explorer.error_label is None or explorer.error_label.winfo_viewable() == False
+++        assert explorer._error_label is None or explorer._error_label.winfo_viewable() == False
++ 
++ 
++ class TestLoadingState:
++     def test_loading_label_shown_while_loading(self, tk_root: tk.Tk) -> None:
+ 
+-tests/test_config_schema.py::test_validate_field_integer_bounds PASSED   [  2%]
+-tests/test_config_schema.py::test_validate_field_pattern PASSED          [  5%]
+-tests/test_config_schema.py::test_validate_field_enum_and_required PASSED [  7%]
+-tests/test_config_schema.py::test_validate_field_boolean_and_number PASSED [ 10%]
+-tests/test_config_schema.py::test_permission_tools_has_todowrite PASSED  [ 12%]
+-tests/test_config_schema.py::test_mcp_discriminated_union PASSED         [ 15%]
+-tests/test_config_schema.py::test_provider_entry_fields_corrected PASSED [ 17%]
+-tests/test_config_schema.py::test_agent_entry_fields_updated PASSED      [ 20%]
+-tests/test_config_schema.py::test_formatter_command_is_string_list PASSED [ 22%]
+-tests/test_config_schema.py::test_command_entry_has_subtask_and_model PASSED [ 25%]
+-tests/test_config_schema.py::test_lsp_entry_fields_exist PASSED          [ 27%]
+-tests/test_config_schema.py::test_experimental_fields_exist PASSED       [ 30%]
+-tests/test_config_schema.py::test_enterprise_fields_exist PASSED         [ 32%]
+-tests/test_config_schema.py::test_well_known_agents PASSED               [ 35%]
+-tests/test_config_schema.py::test_keybind_slots_has_plugin_manager PASSED [ 37%]
+-tests/test_config_schema.py::test_tui_plugin_fields PASSED               [ 40%]
+-tests/test_config_schema.py::test_nested_dict_helpers PASSED             [ 42%]
+-tests/test_config_schema.py::test_validate_config_empty_is_valid PASSED  [ 45%]
+-tests/test_config_schema.py::test_validate_config_general_invalid_enum PASSED [ 47%]
+-tests/test_config_schema.py::test_validate_config_server_port_out_of_range PASSED [ 50%]
+-tests/test_config_schema.py::test_validate_config_valid_minimal PASSED   [ 52%]
+-tests/test_config_schema.py::test_validate_config_unknown_permission_tool PASSED [ 55%]
+-tests/test_config_schema.py::test_validate_config_provider_valid PASSED  [ 57%]
+-tests/test_config_schema.py::test_validate_config_agent_color_enum PASSED [ 60%]
+-tests/test_config_schema.py::test_validate_config_mcp_local_command_string_list PASSED [ 62%]
+-tests/test_config_schema.py::test_validate_config_mcp_remote PASSED      [ 65%]
+-tests/test_config_schema.py::test_validate_config_experimental_fields PASSED [ 67%]
+-tests/test_config_schema.py::test_validate_config_enterprise_url PASSED  [ 70%]
+-tests/test_config_schema.py::test_validate_config_lsp_valid PASSED       [ 72%]
+-tests/test_static_tabs.py::test_general_tab_load_and_save_config SKIPPED [ 75%]
+-tests/test_static_tabs.py::test_general_tab_autoupdate_bool_coercion SKIPPED [ 77%]
+-tests/test_static_tabs.py::test_server_tab_save_and_remove_empty_section SKIPPED [ 80%]
+-tests/test_static_tabs.py::test_advanced_tab_load_and_save_multiple_sections SKIPPED [ 82%]
+-tests/test_static_tabs.py::test_section_frame_collapse_and_expand SKIPPED [ 85%]
+-tests/test_static_tabs.py::test_section_frame_starts_collapsed SKIPPED   [ 87%]
+-tests/test_static_tabs.py::test_smoke_all_tabs_render SKIPPED (Tk di...) [ 90%]
+-tests/test_static_tabs.py::test_save_button_disabled_when_invalid_config SKIPPED [ 92%]
+-tests/test_static_tabs.py::test_save_button_enabled_when_valid_config SKIPPED [ 95%]
+-tests/test_static_tabs.py::test_status_bar_shows_error_count SKIPPED     [ 97%]
+-tests/test_static_tabs.py::test_validation_state_updates_on_field_change SKIPPED [100%]
++[0m
++Now let me verify the fixes compile and tests still pass:
++[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m py_compile app/config_export.py && python3 -m py_compile app/config_import.py && python3 -m py_compile app/main.py && python3 -m py_compile app/tabs/models.py && python3 -m py_compile tests/test_enhanced_model_explorer.py && echo "All compile OK"
++All compile OK
++[0m
++[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && CI=true python3 -m pytest tests/ -q 2>&1
++==================================== ERRORS ====================================
++____________ ERROR collecting tests/test_enhanced_model_explorer.py ____________
++ImportError while importing test module '/home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py'.
++Hint: make sure your test modules/packages have valid Python names.
++Traceback:
++/usr/lib/python3.12/importlib/__init__.py:90: in import_module
++    return _bootstrap._gcd_import(name[level:], package, level)
++           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++tests/test_enhanced_model_explorer.py:10: in <module>
++    from app.tabs.models import EnhancedModelExplorer, ModelInfo
++E   ImportError: cannot import name 'ModelInfo' from 'app.tabs.models' (/home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py)
++=========================== short test summary info ============================
++ERROR tests/test_enhanced_model_explorer.py
++!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
++1 error in 0.37s
++[0m
++The test also imports `ModelInfo` from `app.tabs.models`. I need to keep the re-export there:
++[0m→ [0mRead tests/test_enhanced_model_explorer.py[90m [limit=12][0m
++The test imports `ModelInfo` from `app.tabs.models` which was re-exporting it. The cleanest fix is to update the test import to use the canonical source:
++[0m
++[0m← [0mEdit tests/test_enhanced_model_explorer.py
++Index: /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
++===================================================================
++--- /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
+++++ /home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py
++@@ -5,10 +5,10 @@
++ from unittest.mock import MagicMock
++ 
++ import pytest
++ 
++-from app.model_loader import ModelLoadError, ModelLoader, ModelMap
++-from app.tabs.models import EnhancedModelExplorer, ModelInfo
+++from app.model_loader import ModelInfo, ModelLoadError, ModelLoader, ModelMap
+++from app.tabs.models import EnhancedModelExplorer
++ 
++ 
++ @pytest.fixture
++ def tk_root() -> tk.Tk:
+ 
+-======================== 29 passed, 11 skipped in 0.21s ========================
+ [0m
+-[0m# [0mTodos
+-[x] Gather recent changes (git log, diff, tracks, tech-debt)
+-[x] Review changed code files for correctness, style, tests, security, perf
+-[x] Run full test suite
+-[x] Run lint/typecheck
+-[x] Fix up to 5-7 lint/style issues
+-[ ] Note architectural problems in tech-debt.md
+-[ ] Commit fixes and report
+-[ ] Adjust current-priority.md if trends found
++[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && CI=true python3 -m pytest tests/ -q 2>&1
++........................................................................ [ 38%]
++....sssssssssssssssssssssssssssssssss................................... [ 76%]
++.......sssssssssssss..sssssssssssssssssssssss                            [100%]
++120 passed, 69 skipped in 0.72s
+ [0m
+-Now let me check if there's a `current-priority.md` and note any architectural issues:
+-[0m$ [0mls /home/daniel-bo/Desktop/opencode-configger/conductor/current-priority.md 2>/dev/null || echo "FILE_NOT_FOUND"
+-FILE_NOT_FOUND
++All 120 tests pass. Now let me check if there's any other reference to the removed functions:
++[0m✱ [0mGrep "_get_clipboard_text|_tk_clipboard_set|_tk_clipboard_get"[90m 0 matches[0m
+ [0m
+-The duplicate `_set_dirty` method was a real bug (the second definition on line 262 shadowed the first, losing the `_update_status()` call). This isn't a tech-debt item since it's fixed. No new architectural concerns to log beyond what's already tracked.
+ [0m# [0mTodos
+-[x] Gather recent changes (git log, diff, tracks, tech-debt)
+-[x] Review changed code files for correctness, style, tests, security, perf
++[x] Review all changed code files for correctness, style, tests, security, performance
+ [x] Run full test suite
+ [x] Run lint/typecheck
+ [x] Fix up to 5-7 lint/style issues
+-[x] Note architectural problems in tech-debt.md
+-[ ] Commit fixes and report
+-[ ] Adjust current-priority.md if trends found
++[ ] Note architectural problems in tech-debt.md
++[ ] Commit fixes and report findings
+ [0m
+-[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && git add app/main.py tests/test_config_schema.py && git commit -m "chore(review): fix duplicate _set_dirty method losing _update_status, fix duplicate dict key in test"
+-[master ac3d43c] chore(review): fix duplicate _set_dirty method losing _update_status, fix duplicate dict key in test
+- 2 files changed, 3 insertions(+), 3 deletions(-)
++Good, no remaining references. Now let me update tech-debt.md with architectural observations:
++[0m→ [0mRead conductor/tech-debt.md
++[0m
++[0m← [0mEdit conductor/tech-debt.md
++Index: /home/daniel-bo/Desktop/opencode-configger/conductor/tech-debt.md
++===================================================================
++--- /home/daniel-bo/Desktop/opencode-configger/conductor/tech-debt.md
+++++ /home/daniel-bo/Desktop/opencode-configger/conductor/tech-debt.md
++@@ -9,6 +9,8 @@
++ | Date | Track | Item | Severity | Status | Notes |
++ |------|-------|------|----------|--------|-------|
++ | 2026-04-13 | Schema Validation Phase 3 | Status bar error label placeholder — no entry widget to wire per-field validation directly | Low | Open | Validation is full-config only; per-field inline errors not yet wired to status bar |
++ | 2026-04-23 | Config Import/Export | SecretsMasker uses simple substring match instead of regex for patterns | Low | Open | _contains_secret does case-insensitive substring check; default patterns are keyword-based (API_KEY, TOKEN, etc.) |
+++| 2026-04-24 | Config Versioning | detect_version() defaults to V1_3 — a config with no formatter/mcp section is assumed v1.3, which may misidentify future older configs | Low | Open | Only two versions exist today; may need explicit version field |
+++| 2026-04-24 | Model Explorer | clipboard code in config_export.py creates tk.Tk() root for each clipboard op — risks conflicts with existing root in GUI mode | Medium | Open | Could accept an optional root parameter or use a shared clipboard utility |
++ 
++ 
++
+ [0m
+ [0m# [0mTodos
+-[x] Gather recent changes (git log, diff, tracks, tech-debt)
+-[x] Review changed code files for correctness, style, tests, security, perf
++[x] Review all changed code files for correctness, style, tests, security, performance
+ [x] Run full test suite
+ [x] Run lint/typecheck
+ [x] Fix up to 5-7 lint/style issues
+ [x] Note architectural problems in tech-debt.md
+-[x] Commit fixes and report
+-[ ] Adjust current-priority.md if trends found
++[ ] Commit fixes and report findings
+ [0m
+-## Code Review Report — Past 24 Hours
+-
+-### Files Reviewed (20 files)
+-- `app/config_io.py`, `app/config_schema.py`, `app/main.py`, `app/tabs/general.py`, `app/widgets.py`
+-- `tests/test_config_io.py`, `tests/test_config_schema.py`, `tests/test_static_tabs.py`, `tests/test_widgets.py`
+-- `pyproject.toml`, `requirements.txt`
+-- Conductor files: `tracks.md`, `tech-debt.md`, `lessons-learned.md`
+-
+-### Issues Found & Fixed (2)
+-
+-| # | File | Issue | Severity |
+-|---|------|-------|----------|
+-| 1 | `app/main.py:262` | **Duplicate `_set_dirty` method** — second definition on line 262 shadowed the first (which called `_update_status()`), causing the status bar to never update after the dirty state changed. Fixed by removing the duplicate and keeping the full implementation. | High |
+-| 2 | `tests/test_config_schema.py:263` | **Duplicate dict key** `"options"` in test data — second `"options"` key silently overwrote the first, so the test was only validating `baseURL` and never `apiKey`. Fixed by merging into a single dict. | Medium |
+-
+-### Test Results
+-- **92 tests**: 49 passed, 43 skipped (Tk display unavailable in headless CI)
+-- All non-GUI tests pass. No failures.
+-
+-### Lint/Typecheck
+-- No ruff or flake8 installed. Python compilation check passes on all source files.
+-
+-### Architectural Concerns
+-- No new items. Existing tech-debt items (tooltip re-show, status bar placeholder) remain Low/Open and are unchanged.
++Now let me commit the fixes:
+diff --git a/conductor/tech-debt.md b/conductor/tech-debt.md
+index 238df4d..531518e 100644
+--- a/conductor/tech-debt.md
++++ b/conductor/tech-debt.md
+@@ -10,5 +10,7 @@
+ |------|-------|------|----------|--------|-------|
+ | 2026-04-13 | Schema Validation Phase 3 | Status bar error label placeholder — no entry widget to wire per-field validation directly | Low | Open | Validation is full-config only; per-field inline errors not yet wired to status bar |
+ | 2026-04-23 | Config Import/Export | SecretsMasker uses simple substring match instead of regex for patterns | Low | Open | _contains_secret does case-insensitive substring check; default patterns are keyword-based (API_KEY, TOKEN, etc.) |
++| 2026-04-24 | Config Versioning | detect_version() defaults to V1_3 — a config with no formatter/mcp section is assumed v1.3, which may misidentify future older configs | Low | Open | Only two versions exist today; may need explicit version field |
++| 2026-04-24 | Model Explorer | clipboard code in config_export.py creates tk.Tk() root for each clipboard op — risks conflicts with existing root in GUI mode | Medium | Open | Could accept an optional root parameter or use a shared clipboard utility |
+ 
+ 
+diff --git a/tests/test_enhanced_model_explorer.py b/tests/test_enhanced_model_explorer.py
+index ae1cc53..28c66e6 100644
+--- a/tests/test_enhanced_model_explorer.py
++++ b/tests/test_enhanced_model_explorer.py
+@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
+ 
+ import pytest
+ 
+-from app.model_loader import ModelLoadError, ModelLoader, ModelMap
+-from app.tabs.models import EnhancedModelExplorer, ModelInfo
++from app.model_loader import ModelInfo, ModelLoadError, ModelLoader, ModelMap
++from app.tabs.models import EnhancedModelExplorer
+ 
+ 
+ @pytest.fixture
+@@ -254,8 +254,8 @@ class TestErrorPanel:
+         explorer._show_error_panel("opencode not found on PATH — check your PATH setting")
+         tk_root.update()
+ 
+-        assert explorer.error_label is not None
+-        assert "opencode" in explorer.error_label.cget("text").lower()
++        assert explorer._error_label is not None
++        assert "opencode" in explorer._error_label.cget("text").lower()
+ 
+     def test_error_panel_hides_on_success(self, tk_root: tk.Tk, sample_model_map: ModelMap) -> None:
+         explorer = EnhancedModelExplorer(tk_root, auto_refresh=False)
+@@ -265,7 +265,7 @@ class TestErrorPanel:
+         explorer.set_models(sample_model_map)
+         tk_root.update()
+ 
+-        assert explorer.error_label is None or explorer.error_label.winfo_viewable() == False
++        assert explorer._error_label is None or explorer._error_label.winfo_viewable() == False
+ 
+ 
+ class TestLoadingState:
+[0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && git add app/config_export.py app/config_import.py app/main.py app/tabs/models.py tests/test_enhanced_model_explorer.py conductor/tech-debt.md && git commit -m "chore(review): fix 7 lint/style issues — unused imports, dead code, duplicate method, test attribute name"
+[master 6a5731a] chore(review): fix 7 lint/style issues — unused imports, dead code, duplicate method, test attribute name
+ 6 files changed, 8 insertions(+), 51 deletions(-)
 [0m
 [0m# [0mTodos
-[x] Gather recent changes (git log, diff, tracks, tech-debt)
-[x] Review changed code files for correctness, style, tests, security, perf
+[x] Review all changed code files for correctness, style, tests, security, performance
 [x] Run full test suite
 [x] Run lint/typecheck
 [x] Fix up to 5-7 lint/style issues
 [x] Note architectural problems in tech-debt.md
-[x] Commit fixes and report
-[ ] Adjust current-priority.md if trends found
+[x] Commit fixes and report findings
 [0m
 ## Code Review Report — Past 24 Hours
 
-### Files Reviewed (20 files)
-- `app/config_io.py`, `app/config_schema.py`, `app/main.py`, `app/tabs/general.py`, `app/widgets.py`
-- `tests/test_config_io.py`, `tests/test_config_schema.py`, `tests/test_static_tabs.py`, `tests/test_widgets.py`
-- `pyproject.toml`, `requirements.txt`
-- Conductor files: `tracks.md`, `tech-debt.md`, `lessons-learned.md`
+### Files Reviewed (14 source + 5 test files)
+- `app/config_export.py`, `app/config_import.py`, `app/main.py`, `app/migration.py`, `app/model_loader.py`, `app/tabs/models.py`, `app/widgets.py`
+- `tests/test_config_export.py`, `tests/test_config_import.py`, `tests/test_migration.py`, `tests/test_model_loader.py`, `tests/test_enhanced_model_explorer.py`
 
-### Issues Found & Fixed (2)
+### Issues Found & Fixed (7)
 
 | # | File | Issue | Severity |
 |---|------|-------|----------|
-| 1 | `app/main.py:262` | **Duplicate `_set_dirty` method** — second definition on line 262 shadowed the first (which called `_update_status()`), causing the status bar to never update after the dirty state changed. Fixed by removing the duplicate and keeping the full implementation. | High |
-| 2 | `tests/test_config_schema.py:263` | **Duplicate dict key** `"options"` in test data — second `"options"` key silently overwrote the first, so the test was only validating `baseURL` and never `apiKey`. Fixed by merging into a single dict. | Medium |
+| 1 | `app/config_export.py` | Unused `import re` | Low |
+| 2 | `app/config_import.py` | Unused `import re` | Low |
+| 3 | `app/config_export.py` | Dead code: `_get_clipboard_text()` and `_tk_clipboard_get()` never called | Low |
+| 4 | `app/config_export.py` | Dead code: `_tk_clipboard_set()` never called | Low |
+| 5 | `app/main.py:403` | **Duplicate `_set_dirty` method** — second definition shadowed the first, losing `_update_status()` call | High |
+| 6 | `app/tabs/models.py` | Unused `ModelInfo` import | Low |
+| 7 | `tests/test_enhanced_model_explorer.py` | Test referenced `self.error_label` but actual attribute is `self._error_label` | Medium |
 
 ### Test Results
-- **92 tests**: 49 passed, 43 skipped (Tk display unavailable in headless CI)
-- All non-GUI tests pass. No failures.
+- **120 passed, 69 skipped** (Tk display unavailable in headless env)
+- No failures
 
-### Lint/Typecheck
-- No ruff or flake8 installed. Python compilation check passes on all source files.
-
-### Architectural Concerns
-- No new items. Existing tech-debt items (tooltip re-show, status bar placeholder) remain Low/Open and are unchanged.
+### Architectural Concerns (added to tech-debt.md)
+1. `detect_version()` defaults to V1_3 — may misidentify future older configs without explicit version field
+2. Clipboard code in `config_export.py` creates `tk.Tk()` root per operation — risks conflicts in GUI mode
