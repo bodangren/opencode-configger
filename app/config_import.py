@@ -1,7 +1,6 @@
 """Config import with validation, merge strategies, and clipboard support."""
 
 import json
-import re
 from pathlib import Path
 from typing import Any
 

@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from app.model_loader import ModelLoadError, ModelLoader, ModelMap
-from app.tabs.models import EnhancedModelExplorer, ModelInfo
+from app.model_loader import ModelInfo, ModelLoadError, ModelLoader, ModelMap
+from app.tabs.models import EnhancedModelExplorer
 
 
 @pytest.fixture
@@ -254,8 +254,8 @@ class TestErrorPanel:
         explorer._show_error_panel("opencode not found on PATH — check your PATH setting")
         tk_root.update()
 
-        assert explorer.error_label is not None
-        assert "opencode" in explorer.error_label.cget("text").lower()
+        assert explorer._error_label is not None
+        assert "opencode" in explorer._error_label.cget("text").lower()
 
     def test_error_panel_hides_on_success(self, tk_root: tk.Tk, sample_model_map: ModelMap) -> None:
         explorer = EnhancedModelExplorer(tk_root, auto_refresh=False)
@@ -265,7 +265,7 @@ class TestErrorPanel:
         explorer.set_models(sample_model_map)
         tk_root.update()
 
-        assert explorer.error_label is None or explorer.error_label.winfo_viewable() == False
+        assert explorer._error_label is None or explorer._error_label.winfo_viewable() == False
 
 
 class TestLoadingState:

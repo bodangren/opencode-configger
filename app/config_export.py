@@ -1,7 +1,6 @@
 """Config export with optional secrets masking and clipboard support."""
 
 import json
-import re
 import tkinter as tk
 from pathlib import Path
 from typing import Any
@@ -79,30 +78,6 @@ def export_to_file(
     path.write_text(text, encoding="utf-8")
 
 
-def _get_clipboard_text() -> str:
-    try:
-        return _tk_clipboard_get()
-    except Exception:
-        try:
-            import pyperclip
-            return pyperclip.paste()
-        except Exception:
-            return ""
-
-
-def _tk_clipboard_get() -> str:
-    root = tk.Tk()
-    root.withdraw()
-    root.update()
-    try:
-        text = root.clipboard_get()
-    except Exception:
-        text = ""
-    finally:
-        root.destroy()
-    return text
-
-
 def export_to_clipboard(
     data: dict[str, Any],
     *,
@@ -124,12 +99,3 @@ def export_to_clipboard(
         except Exception:
             pass
     return text
-
-
-def _tk_clipboard_set(text: str) -> None:
-    root = tk.Tk()
-    root.withdraw()
-    root.clipboard_clear()
-    root.clipboard_append(text)
-    root.update()
-    root.destroy()

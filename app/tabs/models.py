@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from typing import Callable
 
-from app.model_loader import ModelInfo, ModelLoadError, ModelLoader, ModelMap
+from app.model_loader import ModelLoadError, ModelLoader, ModelMap
 
 
 class EnhancedModelExplorer(ttk.Frame):

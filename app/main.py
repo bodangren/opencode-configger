@@ -400,16 +400,6 @@ class ConfiggerApp:
         dirty_marker = " *" if self.is_dirty else ""
         self.root.title(f"OpenCode Configger - {path_label}{dirty_marker}")
 
-    def _set_dirty(self, dirty: bool) -> None:
-        """Set dirty state and refresh title and status bar.
-
-        Args:
-            dirty: New dirty state.
-        """
-        self.is_dirty = dirty
-        self._update_title()
-        self._update_status()
-
     def _on_change(self) -> None:
         """Mark document as modified when any field changes."""
         self._set_dirty(True)
