@@ -271,3 +271,241 @@ Index: /home/daniel-bo/Desktop/opencode-configger/conductor/tech-debt.md
 [x] Update lessons-learned.md
 [ ] Commit checkpoint and push
 [0m
+[0m$ [0mgit add -A && git commit -m "Checkpoint: Config Versioning track complete (autonomous run - MiniMax-M2)"
+[master 902a541] Checkpoint: Config Versioning track complete (autonomous run - MiniMax-M2)
+ 3 files changed, 248 insertions(+), 2 deletions(-)
+[0m
+[0m$ [0mgit push
+To https://github.com/bodangren/opencode-configger.git
+   4f5771a..902a541  master -> master
+[0m
+[0m# [0mTodos
+[x] Update tracks.md to mark Config Versioning as done
+[x] Update tech-debt.md - mark migration items resolved
+[x] Update lessons-learned.md
+[x] Commit checkpoint and push
+[ ] Identify next track from tech-debt or roadmap
+[0m
+[0m→ [0mRead conductor/tech-debt.md
+[0m→ [0mRead conductor/tracks.md[90m [offset=28][0m
+[0m✱ [0mGlob "conductor/tracks/enhanced_model_explorer*/**"[90m 3 matches[0m
+[0m→ [0mRead conductor/tracks/enhanced_model_explorer_20260408/spec.md
+[0m→ [0mRead conductor/tracks/enhanced_model_explorer_20260408/plan.md
+[0m✱ [0mGlob "app/tabs/models*.py"[90m 1 match[0m
+[0m✱ [0mGlob "app/**/model*.py"[90m 1 match[0m
+[0m→ [0mRead app/tabs/models.py
+[0m✱ [0mGrep "test.*model|parse_models"[90m in tests · 13 matches[0m
+[0m→ [0mRead tests/test_tui_and_models_tabs.py
+[0m
+[0m← [0mEdit conductor/tracks/enhanced_model_explorer_20260408/metadata.json
+Index: /home/daniel-bo/Desktop/opencode-configger/conductor/tracks/enhanced_model_explorer_20260408/metadata.json
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/conductor/tracks/enhanced_model_explorer_20260408/metadata.json
++++ /home/daniel-bo/Desktop/opencode-configger/conductor/tracks/enhanced_model_explorer_20260408/metadata.json
+@@ -1,11 +1,11 @@
+ {
+   "track_id": "enhanced_model_explorer_20260408",
+   "type": "feature",
+-  "status": "new",
++  "status": "in_progress",
+   "created_at": "2026-04-08T12:00:00Z",
+-  "updated_at": "2026-04-08T12:00:00Z",
+-  "description": "Advanced model picker with search, provider filtering, and live provider API integration to show available models.",
+-  "estimated_tasks": 7,
+-  "actual_tasks": null,
++  "updated_at": "2026-04-23T12:00:00Z",
++  "description": "Develop a more advanced model picker with search, filtering by provider, and integration with live provider APIs to show available models.",
++  "estimated_tasks": 8,
++  "actual_tasks": 0,
+   "deviation_notes": ""
+ }
+
+[0m
+[0m✱ [0mGrep "search.*model|filter.*model|ModelLoader"[90m in tests · 0 matches[0m
+[0m
+[0m$ [0mpython3 -m pytest tests/test_tui_and_models_tabs.py -v --tb=short 2>&1 | head -30
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/daniel-bo/Desktop/opencode-configger
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 5 items
+
+tests/test_tui_and_models_tabs.py::test_tui_tab_load_and_save_roundtrip SKIPPED [ 20%]
+tests/test_tui_and_models_tabs.py::test_keybind_editor_search_and_edit SKIPPED [ 40%]
+tests/test_tui_and_models_tabs.py::test_parse_models_json_accepts_list_and_mapping PASSED [ 60%]
+tests/test_tui_and_models_tabs.py::test_parse_models_text_extracts_provider_and_model PASSED [ 80%]
+tests/test_tui_and_models_tabs.py::test_models_tab_selection_callback SKIPPED [100%]
+
+========================= 2 passed, 3 skipped in 0.06s =========================
+[0m
+[0m# [0mTodos
+[x] Update tracks.md to mark Config Versioning as done
+[x] Update tech-debt.md - mark migration items resolved
+[x] Update lessons-learned.md
+[x] Commit checkpoint and push
+[x] Identify next track from tech-debt or roadmap
+[ ] Phase 1: ModelLoader backend - write tests first (TDD)
+[0m
+[0m→ [0mRead app/tabs/models.py[90m [limit=50, offset=70][0m
+[0m✱ [0mGlob "app/model_loader.py"[90m 0 matches[0m
+Let me create the `ModelLoader` class with background thread loading. First I'll write tests.
+[0m
+[0m← [0mWrite tests/test_model_loader.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython3 -m pytest tests/test_model_loader.py -v --tb=short 2>&1 | head -40
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/daniel-bo/Desktop/opencode-configger
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+_________________ ERROR collecting tests/test_model_loader.py __________________
+ImportError while importing test module '/home/daniel-bo/Desktop/opencode-configger/tests/test_model_loader.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_model_loader.py:10: in <module>
+    from app.model_loader import ModelInfo, ModelLoader, ModelLoadError
+E   ModuleNotFoundError: No module named 'app.model_loader'
+=========================== short test summary info ============================
+ERROR tests/test_model_loader.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.23s ===============================
+[0m
+[0m← [0mWrite app/model_loader.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython3 -m pytest tests/test_model_loader.py -v --tb=short 2>&1
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/daniel-bo/Desktop/opencode-configger
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 12 items
+
+tests/test_model_loader.py::TestModelInfo::test_model_info_creation PASSED [  8%]
+tests/test_model_loader.py::TestModelInfo::test_model_info_optional_context_window PASSED [ 16%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_json_output PASSED [ 25%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_text_output_falls_back_when_json_fails PASSED [ 33%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_list_json_format PASSED [ 41%]
+tests/test_model_loader.py::TestModelLoaderError::test_opencode_not_on_path PASSED [ 50%]
+tests/test_model_loader.py::TestModelLoaderError::test_timeout FAILED    [ 58%]
+tests/test_model_loader.py::TestModelLoaderError::test_empty_output PASSED [ 66%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_calls_callback_on_success PASSED [ 75%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_calls_error_callback PASSED [ 83%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_timeout FAILED [ 91%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_join_does_not_block_if_not_started PASSED [100%]
+
+=================================== FAILURES ===================================
+______________________ TestModelLoaderError.test_timeout _______________________
+tests/test_model_loader.py:100: in test_timeout
+    assert "timeout" in str(exc_info.value).lower()
+E   AssertionError: assert 'timeout' in 'model fetch timed out'
+E    +  where 'model fetch timed out' = <built-in method lower of str object at 0x7f572c66a030>()
+E    +    where <built-in method lower of str object at 0x7f572c66a030> = 'Model fetch timed out'.lower
+E    +      where 'Model fetch timed out' = str(ModelLoadError('Model fetch timed out'))
+E    +        where ModelLoadError('Model fetch timed out') = <ExceptionInfo ModelLoadError('Model fetch timed out') tblen=3>.value
+_________________ TestModelLoaderAsync.test_load_async_timeout _________________
+tests/test_model_loader.py:159: in test_load_async_timeout
+    assert "timeout" in str(errors[0]).lower()
+E   AssertionError: assert 'timeout' in 'model fetch timed out'
+E    +  where 'model fetch timed out' = <built-in method lower of str object at 0x7f572c66a030>()
+E    +    where <built-in method lower of str object at 0x7f572c66a030> = 'Model fetch timed out'.lower
+E    +      where 'Model fetch timed out' = str(ModelLoadError('Model fetch timed out'))
+=========================== short test summary info ============================
+FAILED tests/test_model_loader.py::TestModelLoaderError::test_timeout - Asser...
+FAILED tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_timeout
+========================= 2 failed, 10 passed in 0.13s =========================
+[0m
+[0m← [0mEdit tests/test_model_loader.py
+Index: /home/daniel-bo/Desktop/opencode-configger/tests/test_model_loader.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/tests/test_model_loader.py
++++ /home/daniel-bo/Desktop/opencode-configger/tests/test_model_loader.py
+@@ -96,9 +96,9 @@
+         mock_run.side_effect = subprocess.TimeoutExpired("opencode models", 10)
+         loader = ModelLoader()
+         with pytest.raises(ModelLoadError) as exc_info:
+             loader.load_sync()
+-        assert "timeout" in str(exc_info.value).lower()
++        assert "timed out" in str(exc_info.value).lower()
+ 
+ def test_empty_output(self) -> None:
+     with patch("subprocess.run") as mock_run:
+         mock_run.return_value = MagicMock(
+
+[0m
+[0m← [0mEdit tests/test_model_loader.py
+Index: /home/daniel-bo/Desktop/opencode-configger/tests/test_model_loader.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/tests/test_model_loader.py
++++ /home/daniel-bo/Desktop/opencode-configger/tests/test_model_loader.py
+@@ -155,9 +155,9 @@
+ 
+         loader.load_async(error_callback=on_error, timeout_seconds=1)
+         loader.join()
+         assert len(errors) == 1
+-        assert "timeout" in str(errors[0]).lower()
++        assert "timed out" in str(errors[0]).lower()
+ 
+ def test_join_does_not_block_if_not_started(self) -> None:
+     loader = ModelLoader()
+     loader.join()
+\ No newline at end of file
+
+[0m
+[0m$ [0mpython3 -m pytest tests/test_model_loader.py -v --tb=short 2>&1
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/daniel-bo/Desktop/opencode-configger
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 12 items
+
+tests/test_model_loader.py::TestModelInfo::test_model_info_creation PASSED [  8%]
+tests/test_model_loader.py::TestModelInfo::test_model_info_optional_context_window PASSED [ 16%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_json_output PASSED [ 25%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_text_output_falls_back_when_json_fails PASSED [ 33%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_list_json_format PASSED [ 41%]
+tests/test_model_loader.py::TestModelLoaderError::test_opencode_not_on_path PASSED [ 50%]
+tests/test_model_loader.py::TestModelLoaderError::test_timeout PASSED    [ 58%]
+tests/test_model_loader.py::TestModelLoaderError::test_empty_output PASSED [ 66%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_calls_callback_on_success PASSED [ 75%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_calls_error_callback PASSED [ 83%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_timeout PASSED [ 91%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_join_does_not_block_if_not_started PASSED [100%]
+
+============================== 12 passed in 0.11s ==============================
+[0m
+[0m$ [0mpython3 -m pytest tests/ -v --tb=short 2>&1 | tail -20
+tests/test_widgets.py::test_object_editor_set_and_get SKIPPED (Tk di...) [ 89%]
+tests/test_widgets.py::test_string_or_bool_widget_values SKIPPED (Tk...) [ 90%]
+tests/test_widgets.py::test_dynamic_dict_editor_load_select_and_save SKIPPED [ 91%]
+tests/test_widgets.py::test_radio_group_get_set SKIPPED (Tk display ...) [ 91%]
+tests/test_widgets.py::test_labeled_spinbox_get_set SKIPPED (Tk disp...) [ 92%]
+tests/test_widgets.py::test_labeled_slider_get_set SKIPPED (Tk displ...) [ 92%]
+tests/test_widgets.py::test_color_picker_get_set SKIPPED (Tk display...) [ 93%]
+tests/test_widgets.py::test_key_value_editor_get_set SKIPPED (Tk dis...) [ 94%]
+tests/test_widgets.py::test_multiline_text_get_set SKIPPED (Tk displ...) [ 94%]
+tests/test_widgets.py::test_searchable_combo_get_set SKIPPED (Tk dis...) [ 95%]
+tests/test_widgets.py::test_build_field_widget_routes_new_types SKIPPED  [ 95%]
+tests/test_widgets.py::test_dynamic_dict_modal_ok SKIPPED (Tk displa...) [ 96%]
+tests/test_widgets.py::test_dynamic_dict_modal_cancel SKIPPED (Tk di...) [ 97%]
+tests/test_widgets.py::test_dynamic_dict_editor_has_edit_button SKIPPED  [ 97%]
+tests/test_widgets.py::test_labeled_entry_show_error_and_clear_error SKIPPED [ 98%]
+tests/test_widgets.py::test_labeled_spinbox_show_error_and_clear_error SKIPPED [ 98%]
+tests/test_widgets.py::test_labeled_combo_show_error_and_clear_error SKIPPED [ 99%]
+tests/test_widgets.py::test_labeled_check_show_error_and_clear_error SKIPPED [100%]
+
+======================= 120 passed, 47 skipped in 0.54s ========================
+[0m
