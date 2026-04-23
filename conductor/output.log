@@ -554,3 +554,327 @@ tests/test_config_import.py::test_find_unknown_keys PASSED               [100%]
 
 ============================== 18 passed in 0.09s ==============================
 [0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && git add -A && git commit -m "feat(import): Phase 2 - config import with validation and merge strategies
+
+Task 2.1: import_from_text/file/clipboard with JSONC support
+Task 2.2: schema validation on import, unknown key detection
+Task 2.3: merge_replace, merge_overlay, merge_selective, compute_diff" --no-gpg-sign 2>&1
+[master ad3fdd3] feat(import): Phase 2 - config import with validation and merge strategies
+ 3 files changed, 595 insertions(+)
+ create mode 100644 app/config_import.py
+ create mode 100644 tests/test_config_import.py
+[0m
+[0m# [0mTodos
+[x] Phase 1: Export Module
+[x] Phase 2: Import and Validation Module
+[x] Phase 3: Merge Strategies
+[ ] Phase 4: UI Integration
+[ ] Task 4.1: Conflict resolution UI
+[ ] Task 4.2: Export/Import buttons in GUI
+[ ] Task 4.3: Integration tests
+[ ] Finalize: update tech-debt.md, lessons-learned.md, commit
+[0m
+[0m→ [0mRead app/main.py
+Now let me add export/import UI. I'll add a menu with Export/Import commands that open dialogs with the options.
+[0m→ [0mRead app/dialogs/file_picker.py
+[0m
+[0m← [0mEdit app/main.py
+Index: /home/daniel-bo/Desktop/opencode-configger/app/main.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/app/main.py
++++ /home/daniel-bo/Desktop/opencode-configger/app/main.py
+@@ -10,18 +10,19 @@
+ except ImportError:
+     ttkb = None  # type: ignore[assignment]
+     HAS_TTKBOOTSTRAP = False
+ 
+-from app.config_io import (
+-    find_config_files,
+-    load_jsonc,
+-    new_config,
+-    new_tui_config,
+-    save_json,
++from app.config_export import SecretsMasker, export_to_clipboard, export_to_file
++from app.config_import import (
++    ImportResult,
++    MergeStrategy,
++    compute_diff,
++    import_from_clipboard,
++    import_from_file,
++    merge_overlay,
++    merge_replace,
++    merge_selective,
+ )
+-from app.config_schema import validate_config
+-from app.config_io import preview_variable, substitute_variables
+-from app.dialogs.file_picker import choose_open_config, choose_save_config
+ from app.tabs.agents import AgentsTab
+ from app.tabs.commands import CommandsTab
+ from app.tabs.compaction import AdvancedTab
+ from app.tabs.formatters import FormattersTab
+
+[0m
+[0m← [0mEdit app/main.py
+Index: /home/daniel-bo/Desktop/opencode-configger/app/main.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/app/main.py
++++ /home/daniel-bo/Desktop/opencode-configger/app/main.py
+@@ -21,8 +21,17 @@
+     merge_overlay,
+     merge_replace,
+     merge_selective,
+ )
++from app.config_io import (
++    find_config_files,
++    load_jsonc,
++    new_config,
++    new_tui_config,
++    preview_variable,
++    save_json,
++)
++from app.config_schema import validate_config
+ from app.tabs.agents import AgentsTab
+ from app.tabs.commands import CommandsTab
+ from app.tabs.compaction import AdvancedTab
+ from app.tabs.formatters import FormattersTab
+
+[0m
+[0m← [0mEdit app/main.py
+Index: /home/daniel-bo/Desktop/opencode-configger/app/main.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/app/main.py
++++ /home/daniel-bo/Desktop/opencode-configger/app/main.py
+@@ -149,8 +149,24 @@
+                       command=self.new_file)
+ file_menu.add_command(label="Open...", accelerator="Ctrl+O",
+                       command=self.open_file)
+ file_menu.add_separator()
++
++export_menu = tk.Menu(file_menu, tearoff=0)
++export_menu.add_command(label="Export to File...",
++                        command=self._export_to_file)
++export_menu.add_command(label="Export to Clipboard",
++                        command=self._export_to_clipboard)
++file_menu.add_cascade(label="Export", menu=export_menu)
++
++import_menu = tk.Menu(file_menu, tearoff=0)
++import_menu.add_command(label="Import from File...",
++                        command=self._import_from_file)
++import_menu.add_command(label="Import from Clipboard",
++                        command=self._import_from_clipboard)
++file_menu.add_cascade(label="Import", menu=import_menu)
++
++file_menu.add_separator()
+ file_menu.add_command(label="Save", accelerator="Ctrl+S",
+                       command=self.save_file)
+ file_menu.add_command(label="Save As...", accelerator="Ctrl+Shift+S",
+                       command=self.save_file_as)
+
+[0m
+[0m← [0mEdit app/main.py
+Index: /home/daniel-bo/Desktop/opencode-configger/app/main.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/app/main.py
++++ /home/daniel-bo/Desktop/opencode-configger/app/main.py
+@@ -501,9 +501,125 @@
+     if ok:
+         self._update_title()
+     return ok
+ 
+-def quit_app(self) -> None:
++def _export_to_file(self) -> None:
++    path = choose_save_config(
++        initial_path=self.current_config_path,
++        default_filename="opencode_export.json",
++    )
++    if not path:
++        return
++    data = self._collect_from_tabs()
++    masker = SecretsMasker()
++    export_to_file(data, path, masker=masker)
++    messagebox.showinfo("Export", f"Configuration exported to:\n{path}")
++
++def _export_to_clipboard(self) -> None:
++    data = self._collect_from_tabs()
++    masker = SecretsMasker()
++    export_to_clipboard(data, masker=masker)
++    messagebox.showinfo("Export", "Configuration copied to clipboard.")
++
++def _import_from_file(self) -> None:
++    if not self._confirm_discard():
++        return
++    path = choose_open_config()
++    if not path:
++        return
++    self._do_import(path)
++
++def _import_from_clipboard(self) -> None:
++    if not self._confirm_discard():
++        return
++    self._do_import(None)
++
++def _do_import(self, path: Path | None) -> None:
++    if path:
++        result = import_from_file(path, validate=True)
++    else:
++        result = import_from_clipboard(validate=True)
++
++    if result.errors or result.unknown_keys:
++        errors = result.errors[:]
++        if result.unknown_keys:
++            errors.append(f"Unknown top-level keys: {', '.join(result.unknown_keys)}")
++        messagebox.showerror(
++            "Import Failed",
++            "Configuration has errors:\n\n" + "\n".join(f"  - {e}" for e in errors),
++        )
++        return
++
++    self._show_merge_dialog(result.data)
++
++def _show_merge_dialog(self, imported_data: dict) -> None:
++    dialog = tk.Toplevel(self.root)
++    dialog.title("Import Configuration")
++    dialog.geometry("600x500")
++    dialog.transient(self.root)
++    dialog.grab_set()
++
++    current_data = self._collect_from_tabs()
++    diff = compute_diff(current_data, imported_data)
++
++    main_frame = ttk.Frame(dialog, padding=10)
++    main_frame.pack(fill=tk.BOTH, expand=True)
++
++    ttk.Label(main_frame, text="Merge Strategy:", font=("Helvetica", 10, "bold")).pack(anchor="w")
++    strategy_var = tk.StringVar(value=MergeStrategy.REPLACE)
++    for s, label in [
++        (MergeStrategy.REPLACE, "Replace — discard current, use imported"),
++        (MergeStrategy.OVERLAY, "Overlay — merge imported over current"),
++    ]:
++        ttk.Radiobutton(main_frame, text=label, variable=strategy_var, value=s).pack(anchor="w")
++
++    diff_frame = ttk.LabelFrame(main_frame, text="Conflicting Keys", padding=5)
++    diff_frame.pack(fill=tk.BOTH, expand=True, pady=10)
++
++    canvas = tk.Canvas(diff_frame)
++    scrollbar = ttk.Scrollbar(diff_frame, orient=tk.VERTICAL, command=canvas.yview)
++    scrollable = ttk.Frame(canvas)
++    scrollable.bind(
++        "<Configure>",
++        lambda _: canvas.configure(scrollregion=canvas.bbox("all")),
++    )
++    canvas.create_window((0, 0), window=scrollable, anchor="nw")
++    canvas.configure(yscrollcommand=scrollbar.set)
++
++    accepted_keys: set[str] = set()
++    key_vars: dict[str, tk.BooleanVar] = {}
++    for key, (cur_val, imp_val) in diff.items():
++        row = ttk.Frame(scrollable)
++        row.pack(fill=tk.X, pady=2)
++        var = tk.BooleanVar(value=True)
++        key_vars[key] = var
++        ttk.Checkbutton(row, text=key, variable=var, width=20).pack(side=tk.LEFT)
++        ttk.Label(row, text=f"Current: {cur_val!r}  ->  Imported: {imp_val!r}",
++                 font=("Courier New", 9)).pack(side=tk.LEFT, fill=tk.X, expand=True)
++
++    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
++    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
++
++    def do_apply() -> None:
++        strategy = strategy_var.get()
++        if strategy == MergeStrategy.REPLACE:
++            merged = merge_replace(current_data, imported_data)
++        elif strategy == MergeStrategy.OVERLAY:
++            merged = merge_overlay(current_data, imported_data)
++        else:
++            merged = merge_selective(
++                current_data, imported_data,
++                accept_keys={k for k, v in key_vars.items() if v.get()},
++            )
++        self.opencode_data = merged
++        self._load_tabs(merged)
++        self._set_dirty(True)
++        dialog.destroy()
++
++    btn_frame = ttk.Frame(main_frame)
++    btn_frame.pack(pady=5)
++    ttk.Button(btn_frame, text="Cancel", command=dialog.destroy, width=12).pack(side=tk.LEFT, padx=5)
++    ttk.Button(btn_frame, text="Apply", command=do_apply, width=12).pack(side=tk.LEFT, padx=5)
+     """Exit application after unsaved-change guard."""
+     if not self._confirm_discard():
+         return
+     self.root.destroy()
+
+[0m
+[0m→ [0mRead app/main.py[90m [limit=120, offset=450][0m
+[0m→ [0mRead app/main.py[90m [limit=80, offset=570][0m
+[0m
+[0m← [0mEdit app/main.py
+Index: /home/daniel-bo/Desktop/opencode-configger/app/main.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/app/main.py
++++ /home/daniel-bo/Desktop/opencode-configger/app/main.py
+@@ -618,8 +618,10 @@
+     btn_frame = ttk.Frame(main_frame)
+     btn_frame.pack(pady=5)
+     ttk.Button(btn_frame, text="Cancel", command=dialog.destroy, width=12).pack(side=tk.LEFT, padx=5)
+     ttk.Button(btn_frame, text="Apply", command=do_apply, width=12).pack(side=tk.LEFT, padx=5)
++
++def quit_app(self) -> None:
+     """Exit application after unsaved-change guard."""
+     if not self._confirm_discard():
+         return
+     self.root.destroy()
+
+[0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m pytest tests/ -v --tb=short 2>&1 | tail -50
+tests/test_scanners.py::TestPluginScanner::test_scan_invalid_json PASSED [ 66%]
+tests/test_scanners.py::TestMcpScanner::test_scan_no_mcp_section PASSED  [ 67%]
+tests/test_scanners.py::TestMcpScanner::test_scan_skips_non_stdio PASSED [ 67%]
+tests/test_scanners.py::TestMcpScanner::test_scan_stdio_no_command PASSED [ 68%]
+tests/test_scanners.py::TestMcpScanner::test_scan_stdio_timeout PASSED   [ 69%]
+tests/test_scanners.py::TestMcpScanner::test_scan_stdio_parses_help_output PASSED [ 70%]
+tests/test_scanners.py::TestMcpScanner::test_scan_multiple_servers PASSED [ 70%]
+tests/test_scanners.py::TestMcpScanner::test_scan_stdio_exception PASSED [ 71%]
+tests/test_scanners.py::TestMcpScanner::test_scan_invalid_server_config PASSED [ 72%]
+tests/test_scanners.py::TestMcpScanner::test_parse_config_flags_duplicates PASSED [ 72%]
+tests/test_static_tabs.py::test_general_tab_load_and_save_config SKIPPED [ 73%]
+tests/test_static_tabs.py::test_general_tab_autoupdate_bool_coercion SKIPPED [ 74%]
+tests/test_static_tabs.py::test_server_tab_save_and_remove_empty_section SKIPPED [ 75%]
+tests/test_static_tabs.py::test_advanced_tab_load_and_save_multiple_sections SKIPPED [ 75%]
+tests/test_static_tabs.py::test_section_frame_collapse_and_expand SKIPPED [ 76%]
+tests/test_static_tabs.py::test_section_frame_starts_collapsed SKIPPED   [ 77%]
+tests/test_static_tabs.py::test_smoke_all_tabs_render SKIPPED (Tk di...) [ 77%]
+tests/test_static_tabs.py::test_save_button_disabled_when_invalid_config SKIPPED [ 78%]
+tests/test_static_tabs.py::test_save_button_enabled_when_valid_config SKIPPED [ 79%]
+tests/test_static_tabs.py::test_status_bar_shows_error_count SKIPPED     [ 80%]
+tests/test_static_tabs.py::test_validation_state_updates_on_field_change SKIPPED [ 80%]
+tests/test_tui_and_models_tabs.py::test_tui_tab_load_and_save_roundtrip SKIPPED [ 81%]
+tests/test_tui_and_models_tabs.py::test_keybind_editor_search_and_edit SKIPPED [ 82%]
+tests/test_tui_and_models_tabs.py::test_parse_models_json_accepts_list_and_mapping PASSED [ 82%]
+tests/test_tui_and_models_tabs.py::test_parse_models_text_extracts_provider_and_model PASSED [ 83%]
+tests/test_tui_and_models_tabs.py::test_models_tab_selection_callback SKIPPED [ 84%]
+tests/test_widgets.py::test_build_field_widget_selects_expected_class SKIPPED [ 85%]
+tests/test_widgets.py::test_labeled_entry_and_check_get_set_value SKIPPED [ 85%]
+tests/test_widgets.py::test_string_list_editor_add_and_remove SKIPPED    [ 86%]
+tests/test_widgets.py::test_permission_row_set_and_get SKIPPED (Tk d...) [ 87%]
+tests/test_widgets.py::test_object_editor_set_and_get SKIPPED (Tk di...) [ 87%]
+tests/test_widgets.py::test_string_or_bool_widget_values SKIPPED (Tk...) [ 88%]
+tests/test_widgets.py::test_dynamic_dict_editor_load_select_and_save SKIPPED [ 89%]
+tests/test_widgets.py::test_radio_group_get_set SKIPPED (Tk display ...) [ 90%]
+tests/test_widgets.py::test_labeled_spinbox_get_set SKIPPED (Tk disp...) [ 90%]
+tests/test_widgets.py::test_labeled_slider_get_set SKIPPED (Tk displ...) [ 91%]
+tests/test_widgets.py::test_color_picker_get_set SKIPPED (Tk display...) [ 92%]
+tests/test_widgets.py::test_key_value_editor_get_set SKIPPED (Tk dis...) [ 92%]
+tests/test_widgets.py::test_multiline_text_get_set SKIPPED (Tk displ...) [ 93%]
+tests/test_widgets.py::test_searchable_combo_get_set SKIPPED (Tk dis...) [ 94%]
+tests/test_widgets.py::test_build_field_widget_routes_new_types SKIPPED  [ 95%]
+tests/test_widgets.py::test_dynamic_dict_modal_ok SKIPPED (Tk displa...) [ 95%]
+tests/test_widgets.py::test_dynamic_dict_modal_cancel SKIPPED (Tk di...) [ 96%]
+tests/test_widgets.py::test_dynamic_dict_editor_has_edit_button SKIPPED  [ 97%]
+tests/test_widgets.py::test_labeled_entry_show_error_and_clear_error SKIPPED [ 97%]
+tests/test_widgets.py::test_labeled_spinbox_show_error_and_clear_error SKIPPED [ 98%]
+tests/test_widgets.py::test_labeled_combo_show_error_and_clear_error SKIPPED [ 99%]
+tests/test_widgets.py::test_labeled_check_show_error_and_clear_error SKIPPED [100%]
+
+======================== 93 passed, 47 skipped in 0.46s ========================
+[0m

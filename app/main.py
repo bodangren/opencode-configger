@@ -11,16 +11,26 @@ except ImportError:
     ttkb = None  # type: ignore[assignment]
     HAS_TTKBOOTSTRAP = False
 
+from app.config_export import SecretsMasker, export_to_clipboard, export_to_file
+from app.config_import import (
+    ImportResult,
+    MergeStrategy,
+    compute_diff,
+    import_from_clipboard,
+    import_from_file,
+    merge_overlay,
+    merge_replace,
+    merge_selective,
+)
 from app.config_io import (
     find_config_files,
     load_jsonc,
     new_config,
     new_tui_config,
+    preview_variable,
     save_json,
 )
 from app.config_schema import validate_config
-from app.config_io import preview_variable, substitute_variables
-from app.dialogs.file_picker import choose_open_config, choose_save_config
 from app.tabs.agents import AgentsTab
 from app.tabs.commands import CommandsTab
 from app.tabs.compaction import AdvancedTab
@@ -139,6 +149,22 @@ class ConfiggerApp:
                               command=self.new_file)
         file_menu.add_command(label="Open...", accelerator="Ctrl+O",
                               command=self.open_file)
+        file_menu.add_separator()
+
+        export_menu = tk.Menu(file_menu, tearoff=0)
+        export_menu.add_command(label="Export to File...",
+                                command=self._export_to_file)
+        export_menu.add_command(label="Export to Clipboard",
+                                command=self._export_to_clipboard)
+        file_menu.add_cascade(label="Export", menu=export_menu)
+
+        import_menu = tk.Menu(file_menu, tearoff=0)
+        import_menu.add_command(label="Import from File...",
+                                command=self._import_from_file)
+        import_menu.add_command(label="Import from Clipboard",
+                                command=self._import_from_clipboard)
+        file_menu.add_cascade(label="Import", menu=import_menu)
+
         file_menu.add_separator()
         file_menu.add_command(label="Save", accelerator="Ctrl+S",
                               command=self.save_file)
@@ -475,6 +501,124 @@ class ConfiggerApp:
         if ok:
             self._update_title()
         return ok
+
+    def _export_to_file(self) -> None:
+        path = choose_save_config(
+            initial_path=self.current_config_path,
+            default_filename="opencode_export.json",
+        )
+        if not path:
+            return
+        data = self._collect_from_tabs()
+        masker = SecretsMasker()
+        export_to_file(data, path, masker=masker)
+        messagebox.showinfo("Export", f"Configuration exported to:\n{path}")
+
+    def _export_to_clipboard(self) -> None:
+        data = self._collect_from_tabs()
+        masker = SecretsMasker()
+        export_to_clipboard(data, masker=masker)
+        messagebox.showinfo("Export", "Configuration copied to clipboard.")
+
+    def _import_from_file(self) -> None:
+        if not self._confirm_discard():
+            return
+        path = choose_open_config()
+        if not path:
+            return
+        self._do_import(path)
+
+    def _import_from_clipboard(self) -> None:
+        if not self._confirm_discard():
+            return
+        self._do_import(None)
+
+    def _do_import(self, path: Path | None) -> None:
+        if path:
+            result = import_from_file(path, validate=True)
+        else:
+            result = import_from_clipboard(validate=True)
+
+        if result.errors or result.unknown_keys:
+            errors = result.errors[:]
+            if result.unknown_keys:
+                errors.append(f"Unknown top-level keys: {', '.join(result.unknown_keys)}")
+            messagebox.showerror(
+                "Import Failed",
+                "Configuration has errors:\n\n" + "\n".join(f"  - {e}" for e in errors),
+            )
+            return
+
+        self._show_merge_dialog(result.data)
+
+    def _show_merge_dialog(self, imported_data: dict) -> None:
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Import Configuration")
+        dialog.geometry("600x500")
+        dialog.transient(self.root)
+        dialog.grab_set()
+
+        current_data = self._collect_from_tabs()
+        diff = compute_diff(current_data, imported_data)
+
+        main_frame = ttk.Frame(dialog, padding=10)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
+        ttk.Label(main_frame, text="Merge Strategy:", font=("Helvetica", 10, "bold")).pack(anchor="w")
+        strategy_var = tk.StringVar(value=MergeStrategy.REPLACE)
+        for s, label in [
+            (MergeStrategy.REPLACE, "Replace — discard current, use imported"),
+            (MergeStrategy.OVERLAY, "Overlay — merge imported over current"),
+        ]:
+            ttk.Radiobutton(main_frame, text=label, variable=strategy_var, value=s).pack(anchor="w")
+
+        diff_frame = ttk.LabelFrame(main_frame, text="Conflicting Keys", padding=5)
+        diff_frame.pack(fill=tk.BOTH, expand=True, pady=10)
+
+        canvas = tk.Canvas(diff_frame)
+        scrollbar = ttk.Scrollbar(diff_frame, orient=tk.VERTICAL, command=canvas.yview)
+        scrollable = ttk.Frame(canvas)
+        scrollable.bind(
+            "<Configure>",
+            lambda _: canvas.configure(scrollregion=canvas.bbox("all")),
+        )
+        canvas.create_window((0, 0), window=scrollable, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        accepted_keys: set[str] = set()
+        key_vars: dict[str, tk.BooleanVar] = {}
+        for key, (cur_val, imp_val) in diff.items():
+            row = ttk.Frame(scrollable)
+            row.pack(fill=tk.X, pady=2)
+            var = tk.BooleanVar(value=True)
+            key_vars[key] = var
+            ttk.Checkbutton(row, text=key, variable=var, width=20).pack(side=tk.LEFT)
+            ttk.Label(row, text=f"Current: {cur_val!r}  ->  Imported: {imp_val!r}",
+                     font=("Courier New", 9)).pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        def do_apply() -> None:
+            strategy = strategy_var.get()
+            if strategy == MergeStrategy.REPLACE:
+                merged = merge_replace(current_data, imported_data)
+            elif strategy == MergeStrategy.OVERLAY:
+                merged = merge_overlay(current_data, imported_data)
+            else:
+                merged = merge_selective(
+                    current_data, imported_data,
+                    accept_keys={k for k, v in key_vars.items() if v.get()},
+                )
+            self.opencode_data = merged
+            self._load_tabs(merged)
+            self._set_dirty(True)
+            dialog.destroy()
+
+        btn_frame = ttk.Frame(main_frame)
+        btn_frame.pack(pady=5)
+        ttk.Button(btn_frame, text="Cancel", command=dialog.destroy, width=12).pack(side=tk.LEFT, padx=5)
+        ttk.Button(btn_frame, text="Apply", command=do_apply, width=12).pack(side=tk.LEFT, padx=5)
 
     def quit_app(self) -> None:
         """Exit application after unsaved-change guard."""
