@@ -37,3 +37,4 @@
 - Config Import/Export track: All 4 phases completed in one session — export/import/masking and UI integration all landed cleanly with 93 tests passing.
 - Config Versioning track: 3 phases completed in one session — detect_version scans formatter/mcp commands for string values, MigrationRegistry stores direct-migration pairs, _find_next_version is a placeholder for future chain migrations.
 - Enhanced Model Explorer track: ModelLoader extracted from tab, async loading with callbacks, ModelsTab backward-compatible via inheritance from EnhancedModelExplorer.
+- Interactive Architecture Graph track: Phase 1 (GraphData + HierarchicalLayout) completed — GraphData uses directed edges (source→target), layer assignment via longest-path from sources (nodes with no incoming edges at layer 0).
