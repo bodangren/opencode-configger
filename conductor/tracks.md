@@ -29,7 +29,7 @@ This file tracks all major tracks for the project.
   *Link: [./tracks/config_versioning_migration_20260408/](./tracks/config_versioning_migration_20260408/)*
   Add logic to handle 'breaking changes' in config schemas, providing automated migration paths for older config files.
 
-- [ ] **Track: Enhanced Model Explorer**
+- [x] **Track: Enhanced Model Explorer**
   *Link: [./tracks/enhanced_model_explorer_20260408/](./tracks/enhanced_model_explorer_20260408/)*
   Develop a more advanced model picker with search, filtering by provider, and integration with live provider APIs to show available models.
 

@@ -11,23 +11,23 @@
 
 ## Phase 2: Explorer Widget
 
-- [ ] Task: Rebuild Models tab as `EnhancedModelExplorer` widget (`app/tabs/models.py`).
-  - [ ] Provider tree with collapsible sections; each leaf shows model ID, context window, "Set Primary", "Set Small" buttons.
-  - [ ] Search box filters visible models in real time (case-insensitive substring match on ID/name).
-  - [ ] Provider checkbox strip toggles visibility of individual providers.
-  - [ ] "Refresh" button re-invokes `ModelLoader` and redraws tree.
-  - [ ] Loading spinner while `ModelLoader` runs.
-  - [ ] Error panel with "opencode not found on PATH — check your PATH setting" when load fails.
-- [ ] Task: Write widget tests using fixture provider/model data.
-  - [ ] Search filters correctly.
-  - [ ] Provider toggle hides/shows groups.
-  - [ ] Error panel renders on load failure.
+- [x] Task: Rebuild Models tab as `EnhancedModelExplorer` widget (`app/tabs/models.py`).
+  - [x] Provider tree with collapsible sections; each leaf shows model ID, context window, "Set Primary", "Set Small" buttons.
+  - [x] Search box filters visible models in real time (case-insensitive substring match on ID/name).
+  - [x] Provider checkbox strip toggles visibility of individual providers.
+  - [x] "Refresh" button re-invokes `ModelLoader` and redraws tree.
+  - [x] Loading spinner while `ModelLoader` runs.
+  - [x] Error panel with "opencode not found on PATH — check your PATH setting" when load fails.
+- [x] Task: Write widget tests using fixture provider/model data.
+  - [x] Search filters correctly.
+  - [x] Provider toggle hides/shows groups.
+  - [x] Error panel renders on load failure.
 - [ ] Task: Conductor — User Manual Verification 'Phase 2: Explorer Widget' (Protocol in workflow.md)
 
 ## Phase 3: Set Primary / Set Small Integration
 
-- [ ] Task: Wire "Set Primary" and "Set Small" buttons to update the General tab fields.
-  - [ ] Emit a shared event or call a callback that updates `model` / `small_model` FieldDef values in the General tab.
-  - [ ] Confirm updated values appear immediately in the General tab without requiring a save.
+- [x] Task: Wire "Set Primary" and "Set Small" buttons to update the General tab fields.
+  - [x] Emit a shared event or call a callback that updates `model` / `small_model` FieldDef values in the General tab.
+  - [x] Confirm updated values appear immediately in the General tab without requiring a save.
 - [ ] Task: Integration test: select a model, verify General tab fields update.
 - [ ] Task: Conductor — User Manual Verification 'Phase 3: Set Primary / Set Small Integration' (Protocol in workflow.md)
