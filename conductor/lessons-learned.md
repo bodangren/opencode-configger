@@ -35,3 +35,4 @@
 - Phase 2 (Widget Error States): 4 tasks completed in one session — show_error/clear_error pattern is consistent across widget types.
 - Phase 1 (Scanner Infrastructure) + Phase 2 (Extensions Tab) for Dynamic Extension Discovery track: 5 commits across 2 phases completed in one session.
 - Config Import/Export track: All 4 phases completed in one session — export/import/masking and UI integration all landed cleanly with 93 tests passing.
+- Config Versioning track: 3 phases completed in one session — detect_version scans formatter/mcp commands for string values, MigrationRegistry stores direct-migration pairs, _find_next_version is a placeholder for future chain migrations.
