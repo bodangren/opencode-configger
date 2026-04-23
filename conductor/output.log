@@ -509,3 +509,249 @@ tests/test_widgets.py::test_labeled_check_show_error_and_clear_error SKIPPED [10
 
 ======================= 120 passed, 47 skipped in 0.54s ========================
 [0m
+[0m$ [0mgit add -A && git commit -m "Phase 1: ModelLoader backend with async loading and error handling"
+[master b00c00f] Phase 1: ModelLoader backend with async loading and error handling
+ 4 files changed, 567 insertions(+), 5 deletions(-)
+ create mode 100644 app/model_loader.py
+ create mode 100644 tests/test_model_loader.py
+[0m
+[0m← [0mEdit conductor/tracks/enhanced_model_explorer_20260408/plan.md
+Index: /home/daniel-bo/Desktop/opencode-configger/conductor/tracks/enhanced_model_explorer_20260408/plan.md
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/conductor/tracks/enhanced_model_explorer_20260408/plan.md
++++ /home/daniel-bo/Desktop/opencode-configger/conductor/tracks/enhanced_model_explorer_20260408/plan.md
+@@ -1,13 +1,13 @@
+ # Implementation Plan: Enhanced Model Explorer
+ 
+ ## Phase 1: Model Loading Backend
+ 
+-- [ ] Task: Implement `ModelLoader` (`app/model_loader.py`).
+-  - [ ] Run `opencode models --json` in a background thread with a 10-second timeout.
+-  - [ ] Parse output into `{provider: [ModelInfo(id, name, context_window)]}` dict.
+-  - [ ] On error (not on PATH, timeout), return empty dict and emit an error event.
+-  - [ ] Write unit tests with mocked subprocess output (success, error, timeout cases).
++- [x] Task: Implement `ModelLoader` (`app/model_loader.py`).
++  - [x] Run `opencode models --json` in a background thread with a 10-second timeout.
++  - [x] Parse output into `{provider: [ModelInfo(id, name, context_window)]}` dict.
++  - [x] On error (not on PATH, timeout), return empty dict and emit an error event.
++  - [x] Write unit tests with mocked subprocess output (success, error, timeout cases).
+ - [ ] Task: Conductor — User Manual Verification 'Phase 1: Model Loading Backend' (Protocol in workflow.md)
+ 
+ ## Phase 2: Explorer Widget
+ 
+
+[0m
+[0m# [0mTodos
+[x] Update tracks.md to mark Config Versioning as done
+[x] Update tech-debt.md - mark migration items resolved
+[x] Update lessons-learned.md
+[x] Commit checkpoint and push
+[x] Identify next track from tech-debt or roadmap
+[x] Phase 1: ModelLoader backend - write tests first (TDD)
+[ ] Phase 2: EnhancedModelExplorer widget - TDD
+[0m
+[0m← [0mWrite tests/test_enhanced_model_explorer.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython3 -m pytest tests/test_enhanced_model_explorer.py -v --tb=short 2>&1 | head -50
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/daniel-bo/Desktop/opencode-configger
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+____________ ERROR collecting tests/test_enhanced_model_explorer.py ____________
+ImportError while importing test module '/home/daniel-bo/Desktop/opencode-configger/tests/test_enhanced_model_explorer.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_enhanced_model_explorer.py:10: in <module>
+    from app.tabs.models import EnhancedModelExplorer, ModelInfo
+E   ImportError: cannot import name 'EnhancedModelExplorer' from 'app.tabs.models' (/home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py)
+=========================== short test summary info ============================
+ERROR tests/test_enhanced_model_explorer.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.27s ===============================
+[0m
+[0m→ [0mRead app/tabs/models.py
+[0m
+[0m← [0mWrite app/tabs/models.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython3 -m pytest tests/test_enhanced_model_explorer.py -v --tb=short 2>&1 | head -50
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/daniel-bo/Desktop/opencode-configger
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 22 items
+
+tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_creates_search_entry SKIPPED [  4%]
+tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_creates_provider_checkboxes SKIPPED [  9%]
+tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_shows_loading_spinner_initially SKIPPED [ 13%]
+tests/test_enhanced_model_explorer.py::TestEnhancedModelExplorerInit::test_auto_refresh_false_does_not_load_on_init SKIPPED [ 18%]
+tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_search_filters_by_model_id_substring SKIPPED [ 22%]
+tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_search_is_case_insensitive SKIPPED [ 27%]
+tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_empty_search_shows_all_providers SKIPPED [ 31%]
+tests/test_enhanced_model_explorer.py::TestSearchFiltering::test_no_matches_hides_all_providers SKIPPED [ 36%]
+tests/test_enhanced_model_explorer.py::TestProviderToggle::test_provider_checkbox_toggles_visibility SKIPPED [ 40%]
+tests/test_enhanced_model_explorer.py::TestProviderToggle::test_all_checkboxes_on_shows_all_providers SKIPPED [ 45%]
+tests/test_enhanced_model_explorer.py::TestProviderToggle::test_all_checkboxes_off_hides_all_providers SKIPPED [ 50%]
+tests/test_enhanced_model_explorer.py::TestModelSelection::test_select_model_enables_set_buttons SKIPPED [ 54%]
+tests/test_enhanced_model_explorer.py::TestModelSelection::test_no_selection_disables_set_buttons SKIPPED [ 59%]
+tests/test_enhanced_model_explorer.py::TestModelSelection::test_set_primary_calls_callback SKIPPED [ 63%]
+tests/test_enhanced_model_explorer.py::TestModelSelection::test_set_small_calls_callback SKIPPED [ 68%]
+tests/test_enhanced_model_explorer.py::TestRefresh::test_refresh_button_triggers_load SKIPPED [ 72%]
+tests/test_enhanced_model_explorer.py::TestErrorPanel::test_error_panel_shows_on_load_failure SKIPPED [ 77%]
+tests/test_enhanced_model_explorer.py::TestErrorPanel::test_error_panel_hides_on_success SKIPPED [ 81%]
+tests/test_enhanced_model_explorer.py::TestLoadingState::test_loading_label_shown_while_loading SKIPPED [ 86%]
+tests/test_enhanced_model_explorer.py::TestLoadingState::test_loading_label_hidden_after_load SKIPPED [ 90%]
+tests/test_enhanced_model_explorer.py::TestModelInfoDisplay::test_model_info_shows_id_and_provider SKIPPED [ 95%]
+tests/test_enhanced_model_explorer.py::TestFilteringIntegration::test_search_with_provider_toggle_combined SKIPPED [100%]
+
+============================= 22 skipped in 0.15s ==============================
+[0m
+[0m$ [0mpython3 -m pytest tests/test_tui_and_models_tabs.py tests/test_model_loader.py -v --tb=short 2>&1
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/daniel-bo/Desktop/opencode-configger
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 12 items / 1 error
+
+==================================== ERRORS ====================================
+______________ ERROR collecting tests/test_tui_and_models_tabs.py ______________
+ImportError while importing test module '/home/daniel-bo/Desktop/opencode-configger/tests/test_tui_and_models_tabs.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_tui_and_models_tabs.py:7: in <module>
+    from app.tabs.models import ModelsTab, parse_models_json, parse_models_text
+E   ImportError: cannot import name 'ModelsTab' from 'app.tabs.models' (/home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py)
+=========================== short test summary info ============================
+ERROR tests/test_tui_and_models_tabs.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.25s ===============================
+[0m
+[0m✗ [0medit failed
+[91m[1mError: [0mCould not find oldString in the file. It must match exactly, including whitespace, indentation, and line endings.
+[0m→ [0mRead app/tabs/models.py[90m [limit=20][0m
+[0m→ [0mRead app/tabs/models.py[90m [limit=50, offset=120][0m
+[0m→ [0mRead app/tabs/models.py[90m [limit=30, offset=195][0m
+[0m
+[0m← [0mEdit app/tabs/models.py
+Index: /home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py
++++ /home/daniel-bo/Desktop/opencode-configger/app/tabs/models.py
+@@ -214,5 +214,43 @@
+             return
+         self.on_pick_model(model, target)
+ 
+     def _update_selection(self) -> None:
+-        self._on_tree_select()
+\ No newline at end of file
++        self._on_tree_select()
++
++
++class ModelsTab(EnhancedModelExplorer):
++    """Legacy model browser tab — delegates to EnhancedModelExplorer for backward compatibility."""
++    pass
++
++
++def parse_models_json(raw: str) -> ModelMap:
++    """Parse JSON model output into provider->models mapping."""
++    from app.model_loader import _parse_models_output
++    return _parse_models_output(raw)
++
++
++def parse_models_text(raw: str) -> ModelMap:
++    """Parse text model output into provider->models mapping."""
++    import re
++    grouped: ModelMap = {}
++    for line in raw.splitlines():
++        cleaned = line.strip()
++        if not cleaned:
++            continue
++        match = re.search(r"([a-zA-Z0-9._-]+/[a-zA-Z0-9._:-]+)", cleaned)
++        if not match:
++            continue
++        model_name = match.group(1)
++        provider = model_name.split("/", 1)[0]
++        grouped.setdefault(provider, []).append(model_name)
++    return grouped
++
++
++def fetch_models_from_cli() -> ModelMap:
++    """Fetch available models by invoking OpenCode CLI."""
++    from app.model_loader import ModelLoadError, ModelLoader
++    loader = ModelLoader()
++    try:
++        return loader.load_sync()
++    except ModelLoadError:
++        raise RuntimeError("Unable to fetch models from OpenCode CLI")
+\ No newline at end of file
+
+[0m
+[0m→ [0mRead app/model_loader.py[90m [limit=30, offset=100][0m
+[0m
+[0m$ [0mpython3 -m pytest tests/test_tui_and_models_tabs.py tests/test_model_loader.py -v --tb=short 2>&1
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/daniel-bo/Desktop/opencode-configger
+configfile: pyproject.toml
+plugins: cov-7.1.0
+collecting ... collected 17 items
+
+tests/test_tui_and_models_tabs.py::test_tui_tab_load_and_save_roundtrip SKIPPED [  5%]
+tests/test_tui_and_models_tabs.py::test_keybind_editor_search_and_edit SKIPPED [ 11%]
+tests/test_tui_and_models_tabs.py::test_parse_models_json_accepts_list_and_mapping PASSED [ 17%]
+tests/test_tui_and_models_tabs.py::test_parse_models_text_extracts_provider_and_model PASSED [ 23%]
+tests/test_tui_and_models_tabs.py::test_models_tab_selection_callback SKIPPED [ 29%]
+tests/test_model_loader.py::TestModelInfo::test_model_info_creation PASSED [ 35%]
+tests/test_model_loader.py::TestModelInfo::test_model_info_optional_context_window PASSED [ 41%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_json_output PASSED [ 47%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_text_output_falls_back_when_json_fails PASSED [ 52%]
+tests/test_model_loader.py::TestModelLoaderSuccess::test_load_list_json_format PASSED [ 58%]
+tests/test_model_loader.py::TestModelLoaderError::test_opencode_not_on_path PASSED [ 64%]
+tests/test_model_loader.py::TestModelLoaderError::test_timeout PASSED    [ 70%]
+tests/test_model_loader.py::TestModelLoaderError::test_empty_output PASSED [ 76%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_calls_callback_on_success PASSED [ 82%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_calls_error_callback PASSED [ 88%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_load_async_timeout PASSED [ 94%]
+tests/test_model_loader.py::TestModelLoaderAsync::test_join_does_not_block_if_not_started PASSED [100%]
+
+======================== 14 passed, 3 skipped in 0.15s =========================
+[0m
+[0m$ [0mpython3 -m pytest tests/ -v --tb=short 2>&1 | tail -20
+tests/test_widgets.py::test_object_editor_set_and_get SKIPPED (Tk di...) [ 91%]
+tests/test_widgets.py::test_string_or_bool_widget_values SKIPPED (Tk...) [ 91%]
+tests/test_widgets.py::test_dynamic_dict_editor_load_select_and_save SKIPPED [ 92%]
+tests/test_widgets.py::test_radio_group_get_set SKIPPED (Tk display ...) [ 92%]
+tests/test_widgets.py::test_labeled_spinbox_get_set SKIPPED (Tk disp...) [ 93%]
+tests/test_widgets.py::test_labeled_slider_get_set SKIPPED (Tk displ...) [ 93%]
+tests/test_widgets.py::test_color_picker_get_set SKIPPED (Tk display...) [ 94%]
+tests/test_widgets.py::test_key_value_editor_get_set SKIPPED (Tk dis...) [ 94%]
+tests/test_widgets.py::test_multiline_text_get_set SKIPPED (Tk displ...) [ 95%]
+tests/test_widgets.py::test_searchable_combo_get_set SKIPPED (Tk dis...) [ 95%]
+tests/test_widgets.py::test_build_field_widget_routes_new_types SKIPPED  [ 96%]
+tests/test_widgets.py::test_dynamic_dict_modal_ok SKIPPED (Tk displa...) [ 96%]
+tests/test_widgets.py::test_dynamic_dict_modal_cancel SKIPPED (Tk di...) [ 97%]
+tests/test_widgets.py::test_dynamic_dict_editor_has_edit_button SKIPPED  [ 97%]
+tests/test_widgets.py::test_labeled_entry_show_error_and_clear_error SKIPPED [ 98%]
+tests/test_widgets.py::test_labeled_spinbox_show_error_and_clear_error SKIPPED [ 98%]
+tests/test_widgets.py::test_labeled_combo_show_error_and_clear_error SKIPPED [ 99%]
+tests/test_widgets.py::test_labeled_check_show_error_and_clear_error SKIPPED [100%]
+
+======================= 120 passed, 69 skipped in 0.54s ========================
+[0m

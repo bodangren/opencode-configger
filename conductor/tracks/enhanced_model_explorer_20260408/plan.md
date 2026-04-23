@@ -2,11 +2,11 @@
 
 ## Phase 1: Model Loading Backend
 
-- [ ] Task: Implement `ModelLoader` (`app/model_loader.py`).
-  - [ ] Run `opencode models --json` in a background thread with a 10-second timeout.
-  - [ ] Parse output into `{provider: [ModelInfo(id, name, context_window)]}` dict.
-  - [ ] On error (not on PATH, timeout), return empty dict and emit an error event.
-  - [ ] Write unit tests with mocked subprocess output (success, error, timeout cases).
+- [x] Task: Implement `ModelLoader` (`app/model_loader.py`).
+  - [x] Run `opencode models --json` in a background thread with a 10-second timeout.
+  - [x] Parse output into `{provider: [ModelInfo(id, name, context_window)]}` dict.
+  - [x] On error (not on PATH, timeout), return empty dict and emit an error event.
+  - [x] Write unit tests with mocked subprocess output (success, error, timeout cases).
 - [ ] Task: Conductor — User Manual Verification 'Phase 1: Model Loading Backend' (Protocol in workflow.md)
 
 ## Phase 2: Explorer Widget
