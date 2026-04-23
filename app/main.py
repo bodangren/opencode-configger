@@ -1,5 +1,8 @@
 """Application entry point for OpenCode Configger."""
 
+import argparse
+import shutil
+import sys
 from pathlib import Path
 import tkinter as tk
 from tkinter import messagebox, ttk
@@ -31,6 +34,7 @@ from app.config_io import (
     save_json,
 )
 from app.config_schema import validate_config
+from app.migration import MigrationRegistry, SchemaVersion, detect_version, v1_2_to_v1_3
 from app.tabs.agents import AgentsTab
 from app.tabs.commands import CommandsTab
 from app.tabs.compaction import AdvancedTab
@@ -49,19 +53,24 @@ from app.tabs.tools import ToolsTab
 class ConfiggerApp:
     """Main OpenCode config editor application."""
 
-    def __init__(self, root: tk.Tk):
+    def __init__(self, root: tk.Tk, *, migrate_path: Path | None = None):
         """Initialize the application.
 
         Args:
             root: Root Tk window.
+            migrate_path: Path to migrate (for --migrate CLI mode).
         """
         self.root = root
         self.current_config_path: Path | None = None
         self.opencode_data: dict = {}
         self.is_dirty = False
         self._validation_errors: list[str] = []
+        self._migration_registry = MigrationRegistry()
+        self._migration_registry.register(SchemaVersion.V1_2, SchemaVersion.V1_3, v1_2_to_v1_3)
 
         self.root.geometry("1000x700")
+        self.migration_banner = None
+        self._build_migration_banner()
         self._build_menu()
         self._build_save_button()
         self._build_status_bar()
@@ -101,6 +110,109 @@ class ConfiggerApp:
         self.status_dirty_label.pack(side=tk.RIGHT, padx=(0, 8))
 
         self._update_status()
+
+    def _build_migration_banner(self) -> None:
+        self.migration_banner = tk.Frame(self.root, bg="#b366ff", height=28)
+        self.migration_banner.pack_propagate(False)
+
+        label = ttk.Label(
+            self.migration_banner,
+            text="Config appears to be from OpenCode v1.2 — click to preview migration",
+            background="#b366ff",
+            foreground="white",
+            cursor="hand2",
+        )
+        label.pack(side=tk.LEFT, padx=8, pady=4)
+        label.bind("<Button-1>", lambda _: self._show_migration_dialog())
+
+        close_btn = tk.Label(
+            self.migration_banner,
+            text="×",
+            bg="#b366ff",
+            fg="white",
+            font=("Helvetica", 14, "bold"),
+            cursor="hand2",
+        )
+        close_btn.pack(side=tk.RIGHT, padx=(0, 8), pady=4)
+        close_btn.bind("<Button-1>", lambda _: self._dismiss_migration_banner())
+
+        self.migration_banner.pack_forget()
+
+    def _dismiss_migration_banner(self) -> None:
+        self.migration_banner.pack_forget()
+
+    def _check_migration_banner(self, data: dict) -> None:
+        version = detect_version(data)
+        if version == SchemaVersion.V1_2:
+            self.migration_banner.pack(fill=tk.X, side=tk.TOP)
+
+    def _show_migration_dialog(self) -> None:
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Migration Preview: v1.2 → v1.3")
+        dialog.geometry("600x400")
+        dialog.transient(self.root)
+        dialog.grab_set()
+
+        current_data = self._collect_from_tabs()
+        migrated = self._migration_registry.migrate(
+            current_data, SchemaVersion.V1_2, SchemaVersion.V1_3
+        )
+        diff = compute_diff(current_data, migrated)
+
+        main_frame = ttk.Frame(dialog, padding=10)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
+        ttk.Label(
+            main_frame,
+            text="The following changes will be made:",
+            font=("Helvetica", 10, "bold"),
+        ).pack(anchor="w", pady=(0, 10))
+
+        text_frame = ttk.Frame(main_frame)
+        text_frame.pack(fill=tk.BOTH, expand=True)
+
+        text_widget = tk.Text(text_frame, wrap=tk.WORD, font=("Courier New", 10))
+        scrollbar = ttk.Scrollbar(text_frame, orient=tk.VERTICAL, command=text_widget.yview)
+        text_widget.config(yscrollcommand=scrollbar.set)
+
+        for key, (old_val, new_val) in diff.items():
+            text_widget.insert(tk.END, f"Key: {key}\n")
+            text_widget.insert(tk.END, f"  Old: {old_val!r}\n")
+            text_widget.insert(tk.END, f"  New: {new_val!r}\n\n")
+
+        text_widget.config(state=tk.DISABLED)
+        text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        btn_frame = ttk.Frame(main_frame)
+        btn_frame.pack(pady=10)
+
+        def do_migrate() -> None:
+            migrated_data = self._migration_registry.migrate(
+                current_data, SchemaVersion.V1_2, SchemaVersion.V1_3
+            )
+            backup_path = self.current_config_path.with_suffix(
+                self.current_config_path.suffix + ".bak"
+            )
+            if self.current_config_path and self.current_config_path.exists():
+                shutil.copy2(self.current_config_path, backup_path)
+            save_json(self.current_config_path, migrated_data)
+            self.opencode_data = migrated_data
+            self._load_tabs(migrated_data)
+            self._set_dirty(False)
+            self._dismiss_migration_banner()
+            dialog.destroy()
+            messagebox.showinfo(
+                "Migration Complete",
+                f"Migrated config saved.\nBackup at: {backup_path}",
+            )
+
+        ttk.Button(btn_frame, text="Migrate & Save", command=do_migrate, width=15).pack(
+            side=tk.LEFT, padx=5
+        )
+        ttk.Button(btn_frame, text="Cancel", command=dialog.destroy, width=15).pack(
+            side=tk.LEFT, padx=5
+        )
 
     def _update_status(self) -> None:
         """Refresh status bar with current file path and dirty state."""
@@ -417,6 +529,7 @@ class ConfiggerApp:
         self._load_tabs(data)
         self._set_dirty(False)
         self._update_validation_state()
+        self._check_migration_banner(data)
         return True
 
     def _confirm_discard(self) -> bool:
@@ -629,12 +742,55 @@ class ConfiggerApp:
 
 def main() -> None:
     """Run the desktop GUI application."""
+    parser = argparse.ArgumentParser(description="OpenCode Configger")
+    parser.add_argument(
+        "--migrate",
+        type=Path,
+        metavar="FILE",
+        help="Migrate a v1.2 config file to v1.3 in place (creates .bak)",
+    )
+    args = parser.parse_args()
+
+    if args.migrate:
+        _migrate_cli(args.migrate)
+        return
+
     if HAS_TTKBOOTSTRAP:
         root = ttkb.Window(themename="darkly")
     else:
         root = tk.Tk()
     ConfiggerApp(root)
     root.mainloop()
+
+
+def _migrate_cli(path: Path) -> None:
+    """Migrate a config file from v1.2 to v1.3 and print diff."""
+    try:
+        data = load_jsonc(path)
+    except Exception as exc:
+        print(f"Error loading {path}: {exc}", file=sys.stderr)
+        sys.exit(1)
+
+    version = detect_version(data)
+    if version != SchemaVersion.V1_2:
+        print(f"Config is not v1.2 (detected: {version.value}), nothing to migrate.")
+        sys.exit(0)
+
+    registry = MigrationRegistry()
+    registry.register(SchemaVersion.V1_2, SchemaVersion.V1_3, v1_2_to_v1_3)
+    migrated = registry.migrate(data, SchemaVersion.V1_2, SchemaVersion.V1_3)
+
+    diff = compute_diff(data, migrated)
+    print(f"Migrating: {path}")
+    print("Changes:")
+    for key, (old_val, new_val) in diff.items():
+        print(f"  {key}: {old_val!r} -> {new_val!r}")
+
+    backup = path.with_suffix(path.suffix + ".bak")
+    shutil.copy2(path, backup)
+    save_json(path, migrated)
+    print(f"\nMigrated and saved to {path}")
+    print(f"Backup created at {backup}")
 
 
 if __name__ == "__main__":

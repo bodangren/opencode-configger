@@ -1,5 +1,10 @@
 """Tests for configuration migration."""
 
+import json
+import shutil
+import tempfile
+from pathlib import Path
+
 import pytest
 
 from app.migration import (
@@ -164,3 +169,36 @@ def test_migration_registry_preserves_unknown_keys():
     result = registry.migrate(config, SchemaVersion.V1_2, SchemaVersion.V1_3)
     assert "unknownKey" in result
     assert result["unknownKey"] == {"nested": "value"}
+
+
+def test_migrate_cli_v1_2_to_v1_3():
+    from app.main import _migrate_cli
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        path = Path(tmpdir) / "test_config.json"
+        config = {
+            "formatter": {
+                "prettier": {"command": "prettier --write", "extensions": [".js"]}
+            }
+        }
+        path.write_text(json.dumps(config))
+
+        import io
+        import sys
+
+        old_stdout = sys.stdout
+        sys.stdout = io.StringIO()
+        try:
+            _migrate_cli(path)
+        finally:
+            output = sys.stdout.getvalue()
+            sys.stdout = old_stdout
+
+        assert "Migrating:" in output
+        assert "formatter" in output
+
+        migrated = json.loads(path.read_text())
+        assert migrated["formatter"]["prettier"]["command"] == ["prettier --write"]
+
+        backup = path.with_suffix(path.suffix + ".bak")
+        assert backup.exists()
