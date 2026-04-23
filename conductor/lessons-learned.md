@@ -14,6 +14,9 @@
 - Error border via tk.Frame `highlightbackground` + `highlightthickness` — cleaner than ttk styling for dynamic error states.
 - Per-widget error state (show_error/clear_error) wired via on_change callback chain — works consistently across Entry, Combo, Spinbox, Check.
 - PluginScanner + McpScanner: scanner modules return descriptor objects; separation of scanning from rendering keeps logic testable.
+- SecretsMasker: substring-based keyword matching (case-insensitive) over regex for default patterns — simpler and faster for common secret names.
+- Merge strategies (replace/overlay/selective) as pure functions operating on dicts — easy to unit test independently of UI.
+- `strip_jsonc_comments` handles both trailing commas and JSONC comments uniformly, so import path doesn't need separate JSONC detection.
 
 ## Implementation Notes
 - Plan spec uses `min`/`max`/`choices` but implementation uses `min_value`/`max_value`/`enum_values` — semantics are identical, just naming difference. No refactoring needed.
@@ -22,6 +25,8 @@
 - Extensions tab runs scanners synchronously on the main thread (3s timeout per plugin/MCP is fast enough to not block UI significantly).
 - CollapsibleSection uses +/– prefix on header label to indicate expand/collapse state.
 - ToolTip bindings (<Enter>, <Leave>) persist after _hide; creating new ToolTip instances on each show_error caused rogue tooltips on hover. Fix: reuse single instance with set_text + show instead of creating new.
+- config_export.py and config_import.py are standalone modules — export is pure data transformation, import returns ImportResult with errors/unknown_keys/is_valid.
+- Merge dialog (Phase 4) uses compute_diff to show conflicts as checkboxes with current vs imported values.
 
 ## Planning Improvements
 - Phase 3 (Save Guard & Status Bar): 3 tasks completed in one session — status bar label, save button disable/enable, and integration tests.
@@ -29,3 +34,4 @@
 - Phase 6.1-6.3 (validation, status bar, variable preview) were already implemented before Phase 6 started — plan was ahead of marks.
 - Phase 2 (Widget Error States): 4 tasks completed in one session — show_error/clear_error pattern is consistent across widget types.
 - Phase 1 (Scanner Infrastructure) + Phase 2 (Extensions Tab) for Dynamic Extension Discovery track: 5 commits across 2 phases completed in one session.
+- Config Import/Export track: All 4 phases completed in one session — export/import/masking and UI integration all landed cleanly with 93 tests passing.

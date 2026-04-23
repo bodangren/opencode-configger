@@ -36,6 +36,6 @@ This file tracks all major tracks for the project.
 - [ ] **Track: Interactive Architecture Graph**
   Add a visual tab that renders a graph of the configured agents, providers, and tools to help users visualize their setup.
 
-- [ ] **Track: Config Import/Export**
+- [x] **Track: Config Import/Export**
   *Link: [./tracks/config_import_export_20260423/](./tracks/config_import_export_20260423/)*
   Import/export configurations for sharing and migration with secrets masking, schema validation, and merge strategies.

@@ -10,5 +10,6 @@
 |------|-------|------|----------|--------|-------|
 | 2026-04-12 | Schema Validation | Error tooltip re-shows on every show_error call | Low | Resolved | Fixed by reusing single ToolTip instance; added set_text/show methods |
 | 2026-04-13 | Schema Validation Phase 3 | Status bar error label placeholder — no entry widget to wire per-field validation directly | Low | Open | Validation is full-config only; per-field inline errors not yet wired to status bar |
+| 2026-04-23 | Config Import/Export | SecretsMasker uses simple substring match instead of regex for patterns | Low | Open | _contains_secret does case-insensitive substring check; default patterns are keyword-based (API_KEY, TOKEN, etc.) |
 
 

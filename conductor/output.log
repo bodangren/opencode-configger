@@ -878,3 +878,111 @@ tests/test_widgets.py::test_labeled_check_show_error_and_clear_error SKIPPED [10
 
 ======================== 93 passed, 47 skipped in 0.46s ========================
 [0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && git add -A && git commit -m "feat(ui): Phase 4 - import/export UI integration
+
+Task 4.1: Conflict resolution merge dialog with per-key accept/reject
+Task 4.2: Export to file/clipboard, Import from file/clipboard in File menu
+Task 4.3: Full test suite passes (93 passed, 47 skipped Tk tests)" --no-gpg-sign 2>&1
+[master a563e59] feat(ui): Phase 4 - import/export UI integration
+ 2 files changed, 470 insertions(+), 2 deletions(-)
+[0m
+[0m# [0mTodos
+[x] Phase 1: Export Module
+[x] Phase 2: Import and Validation Module
+[x] Phase 3: Merge Strategies
+[x] Phase 4: UI Integration
+[ ] Finalize: update tech-debt.md, lessons-learned.md, commit
+[0m
+[0m← [0mEdit conductor/tech-debt.md
+Index: /home/daniel-bo/Desktop/opencode-configger/conductor/tech-debt.md
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/conductor/tech-debt.md
++++ /home/daniel-bo/Desktop/opencode-configger/conductor/tech-debt.md
+@@ -9,6 +9,7 @@
+ | Date | Track | Item | Severity | Status | Notes |
+ |------|-------|------|----------|--------|-------|
+ | 2026-04-12 | Schema Validation | Error tooltip re-shows on every show_error call | Low | Resolved | Fixed by reusing single ToolTip instance; added set_text/show methods |
+ | 2026-04-13 | Schema Validation Phase 3 | Status bar error label placeholder — no entry widget to wire per-field validation directly | Low | Open | Validation is full-config only; per-field inline errors not yet wired to status bar |
++| 2026-04-23 | Config Import/Export | SecretsMasker uses simple substring match instead of regex for patterns | Low | Open | _contains_secret does case-insensitive substring check; default patterns are keyword-based (API_KEY, TOKEN, etc.) |
+ 
+ 
+
+[0m
+[0m← [0mEdit conductor/lessons-learned.md
+Index: /home/daniel-bo/Desktop/opencode-configger/conductor/lessons-learned.md
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/conductor/lessons-learned.md
++++ /home/daniel-bo/Desktop/opencode-configger/conductor/lessons-learned.md
+@@ -13,19 +13,25 @@
+ - `validate_field` + `validate_config` pattern: field-level validators composed into a full-config validator — easy to test in isolation and extend per section.
+ - Error border via tk.Frame `highlightbackground` + `highlightthickness` — cleaner than ttk styling for dynamic error states.
+ - Per-widget error state (show_error/clear_error) wired via on_change callback chain — works consistently across Entry, Combo, Spinbox, Check.
+ - PluginScanner + McpScanner: scanner modules return descriptor objects; separation of scanning from rendering keeps logic testable.
++- SecretsMasker: substring-based keyword matching (case-insensitive) over regex for default patterns — simpler and faster for common secret names.
++- Merge strategies (replace/overlay/selective) as pure functions operating on dicts — easy to unit test independently of UI.
++- `strip_jsonc_comments` handles both trailing commas and JSONC comments uniformly, so import path doesn't need separate JSONC detection.
+ 
+ ## Implementation Notes
+ - Plan spec uses `min`/`max`/`choices` but implementation uses `min_value`/`max_value`/`enum_values` — semantics are identical, just naming difference. No refactoring needed.
+ - Widget error state uses wrapper tk.Frame with red highlightborder around the inner ttk widget.
+ - Validation state (_validation_errors) maintained in main.py and updated via _update_validation_state() on every change, load, and after _collect_from_tabs.
+ - Extensions tab runs scanners synchronously on the main thread (3s timeout per plugin/MCP is fast enough to not block UI significantly).
+ - CollapsibleSection uses +/– prefix on header label to indicate expand/collapse state.
+ - ToolTip bindings (<Enter>, <Leave>) persist after _hide; creating new ToolTip instances on each show_error caused rogue tooltips on hover. Fix: reuse single instance with set_text + show instead of creating new.
++- config_export.py and config_import.py are standalone modules — export is pure data transformation, import returns ImportResult with errors/unknown_keys/is_valid.
++- Merge dialog (Phase 4) uses compute_diff to show conflicts as checkboxes with current vs imported values.
+ 
+ ## Planning Improvements
+ - Phase 3 (Save Guard & Status Bar): 3 tasks completed in one session — status bar label, save button disable/enable, and integration tests.
+ - Phase 6 (Polish) tasks were smaller than Phase 1-5 (Schema + Widgets) — 4 tasks completed in one session vs multi-session phases earlier.
+ - Phase 6.1-6.3 (validation, status bar, variable preview) were already implemented before Phase 6 started — plan was ahead of marks.
+ - Phase 2 (Widget Error States): 4 tasks completed in one session — show_error/clear_error pattern is consistent across widget types.
+-- Phase 1 (Scanner Infrastructure) + Phase 2 (Extensions Tab) for Dynamic Extension Discovery track: 5 commits across 2 phases completed in one session.
+\ No newline at end of file
++- Phase 1 (Scanner Infrastructure) + Phase 2 (Extensions Tab) for Dynamic Extension Discovery track: 5 commits across 2 phases completed in one session.
++- Config Import/Export track: All 4 phases completed in one session — export/import/masking and UI integration all landed cleanly with 93 tests passing.
+\ No newline at end of file
+
+[0m
+[0m← [0mEdit conductor/tracks.md
+Index: /home/daniel-bo/Desktop/opencode-configger/conductor/tracks.md
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/conductor/tracks.md
++++ /home/daniel-bo/Desktop/opencode-configger/conductor/tracks.md
+@@ -35,7 +35,7 @@
+ 
+ - [ ] **Track: Interactive Architecture Graph**
+   Add a visual tab that renders a graph of the configured agents, providers, and tools to help users visualize their setup.
+ 
+-- [ ] **Track: Config Import/Export**
++- [x] **Track: Config Import/Export**
+   *Link: [./tracks/config_import_export_20260423/](./tracks/config_import_export_20260423/)*
+   Import/export configurations for sharing and migration with secrets masking, schema validation, and merge strategies.
+
+[0m
+[0m← [0mEdit conductor/tracks/config_import_export_20260423/metadata.json
+Index: /home/daniel-bo/Desktop/opencode-configger/conductor/tracks/config_import_export_20260423/metadata.json
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/conductor/tracks/config_import_export_20260423/metadata.json
++++ /home/daniel-bo/Desktop/opencode-configger/conductor/tracks/config_import_export_20260423/metadata.json
+@@ -1,11 +1,11 @@
+ {
+   "track_id": "config_import_export_20260423",
+   "type": "feature",
+-  "status": "new",
++  "status": "completed",
+   "created_at": "2026-04-23T00:00:00Z",
+   "updated_at": "2026-04-23T00:00:00Z",
+   "description": "Import/export configurations for sharing and migration with secrets masking, schema validation, and merge strategies.",
+   "estimated_tasks": 10,
+-  "actual_tasks": null,
++  "actual_tasks": 10,
+   "deviation_notes": ""
+ }
+
+[0m
+[0m$ [0mcd /home/daniel-bo/Desktop/opencode-configger && python3 -m pytest tests/ -q 2>&1 | tail -5
+........................................................................ [ 51%]
+....sssssssssss...............sssssssssssss..sssssssssssssssssssssss     [100%]
+93 passed, 47 skipped in 0.39s
+[0m
