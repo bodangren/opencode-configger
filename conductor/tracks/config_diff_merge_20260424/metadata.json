@@ -1,0 +1,8 @@
+{
+  "id": "config_diff_merge_20260424",
+  "title": "Config Diff & Merge Tool",
+  "status": "pending",
+  "created": "2026-04-24",
+  "dependencies": ["config_import_export_20260423"],
+  "tags": ["diff", "merge", "comparison", "collaboration"]
+}

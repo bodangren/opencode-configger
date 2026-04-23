@@ -1,0 +1,8 @@
+{
+  "id": "live_config_validation_20260424",
+  "title": "Live Config Validation with OpenCode",
+  "status": "pending",
+  "created": "2026-04-24",
+  "dependencies": ["schema_validation_feedback_20260408"],
+  "tags": ["validation", "live", "openai", "real-time"]
+}

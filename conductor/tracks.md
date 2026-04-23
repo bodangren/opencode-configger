@@ -5,32 +5,32 @@ This file tracks all major tracks for the project.
 ---
 
 - [x] **Track: MVP — Core Config Editor**
-  *Link: [./tracks/mvp_20260328/](./tracks/mvp_20260328/)*
+  *Link: [./archive/mvp_20260328/](./archive/mvp_20260328/)*
 - [x] **Track: UX Overhaul — Schema Correction & Modern Widgets**
-  *Link: [./tracks/ux_overhaul_20260328/](./tracks/ux_overhaul_20260328/)*
+  *Link: [./archive/ux_overhaul_20260328/](./archive/ux_overhaul_20260328/)*
 
 ---
 
 - [x] **Track: Schema Validation & Feedback**
-  *Link: [./tracks/schema_validation_feedback_20260408/](./tracks/schema_validation_feedback_20260408/)*
+  *Link: [./archive/schema_validation_feedback_20260408/](./archive/schema_validation_feedback_20260408/)*
   Implement real-time validation against the defined 'FieldDef' constraints (min/max, required) with visual error indicators in the GUI.
 
 ## Future Roadmap
 
 - [x] **Track: Dynamic Extension Discovery**
-  *Link: [./tracks/dynamic_extension_discovery_20260408/](./tracks/dynamic_extension_discovery_20260408/)*
+  *Link: [./archive/dynamic_extension_discovery_20260408/](./archive/dynamic_extension_discovery_20260408/)*
   Enable the GUI to scan for and integrate configuration requirements from OpenCode plugins or MCP servers dynamically.
 
 - [x] **Track: Tooltip Fix — Error tooltip re-show bug**
-  *Link: [./tracks/tooltip_fix_20260417/](./tracks/tooltip_fix_20260417/)*
+  *Link: [./archive/tooltip_fix_20260417/](./archive/tooltip_fix_20260417/)*
   Fix error tooltip re-showing on every show_error call by reusing single ToolTip instance.
 
 - [x] **Track: Configuration Versioning & Migration**
-  *Link: [./tracks/config_versioning_migration_20260408/](./tracks/config_versioning_migration_20260408/)*
+  *Link: [./archive/config_versioning_migration_20260408/](./archive/config_versioning_migration_20260408/)*
   Add logic to handle 'breaking changes' in config schemas, providing automated migration paths for older config files.
 
 - [x] **Track: Enhanced Model Explorer**
-  *Link: [./tracks/enhanced_model_explorer_20260408/](./tracks/enhanced_model_explorer_20260408/)*
+  *Link: [./archive/enhanced_model_explorer_20260408/](./archive/enhanced_model_explorer_20260408/)*
   Develop a more advanced model picker with search, filtering by provider, and integration with live provider APIs to show available models.
 
 - [~] **Track: Interactive Architecture Graph**
@@ -38,5 +38,23 @@ This file tracks all major tracks for the project.
   Add a visual tab that renders a graph of the configured agents, providers, and tools to help users visualize their setup.
 
 - [x] **Track: Config Import/Export**
-  *Link: [./tracks/config_import_export_20260423/](./tracks/config_import_export_20260423/)*
+  *Link: [./archive/config_import_export_20260423/](./archive/config_import_export_20260423/)*
   Import/export configurations for sharing and migration with secrets masking, schema validation, and merge strategies.
+
+## Upcoming Tracks
+
+- [ ] **Track: Config Templates & Presets**
+  *Link: [./tracks/config_templates_presets_20260424/](./tracks/config_templates_presets_20260424/)*
+  Pre-built configuration templates for common setups, template browser, one-click application, custom template save/export.
+
+- [ ] **Track: Undo/Redo & Change History**
+  *Link: [./tracks/undo_redo_history_20260424/](./tracks/undo_redo_history_20260424/)*
+  Command pattern for change tracking, unlimited undo/redo, history persistence, visual diff between states.
+
+- [ ] **Track: Config Diff & Merge Tool**
+  *Link: [./tracks/config_diff_merge_20260424/](./tracks/config_diff_merge_20260424/)*
+  Side-by-side diff view, three-way merge for conflicts, field-level change indicators, merge preview.
+
+- [ ] **Track: Live Config Validation with OpenCode**
+  *Link: [./tracks/live_config_validation_20260424/](./tracks/live_config_validation_20260424/)*
+  Validate against running OpenCode instance, model name verification, provider connectivity tests, MCP server health checks.

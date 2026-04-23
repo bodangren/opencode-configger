@@ -1,0 +1,8 @@
+{
+  "id": "undo_redo_history_20260424",
+  "title": "Undo/Redo & Change History",
+  "status": "pending",
+  "created": "2026-04-24",
+  "dependencies": ["mvp_20260328"],
+  "tags": ["ux", "safety", "history", "undo"]
+}
