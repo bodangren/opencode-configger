@@ -4,6 +4,7 @@ import argparse
 import shutil
 import sys
 from pathlib import Path
+from typing import Any
 import tkinter as tk
 from tkinter import messagebox, ttk
 
@@ -51,6 +52,7 @@ from app.tabs.tui import TuiTab
 from app.tabs.tools import ToolsTab
 from app.tabs.templates import TemplatesTab
 from app.template import Template
+from app.history import HistoryManager
 
 
 class ConfiggerApp:
@@ -70,6 +72,7 @@ class ConfiggerApp:
         self._validation_errors: list[str] = []
         self._migration_registry = MigrationRegistry()
         self._migration_registry.register(SchemaVersion.V1_2, SchemaVersion.V1_3, v1_2_to_v1_3)
+        self._history: HistoryManager | None = None
 
         self.root.geometry("1000x700")
         self.migration_banner = None
@@ -404,6 +407,8 @@ class ConfiggerApp:
         self.root.bind("<Control-o>", lambda _: self.open_file())
         self.root.bind("<Control-s>", lambda _: self.save_file())
         self.root.bind("<Control-S>", lambda _: self.save_file_as())
+        self.root.bind("<Control-z>", lambda _: self._undo())
+        self.root.bind("<Control-Z>", lambda _: self._redo())
         self.root.bind("<Control-q>", lambda _: self.quit_app())
         self.root.protocol("WM_DELETE_WINDOW", self.quit_app)
 
@@ -419,6 +424,42 @@ class ConfiggerApp:
         """Mark document as modified when any field changes."""
         self._set_dirty(True)
         self._update_validation_state()
+
+    def _undo(self) -> None:
+        """Undo the last change."""
+        if self._history and self._history.can_undo():
+            result = self._history.undo()
+            if result:
+                field, values = result
+                self._apply_field_change(field, values)
+                self._set_dirty(True)
+                self._update_validation_state()
+
+    def _redo(self) -> None:
+        """Redo the last undone change."""
+        if self._history and self._history.can_redo():
+            result = self._history.redo()
+            if result:
+                field, values = result
+                self._apply_field_change(field, values)
+                self._set_dirty(True)
+                self._update_validation_state()
+
+    def _apply_field_change(self, field: str, values: dict[str, Any]) -> None:
+        """Apply a field change from history undo/redo."""
+        self._apply_nested_value(self.opencode_data, field, values.get(field))
+        self._load_tabs(self.opencode_data)
+        self._update_validation_state()
+
+    def _apply_nested_value(self, data: dict, path: str, value: Any) -> None:
+        """Set a nested value in a dict using dot notation."""
+        keys = path.split(".")
+        current = data
+        for key in keys[:-1]:
+            if key not in current:
+                current[key] = {}
+            current = current[key]
+        current[keys[-1]] = value
 
     def _load_default_or_new(self) -> None:
         """Load default config if found, otherwise initialize a new one."""
@@ -449,6 +490,14 @@ class ConfiggerApp:
 
         self._set_dirty(False)
         self._update_validation_state()
+        self._init_history()
+
+    def _init_history(self) -> None:
+        """Initialize history manager with current config path."""
+        if self.current_config_path:
+            self._history = HistoryManager(config_path=self.current_config_path)
+        else:
+            self._history = HistoryManager()
 
     def _load_tabs(self, data: dict) -> None:
         """Load config data into all instantiated tabs.
@@ -628,6 +677,7 @@ class ConfiggerApp:
         self._set_dirty(False)
         self._update_validation_state()
         self._check_migration_banner(data)
+        self._init_history()
         return True
 
     def _confirm_discard(self) -> bool:
