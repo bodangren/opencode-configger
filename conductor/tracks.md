@@ -44,11 +44,11 @@ This file tracks all major tracks for the project.
 ## Upcoming Tracks
 
 - [x] **Track: Config Templates & Presets**
-  *Link: [./tracks/config_templates_presets_20260424/](./tracks/config_templates_presets_20260424/)*
+  *Link: [./archive/config_templates_presets_20260424/](./archive/config_templates_presets_20260424/)*
   Pre-built configuration templates for common setups, template browser, one-click application, custom template save/export.
 
 - [x] **Track: Undo/Redo & Change History**
-  *Link: [./tracks/undo_redo_history_20260424/](./tracks/undo_redo_history_20260424/)*
+  *Link: [./archive/undo_redo_history_20260424/](./archive/undo_redo_history_20260424/)*
   Command pattern for change tracking, unlimited undo/redo, history persistence, visual diff between states.
 
 - [ ] **Track: Config Diff & Merge Tool**
