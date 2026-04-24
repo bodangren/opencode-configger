@@ -80,6 +80,7 @@ class ConfiggerApp:
         self._build_menu()
         self._build_save_button()
         self._build_status_bar()
+        self._build_edit_buttons()
         self._build_tabs()
         self._bind_shortcuts()
 
@@ -93,6 +94,35 @@ class ConfiggerApp:
             self.root, text="Save", command=self.save_file, width=10,
         )
         self.save_btn.place(relx=1.0, rely=1.0, x=-8, y=-2, anchor="se")
+
+    def _build_edit_buttons(self) -> None:
+        """Create undo/redo buttons in the button bar."""
+        btn_frame = ttk.Frame(self.root)
+        btn_frame.place(relx=1.0, rely=1.0, x=-200, y=-2, anchor="se")
+
+        self.undo_btn = ttk.Button(
+            btn_frame, text="Undo", command=self._undo, width=6,
+            state="disabled",
+        )
+        self.undo_btn.pack(side="left", padx=(0, 2))
+
+        self.redo_btn = ttk.Button(
+            btn_frame, text="Redo", command=self._redo, width=6,
+            state="disabled",
+        )
+        self.redo_btn.pack(side="left")
+
+    def _update_edit_buttons(self) -> None:
+        """Update undo/redo button states based on history."""
+        if not self._history:
+            self.undo_btn.configure(state="disabled")
+            self.redo_btn.configure(state="disabled")
+            return
+
+        undo_state = "normal" if self._history.can_undo() else "disabled"
+        redo_state = "normal" if self._history.can_redo() else "disabled"
+        self.undo_btn.configure(state=undo_state)
+        self.redo_btn.configure(state=redo_state)
 
     def _build_status_bar(self) -> None:
         """Create the status bar at the bottom of the window."""
@@ -424,6 +454,19 @@ class ConfiggerApp:
         """Mark document as modified when any field changes."""
         self._set_dirty(True)
         self._update_validation_state()
+        self._update_edit_buttons()
+
+    def record_change(self, field: str, old_value: Any, new_value: Any) -> None:
+        """Record a configuration change for undo/redo tracking.
+
+        Args:
+            field: Dot-notation path to the field.
+            old_value: Value before the change.
+            new_value: Value after the change.
+        """
+        if self._history:
+            self._history.record_change(field, old_value, new_value)
+            self._update_edit_buttons()
 
     def _undo(self) -> None:
         """Undo the last change."""
@@ -434,6 +477,7 @@ class ConfiggerApp:
                 self._apply_field_change(field, values)
                 self._set_dirty(True)
                 self._update_validation_state()
+                self._update_edit_buttons()
 
     def _redo(self) -> None:
         """Redo the last undone change."""
@@ -444,6 +488,7 @@ class ConfiggerApp:
                 self._apply_field_change(field, values)
                 self._set_dirty(True)
                 self._update_validation_state()
+                self._update_edit_buttons()
 
     def _apply_field_change(self, field: str, values: dict[str, Any]) -> None:
         """Apply a field change from history undo/redo."""
