@@ -1,0 +1,19 @@
+// Minimal configuration template — starter setup with only essential settings
+{
+  "id": "minimal",
+  "name": "Minimal",
+  "description": "A minimal configuration with just the core settings needed to get started. Good for testing or lightweight usage.",
+  "tags": ["minimal", "starter", "basic"],
+  "category": "starter",
+  "version": "1.0",
+  "author": "OpenCode",
+  "config": {
+    "model": "anthropic/claude-3-5-haiku",
+    "default_agent": "build",
+    "agent": {
+      "build": {
+        "model": "anthropic/claude-3-5-haiku"
+      }
+    }
+  }
+}

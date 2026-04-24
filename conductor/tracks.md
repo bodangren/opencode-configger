@@ -43,7 +43,7 @@ This file tracks all major tracks for the project.
 
 ## Upcoming Tracks
 
-- [ ] **Track: Config Templates & Presets**
+- [x] **Track: Config Templates & Presets**
   *Link: [./tracks/config_templates_presets_20260424/](./tracks/config_templates_presets_20260424/)*
   Pre-built configuration templates for common setups, template browser, one-click application, custom template save/export.
 

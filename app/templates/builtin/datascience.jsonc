@@ -1,0 +1,59 @@
+// Data Science template — analysis and ML workflows
+{
+  "id": "datascience",
+  "name": "Data Science",
+  "description": "A configuration optimized for data science and machine learning workflows. Includes Jupyter support, pandas, numpy, scikit-learn, and visualization tools.",
+  "tags": ["data-science", "python", "ml", "ai", "jupyter"],
+  "category": "specialized",
+  "version": "1.0",
+  "author": "OpenCode",
+  "config": {
+    "model": "anthropic/claude-sonnet-4-5",
+    "default_agent": "build",
+    "agent": {
+      "build": {
+        "model": "anthropic/claude-sonnet-4-5",
+        "permission": {
+          "bash": {},
+          "read": {},
+          "edit": {},
+          "glob": {},
+          "write": {}
+        }
+      },
+      "plan": {
+        "model": "anthropic/claude-3-5-haiku",
+        "permission": {
+          "bash": {},
+          "read": {},
+          "glob": {}
+        }
+      }
+    },
+    "command": {
+      "notebook": {
+        "agent": "build",
+        "command": "jupyter notebook"
+      },
+      "train": {
+        "agent": "build",
+        "command": "python train.py"
+      },
+      "visualize": {
+        "agent": "build",
+        "command": "python visualize.py"
+      }
+    },
+    "formatter": {
+      "black": {
+        "command": "black ."
+      }
+    },
+    "lsp": {
+      "pyright": {
+        "type": "local",
+        "command": "pyright"
+      }
+    }
+  }
+}

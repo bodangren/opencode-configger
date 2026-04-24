@@ -1,0 +1,56 @@
+// Python Development template — full-featured setup for Python projects
+{
+  "id": "python_dev",
+  "name": "Python Development",
+  "description": "A comprehensive configuration for Python development with code editing, linting, and testing tools. Includes pyright for type checking, ruff for linting, and pytest for testing.",
+  "tags": ["python", "development", "testing", "linting"],
+  "category": "development",
+  "version": "1.0",
+  "author": "OpenCode",
+  "config": {
+    "model": "anthropic/claude-sonnet-4-5",
+    "default_agent": "build",
+    "agent": {
+      "build": {
+        "model": "anthropic/claude-sonnet-4-5",
+        "permission": {
+          "bash": {},
+          "read": {},
+          "edit": {},
+          "glob": {},
+          "grep": {},
+          "write": {}
+        }
+      },
+      "plan": {
+        "model": "anthropic/claude-3-5-haiku",
+        "permission": {
+          "bash": {},
+          "read": {},
+          "glob": {}
+        }
+      }
+    },
+    "formatter": {
+      "ruff": {
+        "command": "ruff format"
+      }
+    },
+    "lsp": {
+      "pyright": {
+        "type": "local",
+        "command": "pyright"
+      }
+    },
+    "command": {
+      "test": {
+        "agent": "build",
+        "command": "python -m pytest"
+      },
+      "lint": {
+        "agent": "build",
+        "command": "ruff check"
+      }
+    }
+  }
+}

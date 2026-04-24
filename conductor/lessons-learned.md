@@ -39,3 +39,4 @@
 - Enhanced Model Explorer track: ModelLoader extracted from tab, async loading with callbacks, ModelsTab backward-compatible via inheritance from EnhancedModelExplorer.
 - Interactive Architecture Graph track: Phase 1 (GraphData + HierarchicalLayout) completed — GraphData uses directed edges (source→target), layer assignment via longest-path from sources (nodes with no incoming edges at layer 0).
 - Architecture tab: GraphCanvas sets _graph reference during load_graph() before redraw() so helper methods (highlight_neighbors, show_tooltip, clear_highlight) can reference the stored graph. Tooltip Toplevel uses overrideredirect(True) for borderless floating appearance.
+- Config Templates track: Template dataclass + TemplateRepository — built-in templates in app/templates/builtin/*.jsonc, custom templates in ~/.configger/templates/. Template.to_dict() includes built_in and filename fields for round-trip JSONC serialization.

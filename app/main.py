@@ -49,6 +49,8 @@ from app.tabs.providers import ProvidersTab
 from app.tabs.server import ServerTab
 from app.tabs.tui import TuiTab
 from app.tabs.tools import ToolsTab
+from app.tabs.templates import TemplatesTab
+from app.template import Template
 
 
 class ConfiggerApp:
@@ -284,6 +286,9 @@ class ConfiggerApp:
         file_menu.add_command(label="Save As...", accelerator="Ctrl+Shift+S",
                               command=self.save_file_as)
         file_menu.add_separator()
+        file_menu.add_command(label="Save as Template...",
+                              command=self._save_as_template)
+        file_menu.add_separator()
         file_menu.add_command(label="Quit", accelerator="Ctrl+Q",
                               command=self.quit_app)
 
@@ -370,6 +375,11 @@ class ConfiggerApp:
         self.models_tab = ModelsTab(self.notebook, on_pick_model=self._apply_model)
         self.extensions_tab = ExtensionsTab(self.notebook, on_change=self._on_change)
         self.architecture_tab = ArchitectureTab(self.notebook, on_change=self._on_change)
+        self.templates_tab = TemplatesTab(
+            self.notebook,
+            on_change=self._on_change,
+            on_apply_template=self._on_apply_template,
+        )
 
         self.notebook.add(self.general_tab, text="General")
         self.notebook.add(self.server_tab, text="Server")
@@ -385,6 +395,7 @@ class ConfiggerApp:
         self.notebook.add(self.models_tab, text="Models")
         self.notebook.add(self.extensions_tab, text="Extensions")
         self.notebook.add(self.architecture_tab, text="Architecture")
+        self.notebook.add(self.templates_tab, text="Templates")
         self.notebook.bind("<<NotebookTabChanged>>", self._on_tab_changed)
 
     def _bind_shortcuts(self) -> None:
@@ -474,6 +485,89 @@ class ConfiggerApp:
         """Switch to models tab for picking a target model field."""
         self.models_tab.preferred_target = target
         self.notebook.select(self.models_tab)
+
+    def _on_apply_template(self, template: Template) -> None:
+        """Apply a configuration template with user confirmation."""
+        from app.config_import import merge_overlay
+
+        confirm_text = (
+            f"Apply template '{template.name}'?\n\n"
+            f"This will merge template settings with your current config.\n"
+            f"Existing settings will be preserved where not overridden."
+        )
+        if template.description:
+            confirm_text += f"\n\nDescription: {template.description}"
+        response = tk.messagebox.askyesno("Apply Template", confirm_text)
+        if not response:
+            return
+
+        merged = merge_overlay(self.opencode_data, template.config)
+        self._load_data_into_tabs(merged)
+        self.is_dirty = True
+        self._update_title()
+        self._update_validation_state()
+
+    def _save_as_template(self) -> None:
+        """Save current config as a custom template."""
+        from app.template import Template, TemplateRepository
+
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Save as Template")
+        dialog.geometry("450x350")
+        dialog.transient(self.root)
+        dialog.grab_set()
+
+        name_var = tk.StringVar()
+        desc_var = tk.StringVar()
+        tags_var = tk.StringVar()
+
+        tk.Label(dialog, text="Template Name:").pack(anchor="w", padx=12, pady=(12, 0))
+        name_entry = ttk.Entry(dialog, textvariable=name_var, width=40)
+        name_entry.pack(padx=12, pady=(2, 8))
+
+        tk.Label(dialog, text="Description:").pack(anchor="w", padx=12)
+        desc_text = tk.Text(dialog, height=3, width=40, wrap="word")
+        desc_text.pack(padx=12, pady=(2, 8))
+
+        tk.Label(dialog, text="Tags (comma-separated):").pack(anchor="w", padx=12)
+        tags_entry = ttk.Entry(dialog, textvariable=tags_var, width=40)
+        tags_entry.pack(padx=12, pady=(2, 8))
+
+        result = {"saved": False}
+
+        def do_save():
+            name = name_var.get().strip()
+            if not name:
+                tk.messagebox.showerror("Error", "Template name is required", parent=dialog)
+                return
+            desc = desc_text.get("1.0", "end").strip()
+            tags = [t.strip() for t in tags_var.get().split(",") if t.strip()]
+            template_id = "".join(c.lower() if c.isalnum() or c in "-_" else "_" for c in name)
+            tmpl = Template(
+                id=template_id,
+                name=name,
+                description=desc,
+                tags=tags,
+                category="custom",
+                config=self._collect_from_tabs(),
+                built_in=False,
+            )
+            repo = TemplateRepository()
+            try:
+                from pathlib import Path
+                custom_dir = Path.home() / ".configger" / "templates"
+                repo = TemplateRepository(custom_dir=custom_dir)
+                path = repo.save_custom_template(tmpl)
+                result["saved"] = True
+                tk.messagebox.showinfo("Saved", f"Template saved to:\n{path}", parent=dialog)
+                dialog.destroy()
+            except Exception as e:
+                tk.messagebox.showerror("Error", f"Failed to save template:\n{e}", parent=dialog)
+
+        btn_frame = ttk.Frame(dialog)
+        btn_frame.pack(pady=12)
+        ttk.Button(btn_frame, text="Save", command=do_save).pack(side="left", padx=4)
+        ttk.Button(btn_frame, text="Cancel", command=dialog.destroy).pack(side="left", padx=4)
 
     def _on_tab_changed(self, event: tk.Event) -> None:
         """Handle tab change events — refresh architecture tab when selected."""

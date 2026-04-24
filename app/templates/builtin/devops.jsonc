@@ -1,0 +1,63 @@
+// DevOps template — infrastructure and deployment workflows
+{
+  "id": "devops",
+  "name": "DevOps & Infrastructure",
+  "description": "A configuration for DevOps workflows including Docker, Kubernetes, Terraform, and CI/CD pipelines. Supports infrastructure as code and deployment automation.",
+  "tags": ["devops", "docker", "kubernetes", "terraform", "ci-cd", "infrastructure"],
+  "category": "specialized",
+  "version": "1.0",
+  "author": "OpenCode",
+  "config": {
+    "model": "anthropic/claude-sonnet-4-5",
+    "default_agent": "build",
+    "agent": {
+      "build": {
+        "model": "anthropic/claude-sonnet-4-5",
+        "permission": {
+          "bash": {},
+          "read": {},
+          "edit": {},
+          "glob": {},
+          "grep": {},
+          "write": {},
+          "websearch": {}
+        }
+      },
+      "plan": {
+        "model": "anthropic/claude-3-5-haiku",
+        "permission": {
+          "bash": {},
+          "read": {},
+          "glob": {}
+        }
+      }
+    },
+    "command": {
+      "docker:build": {
+        "agent": "build",
+        "command": "docker build"
+      },
+      "docker:run": {
+        "agent": "build",
+        "command": "docker run"
+      },
+      "k8s:deploy": {
+        "agent": "build",
+        "command": "kubectl apply -f"
+      },
+      "terraform:plan": {
+        "agent": "build",
+        "command": "terraform plan"
+      },
+      "terraform:apply": {
+        "agent": "build",
+        "command": "terraform apply"
+      }
+    },
+    "formatter": {
+      "terraform": {
+        "command": "terraform fmt"
+      }
+    }
+  }
+}

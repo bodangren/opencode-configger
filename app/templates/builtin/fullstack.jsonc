@@ -1,0 +1,66 @@
+// Full-Stack Development template — web app development with frontend and backend
+{
+  "id": "fullstack",
+  "name": "Full-Stack Web Development",
+  "description": "A full-featured configuration for building modern web applications. Covers frontend (React/Next.js), backend (Node/Python), database interactions, and API testing.",
+  "tags": ["fullstack", "web", "frontend", "backend", "react", "node"],
+  "category": "development",
+  "version": "1.0",
+  "author": "OpenCode",
+  "config": {
+    "model": "anthropic/claude-sonnet-4-5",
+    "default_agent": "build",
+    "agent": {
+      "build": {
+        "model": "anthropic/claude-sonnet-4-5",
+        "permission": {
+          "bash": {},
+          "read": {},
+          "edit": {},
+          "glob": {},
+          "grep": {},
+          "write": {},
+          "websearch": {},
+          "webfetch": {}
+        }
+      },
+      "plan": {
+        "model": "anthropic/claude-3-5-haiku",
+        "permission": {
+          "bash": {},
+          "read": {},
+          "glob": {}
+        }
+      },
+      "general": {
+        "model": "anthropic/claude-sonnet-4-5",
+        "permission": {
+          "bash": {},
+          "read": {},
+          "edit": {},
+          "write": {}
+        }
+      }
+    },
+    "command": {
+      "dev": {
+        "agent": "build",
+        "command": "npm run dev"
+      },
+      "build": {
+        "agent": "build",
+        "command": "npm run build"
+      },
+      "test": {
+        "agent": "build",
+        "command": "npm test"
+      }
+    },
+    "mcp": {
+      "filesystem": {
+        "type": "local",
+        "command": "npx @modelcontextprotocol/server-filesystem /projects"
+      }
+    }
+  }
+}
