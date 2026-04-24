@@ -71,7 +71,7 @@ class GraphCanvas:
         if self._graph is None or node_id not in self._graph.nodes:
             return
         node = self._graph.nodes[node_id]
-        path = _config_path_for_node(node)
+        path = self._config_path_for_node(node)
         if self._tooltip is None:
             self._tooltip = tk.Toplevel(self.canvas)
             self._tooltip.withdraw()

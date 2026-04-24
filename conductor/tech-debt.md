@@ -15,5 +15,6 @@
 | 2026-04-24 | Architecture Graph | GraphCanvas pan/zoom rescale implementation is basic — scrollregion resize on zoom may be imperfect | Low | Open | Works for moderate zoom levels; complex configs may need canvas size adaption |
 | 2026-04-24 | Config Templates | TemplateRepository custom templates stored in ~/.configger/templates — not backed up with config | Low | Open | Custom templates persist across sessions but not with the config file |
 | 2026-04-24 | Undo/Redo | History tracking records field changes but doesn't capture which widget triggered the change | Low | Open | record_change() available but not yet wired to widgets — future integration needed |
+| 2026-04-25 | Architecture Graph | _build_graph_from_config connects tools to ALL agents — no per-agent permission scoping | Low | Open | Tools tab is global, not per-agent; graph shows complete bipartite connections which may be misleading for large configs |
 
 

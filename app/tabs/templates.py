@@ -1,8 +1,10 @@
 """Templates tab — browse and apply pre-built configuration templates."""
 
 import tkinter as tk
-from tkinter import ttk
+from tkinter import messagebox, ttk
 from typing import Any, Callable
+
+import json
 
 from app.template import Template, TemplateRepository
 
@@ -99,7 +101,6 @@ class TemplateDetailView(ttk.Frame):
 
         config_text = tk.Text(self, height=14, width=40, font=("Courier", 9), state="disabled", wrap="word")
         config_text.pack(fill=tk.BOTH, expand=True, padx=8, pady=(4, 8))
-        import json
         config_str = json.dumps(self.template.config, indent=2)
         config_text.config(state="normal")
         config_text.insert("1.0", config_str)
@@ -241,10 +242,10 @@ class TemplatesTab(ttk.Frame):
             from pathlib import Path
             tmpl = repo._load_template_file(Path(path), built_in=False)
             if tmpl is None:
-                tk.messagebox.showerror("Import Error", "Failed to parse template file")
+                messagebox.showerror("Import Error", "Failed to parse template file")
                 return
             self._repo._custom.append(tmpl)
             self._refresh_templates()
-            tk.messagebox.showinfo("Imported", f"Template '{tmpl.name}' imported successfully")
+            messagebox.showinfo("Imported", f"Template '{tmpl.name}' imported successfully")
         except Exception as e:
-            tk.messagebox.showerror("Import Error", f"Failed to import template:\n{e}")
+            messagebox.showerror("Import Error", f"Failed to import template:\n{e}")
