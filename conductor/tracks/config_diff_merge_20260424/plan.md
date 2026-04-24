@@ -1,10 +1,10 @@
 # Implementation Plan: Config Diff & Merge Tool
 
 ## Phase 1: Diff Engine
-- [ ] 1.1 Create DiffEngine with field-level comparison
-- [ ] 1.2 Implement change classification (added, removed, modified, conflict)
-- [ ] 1.3 Add diff serialization to JSON format
-- [ ] 1.4 Write unit tests for diff accuracy
+- [x] 1.1 Create DiffEngine with field-level comparison
+- [x] 1.2 Implement change classification (added, removed, modified, conflict)
+- [x] 1.3 Add diff serialization to JSON format
+- [x] 1.4 Write unit tests for diff accuracy
 
 ## Phase 2: Diff Viewer UI
 - [ ] 2.1 Create DiffViewer component with side-by-side layout
