@@ -4,10 +4,10 @@
 
 ### Tasks
 
-- [ ] **1.1** Write unit tests for `GraphData` model (nodes, edges, adjacency)
-- [ ] **1.2** Implement `GraphData` class: `add_node()`, `add_edge()`, `get_neighbors()`
-- [ ] **1.3** Write unit tests for `HierarchicalLayout` (layer assignment, x/y computation)
-- [ ] **1.4** Implement `HierarchicalLayout` — assigns layers left-to-right, computes node positions
+- [x] **1.1** Write unit tests for `GraphData` model (nodes, edges, adjacency)
+- [x] **1.2** Implement `GraphData` class: `add_node()`, `add_edge()`, `get_neighbors()`
+- [x] **1.3** Write unit tests for `HierarchicalLayout` (layer assignment, x/y computation)
+- [x] **1.4** Implement `HierarchicalLayout` — assigns layers left-to-right, computes node positions
 
 ---
 
@@ -15,12 +15,12 @@
 
 ### Tasks
 
-- [ ] **2.1** Write unit tests for `ArchitectureTab` node rendering (color, size, label)
-- [ ] **2.2** Implement `ArchitectureTab` class inheriting from `ttk.Frame`
-- [ ] **2.3** Implement `GraphCanvas` widget using `tk.Canvas` for node/edge drawing
-- [ ] **2.4** Implement `draw_node()` — colored rounded rectangle with label
-- [ ] **2.5** Implement `draw_edge()` — directed arrow between nodes
-- [ ] **2.6** Implement `redraw()` — clears canvas and redraws all nodes/edges
+- [x] **2.1** Write unit tests for `ArchitectureTab` node rendering (color, size, label)
+- [x] **2.2** Implement `ArchitectureTab` class inheriting from `ttk.Frame`
+- [x] **2.3** Implement `GraphCanvas` widget using `tk.Canvas` for node/edge drawing
+- [x] **2.4** Implement `draw_node()` — colored rounded rectangle with label
+- [x] **2.5** Implement `draw_edge()` — directed arrow between nodes
+- [x] **2.6** Implement `redraw()` — clears canvas and redraws all nodes/edges
 
 ---
 
@@ -28,10 +28,10 @@
 
 ### Tasks
 
-- [ ] **3.1** Write unit tests for `build_graph_from_config()` — extracts nodes and edges from config dict
-- [ ] **3.2** Implement `build_graph_from_config()` — traverses `agent`, `provider`, `permission`, `command`, `formatter`, `mcp`, `lsp` sections
-- [ ] **3.3** Wire `ArchitectureTab.load_graph()` to receive config data from main app
-- [ ] **3.4** Implement node type color mapping (provider=blue, agent=green, tool=orange, etc.)
+- [x] **3.1** Write unit tests for `build_graph_from_config()` — extracts nodes and edges from config dict
+- [x] **3.2** Implement `build_graph_from_config()` — traverses `agent`, `provider`, `permission`, `command`, `formatter`, `mcp`, `lsp` sections
+- [x] **3.3** Wire `ArchitectureTab.load_graph()` to receive config data from main app
+- [x] **3.4** Implement node type color mapping (provider=blue, agent=green, tool=orange, etc.)
 
 ---
 
@@ -39,11 +39,11 @@
 
 ### Tasks
 
-- [ ] **4.1** Write unit tests for `highlight_neighbors()` — click detection and neighbor highlighting
-- [ ] **4.2** Implement node click handler — highlights direct neighbors with accent color
-- [ ] **4.3** Implement hover tooltip — shows full config path on mouseover
-- [ ] **4.4** Implement pan — drag canvas to pan view
-- [ ] **4.5** Implement zoom — mousewheel zoom in/out (scale transform)
+- [x] **4.1** Write unit tests for `highlight_neighbors()` — click detection and neighbor highlighting
+- [x] **4.2** Implement node click handler — highlights direct neighbors with accent color
+- [x] **4.3** Implement hover tooltip — shows full config path on mouseover
+- [x] **4.4** Implement pan — drag canvas to pan view
+- [x] **4.5** Implement zoom — mousewheel zoom in/out (scale transform)
 
 ---
 
@@ -51,7 +51,7 @@
 
 ### Tasks
 
-- [ ] **5.1** Register `ArchitectureTab` in `main.py` (`_build_tabs()` and `_build_tab_order`)
-- [ ] **5.2** Wire `_collect_from_tabs()` to gather data for graph (read-only pass)
-- [ ] **5.3** Add Architecture tab after Extensions tab in notebook
-- [ ] **5.4** Run full test suite — verify no regressions
+- [x] **5.1** Register `ArchitectureTab` in `main.py` (`_build_tabs()` and `_build_tab_order`)
+- [x] **5.2** Wire `_collect_from_tabs()` to gather data for graph (read-only pass)
+- [x] **5.3** Add Architecture tab after Extensions tab in notebook
+- [x] **5.4** Run full test suite — verify no regressions

@@ -1,11 +1,11 @@
 {
   "track_id": "interactive_architecture_graph_20260424",
   "type": "feature",
-  "status": "new",
+  "status": "in_progress",
   "created_at": "2026-04-24T00:00:00Z",
   "updated_at": "2026-04-24T00:00:00Z",
   "description": "Add a visual tab that renders a graph of the configured agents, providers, and tools to help users visualize their setup.",
   "estimated_tasks": 23,
-  "actual_tasks": null,
-  "deviation_notes": ""
+  "actual_tasks": 17,
+  "deviation_notes": "Phase 1 (GraphData + HierarchicalLayout) already done. Phase 5 (Integration) partially done. Interactive features (Phase 4) implemented with basic versions."
 }

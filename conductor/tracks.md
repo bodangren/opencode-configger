@@ -33,7 +33,7 @@ This file tracks all major tracks for the project.
   *Link: [./archive/enhanced_model_explorer_20260408/](./archive/enhanced_model_explorer_20260408/)*
   Develop a more advanced model picker with search, filtering by provider, and integration with live provider APIs to show available models.
 
-- [~] **Track: Interactive Architecture Graph**
+- [x] **Track: Interactive Architecture Graph**
   *Link: [./tracks/interactive_architecture_graph_20260424/](./tracks/interactive_architecture_graph_20260424/)*
   Add a visual tab that renders a graph of the configured agents, providers, and tools to help users visualize their setup.
 

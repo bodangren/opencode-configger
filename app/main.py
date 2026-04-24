@@ -36,6 +36,7 @@ from app.config_io import (
 from app.config_schema import validate_config
 from app.migration import MigrationRegistry, SchemaVersion, detect_version, v1_2_to_v1_3
 from app.tabs.agents import AgentsTab
+from app.tabs.architecture import ArchitectureTab
 from app.tabs.commands import CommandsTab
 from app.tabs.compaction import AdvancedTab
 from app.tabs.formatters import FormattersTab
@@ -368,6 +369,7 @@ class ConfiggerApp:
         self.tui_tab = TuiTab(self.notebook, on_change=self._on_change)
         self.models_tab = ModelsTab(self.notebook, on_pick_model=self._apply_model)
         self.extensions_tab = ExtensionsTab(self.notebook, on_change=self._on_change)
+        self.architecture_tab = ArchitectureTab(self.notebook, on_change=self._on_change)
 
         self.notebook.add(self.general_tab, text="General")
         self.notebook.add(self.server_tab, text="Server")
@@ -382,6 +384,8 @@ class ConfiggerApp:
         self.notebook.add(self.tui_tab, text="TUI")
         self.notebook.add(self.models_tab, text="Models")
         self.notebook.add(self.extensions_tab, text="Extensions")
+        self.notebook.add(self.architecture_tab, text="Architecture")
+        self.notebook.bind("<<NotebookTabChanged>>", self._on_tab_changed)
 
     def _bind_shortcuts(self) -> None:
         """Bind keyboard shortcuts for file actions."""
@@ -451,6 +455,7 @@ class ConfiggerApp:
         self.formatters_tab.load_config(data)
         self.mcp_tab.load_config(data)
         self.lsp_tab.load_config(data)
+        self.architecture_tab.load_config(data)
         self._update_validation_state()
 
     def _apply_model(self, model_name: str, target: str) -> None:
@@ -469,6 +474,15 @@ class ConfiggerApp:
         """Switch to models tab for picking a target model field."""
         self.models_tab.preferred_target = target
         self.notebook.select(self.models_tab)
+
+    def _on_tab_changed(self, event: tk.Event) -> None:
+        """Handle tab change events — refresh architecture tab when selected."""
+        try:
+            current = self.notebook.select()
+            if current == str(self.architecture_tab):
+                self.architecture_tab.load_config(self.opencode_data)
+        except Exception:
+            pass
 
     def _collect_from_tabs(self) -> dict:
         """Collect values from tabs into a config dictionary.
