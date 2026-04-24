@@ -14,5 +14,6 @@
 | 2026-04-24 | Model Explorer | clipboard code in config_export.py creates tk.Tk() root for each clipboard op — risks conflicts with existing root in GUI mode | Medium | Open | Could accept an optional root parameter or use a shared clipboard utility |
 | 2026-04-24 | Architecture Graph | GraphCanvas pan/zoom rescale implementation is basic — scrollregion resize on zoom may be imperfect | Low | Open | Works for moderate zoom levels; complex configs may need canvas size adaption |
 | 2026-04-24 | Config Templates | TemplateRepository custom templates stored in ~/.configger/templates — not backed up with config | Low | Open | Custom templates persist across sessions but not with the config file |
+| 2026-04-24 | Undo/Redo | History tracking records field changes but doesn't capture which widget triggered the change | Low | Open | record_change() available but not yet wired to widgets — future integration needed |
 
 

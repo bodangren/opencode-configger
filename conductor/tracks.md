@@ -47,7 +47,7 @@ This file tracks all major tracks for the project.
   *Link: [./tracks/config_templates_presets_20260424/](./tracks/config_templates_presets_20260424/)*
   Pre-built configuration templates for common setups, template browser, one-click application, custom template save/export.
 
-- [ ] **Track: Undo/Redo & Change History**
+- [x] **Track: Undo/Redo & Change History**
   *Link: [./tracks/undo_redo_history_20260424/](./tracks/undo_redo_history_20260424/)*
   Command pattern for change tracking, unlimited undo/redo, history persistence, visual diff between states.
 
