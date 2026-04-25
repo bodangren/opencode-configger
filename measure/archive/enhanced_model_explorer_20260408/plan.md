@@ -7,7 +7,7 @@
   - [x] Parse output into `{provider: [ModelInfo(id, name, context_window)]}` dict.
   - [x] On error (not on PATH, timeout), return empty dict and emit an error event.
   - [x] Write unit tests with mocked subprocess output (success, error, timeout cases).
-- [ ] Task: Conductor — User Manual Verification 'Phase 1: Model Loading Backend' (Protocol in workflow.md)
+- [ ] Task: Measure — User Manual Verification 'Phase 1: Model Loading Backend' (Protocol in workflow.md)
 
 ## Phase 2: Explorer Widget
 
@@ -22,7 +22,7 @@
   - [x] Search filters correctly.
   - [x] Provider toggle hides/shows groups.
   - [x] Error panel renders on load failure.
-- [ ] Task: Conductor — User Manual Verification 'Phase 2: Explorer Widget' (Protocol in workflow.md)
+- [ ] Task: Measure — User Manual Verification 'Phase 2: Explorer Widget' (Protocol in workflow.md)
 
 ## Phase 3: Set Primary / Set Small Integration
 
@@ -30,4 +30,4 @@
   - [x] Emit a shared event or call a callback that updates `model` / `small_model` FieldDef values in the General tab.
   - [x] Confirm updated values appear immediately in the General tab without requiring a save.
 - [ ] Task: Integration test: select a model, verify General tab fields update.
-- [ ] Task: Conductor — User Manual Verification 'Phase 3: Set Primary / Set Small Integration' (Protocol in workflow.md)
+- [ ] Task: Measure — User Manual Verification 'Phase 3: Set Primary / Set Small Integration' (Protocol in workflow.md)

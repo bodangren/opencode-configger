@@ -59,4 +59,14 @@ This file tracks all major tracks for the project.
   *Link: [./tracks/live_config_validation_20260424/](./tracks/live_config_validation_20260424/)*
   Validate against running OpenCode instance, model name verification, provider connectivity tests, MCP server health checks.
 
-- [x] [Visual Refresh: Define Unique Identity](tracks/visual_refresh_20260425/spec.md)
+- [x] **Track: Visual Refresh: Define Unique Identity**
+  *Link: [./archive/visual_refresh_20260425/](./archive/visual_refresh_20260425/)*
+  *Status: Complete*
+
+- [ ] **Track: Widget-Wired Undo/Redo**
+  *Link: [./tracks/widget_wired_undo_redo_20260426/](./tracks/widget_wired_undo_redo_20260426/)*
+  Connect record_change() to all editable widgets for full change tracking.
+
+- [ ] **Track: Regex-Based Secret Detection**
+  *Link: [./tracks/regex_secret_detection_20260426/](./tracks/regex_secret_detection_20260426/)*
+  Upgrade SecretsMasker from substring to regex pattern matching.

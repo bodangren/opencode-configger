@@ -11,7 +11,7 @@
 - [x] Task: Write unit tests for `validate_field`.
   - [x] One test per constraint type (min, max, required, pattern, choices).
   - [x] Edge cases: None value on required field, value at exact boundary.
-- [x] Task: Conductor — User Manual Verification 'Phase 1: Constraint Model' (Protocol in workflow.md)
+- [x] Task: Measure — User Manual Verification 'Phase 1: Constraint Model' (Protocol in workflow.md)
   [checkpoint: 1c42c3f]
 
 ## Phase 2: Widget Error States
@@ -22,7 +22,7 @@
   - [x] Wire validation callback into each widget's change event.
 - [x] Task: Apply error-state to one widget of each type (text, spinbox, dropdown, checkbox).
 - [x] Task: Write widget tests covering error and clear-error transitions.
-- [x] Task: Conductor — User Manual Verification 'Phase 2: Widget Error States' (Protocol in workflow.md)
+- [x] Task: Measure — User Manual Verification 'Phase 2: Widget Error States' (Protocol in workflow.md)
   [checkpoint: 1c42c3f]
 
 ## Phase 3: Save Guard & Status Bar
@@ -34,5 +34,5 @@
   - [x] Maintain an `error_count` counter in app state.
   - [x] Re-enable Save when counter reaches zero.
 - [x] Task: Integration test: load a config with a deliberate invalid value and confirm Save is blocked.
-- [x] Task: Conductor — User Manual Verification 'Phase 3: Save Guard & Status Bar' (Protocol in workflow.md)
+- [x] Task: Measure — User Manual Verification 'Phase 3: Save Guard & Status Bar' (Protocol in workflow.md)
   [checkpoint: 1c42c3f]

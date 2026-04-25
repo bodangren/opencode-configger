@@ -11,7 +11,7 @@
   - [ ] Add user-configurable masking patterns.
   - [ ] Apply masking before any output.
   - [ ] Write tests for default and custom masking patterns.
-- [ ] Task: Conductor — User Manual Verification 'Phase 1: Export Module' (Protocol in workflow.md)
+- [ ] Task: Measure — User Manual Verification 'Phase 1: Export Module' (Protocol in workflow.md)
 
 ## Phase 2: Import and Validation Module
 
@@ -23,7 +23,7 @@
   - [ ] Validate imported config against current schema.
   - [ ] Report errors with field paths and line numbers.
   - [ ] Write tests for valid imports, invalid imports, and unknown keys.
-- [ ] Task: Conductor — User Manual Verification 'Phase 2: Import and Validation Module' (Protocol in workflow.md)
+- [ ] Task: Measure — User Manual Verification 'Phase 2: Import and Validation Module' (Protocol in workflow.md)
 
 ## Phase 3: Merge Strategies
 
@@ -38,7 +38,7 @@
   - [ ] Compute diff between current and imported configs.
   - [ ] Expose per-key accept/reject API.
   - [ ] Write tests for selective merge with mixed accept/reject.
-- [ ] Task: Conductor — User Manual Verification 'Phase 3: Merge Strategies' (Protocol in workflow.md)
+- [ ] Task: Measure — User Manual Verification 'Phase 3: Merge Strategies' (Protocol in workflow.md)
 
 ## Phase 4: UI Integration
 
@@ -53,4 +53,4 @@
 - [ ] Task: Write integration tests for export → import round-trip.
   - [ ] Export a config, import it back, verify equivalence.
   - [ ] Test all merge strategies end-to-end.
-- [ ] Task: Conductor — User Manual Verification 'Phase 4: UI Integration' (Protocol in workflow.md)
+- [ ] Task: Measure — User Manual Verification 'Phase 4: UI Integration' (Protocol in workflow.md)

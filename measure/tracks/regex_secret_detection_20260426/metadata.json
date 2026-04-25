@@ -1,0 +1,9 @@
+{
+  "id": "regex_secret_detection_20260426",
+  "title": "Regex-Based Secret Detection",
+  "status": "pending",
+  "priority": "low",
+  "type": "chore",
+  "created": "2026-04-26",
+  "depends_on": []
+}

@@ -43,7 +43,7 @@ opencode-configger/
 │   ├── test_config_schema.py
 │   ├── test_config_io.py
 │   └── test_widgets.py
-├── conductor/               # Conductor project management
+├── measure/               # Measure project management
 ├── requirements.txt         # pytest, pytest-cov, ttkbootstrap (optional)
 └── pyproject.toml           # Project metadata
 ```

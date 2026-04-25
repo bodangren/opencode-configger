@@ -6,7 +6,7 @@
   - [ ] Add versions: `V1_2`, `V1_3`, `UNKNOWN`.
   - [ ] Implement `detect_version(config_dict) -> SchemaVersion` using structural signals (e.g., `formatter.command` type, presence of `lsp` key).
   - [ ] Write unit tests with fixture dicts for each known version.
-- [ ] Task: Conductor — User Manual Verification 'Phase 1: Version Detection' (Protocol in workflow.md)
+- [ ] Task: Measure — User Manual Verification 'Phase 1: Version Detection' (Protocol in workflow.md)
 
 ## Phase 2: Migration Registry
 
@@ -18,7 +18,7 @@
   - [ ] Convert `formatter.command` from string to `[string]` if needed.
   - [ ] Convert `mcp.<name>.command` from string to `[string]` if needed.
 - [ ] Task: Write unit tests for migration chain and the v1.2→v1.3 migration with fixtures.
-- [ ] Task: Conductor — User Manual Verification 'Phase 2: Migration Registry' (Protocol in workflow.md)
+- [ ] Task: Measure — User Manual Verification 'Phase 2: Migration Registry' (Protocol in workflow.md)
 
 ## Phase 3: UI Integration & CLI Flag
 
@@ -29,4 +29,4 @@
 - [ ] Task: Add `--migrate <file>` CLI flag to `app/main.py` for headless migration.
   - [ ] Prints migration diff to stdout, writes migrated file, creates `.bak`.
 - [ ] Task: Integration tests for banner flow and CLI flag.
-- [ ] Task: Conductor — User Manual Verification 'Phase 3: UI Integration & CLI Flag' (Protocol in workflow.md)
+- [ ] Task: Measure — User Manual Verification 'Phase 3: UI Integration & CLI Flag' (Protocol in workflow.md)

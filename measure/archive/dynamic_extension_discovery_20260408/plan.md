@@ -12,7 +12,7 @@
   - [x] For each stdio-type MCP entry, run `<command> --help` with 3-second timeout and parse output for `--config-*` style flags.
   - [x] Return list of `McpDescriptor(server_name, config_keys=[])` objects.
 - [x] Task: Write unit tests for both scanners using mocked subprocess calls.
-- [x] Task: Conductor — User Manual Verification 'Phase 1: Scanner Infrastructure' (Protocol in workflow.md)
+- [x] Task: Measure — User Manual Verification 'Phase 1: Scanner Infrastructure' (Protocol in workflow.md)
   [checkpoint: 95% coverage, 15/15 tests pass]
 
 ## Phase 2: Extensions Tab
@@ -24,5 +24,5 @@
   - [x] Show loading spinner while scanning; show "No extensions found" if list is empty.
 - [x] Task: Add "Refresh Extensions" button that re-runs scanners without restarting.
 - [x] Task: Write tab tests using fixture descriptor data (no real subprocesses).
-- [x] Task: Conductor — User Manual Verification 'Phase 2: Extensions Tab' (Protocol in workflow.md)
+- [x] Task: Measure — User Manual Verification 'Phase 2: Extensions Tab' (Protocol in workflow.md)
   [checkpoint: integrated into main.py, Extensions tab visible in notebook]
