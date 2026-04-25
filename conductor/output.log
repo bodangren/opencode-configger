@@ -614,3 +614,58 @@ Index: /home/daniel-bo/Desktop/opencode-configger/conductor/tracks/visual_refres
 +- [x] Verify the visual refresh locally.
 
 [0m
+[0m$ [0mgit add -A && git commit -m "refactor(visual-refresh): Phase 1-2 complete — define and apply Cinematic Neon design tokens (MiniMax-M2.7)"
+[master 2d34dff] refactor(visual-refresh): Phase 1-2 complete — define and apply Cinematic Neon design tokens (MiniMax-M2.7)
+ 13 files changed, 842 insertions(+), 18 deletions(-)
+ create mode 100644 DESIGN.md
+ create mode 100644 conductor/tracks/visual_refresh_20260425/metadata.json
+ create mode 100644 conductor/tracks/visual_refresh_20260425/plan.md
+ create mode 100644 conductor/tracks/visual_refresh_20260425/spec.md
+ create mode 100644 gemini_design_update.log
+ create mode 100644 visual_refresh_track.log
+[0m
+[0m→ [0mRead conductor/tech-debt.md
+[0m→ [0mRead conductor/lessons-learned.md
+[0m
+[0m← [0mEdit conductor/lessons-learned.md
+Index: /home/daniel-bo/Desktop/opencode-configger/conductor/lessons-learned.md
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/conductor/lessons-learned.md
++++ /home/daniel-bo/Desktop/opencode-configger/conductor/lessons-learned.md
+@@ -39,5 +39,6 @@
+ - Enhanced Model Explorer track: ModelLoader extracted from tab, async loading with callbacks, ModelsTab backward-compatible via inheritance from EnhancedModelExplorer.
+ - Interactive Architecture Graph track: Phase 1 (GraphData + HierarchicalLayout) completed — GraphData uses directed edges (source→target), layer assignment via longest-path from sources (nodes with no incoming edges at layer 0).
+ - Architecture tab: GraphCanvas sets _graph reference during load_graph() before redraw() so helper methods (highlight_neighbors, show_tooltip, clear_highlight) can reference the stored graph. Tooltip Toplevel uses overrideredirect(True) for borderless floating appearance.
+ - Config Templates track: Template dataclass + TemplateRepository — built-in templates in app/templates/builtin/*.jsonc, custom templates in ~/.configger/templates/. Template.to_dict() includes built_in and filename fields for round-trip JSONC serialization.
+-- Undo/Redo track: Command pattern with CommandHistory (undo/redo stacks) + HistoryManager (persistence). _bind_shortcuts for Ctrl+Z/Ctrl+Shift+Z, _build_edit_buttons for Undo/Redo buttons. record_change() method available but not yet wired to widgets.
+\ No newline at end of file
++- Undo/Redo track: Command pattern with CommandHistory (undo/redo stacks) + HistoryManager (persistence). _bind_shortcuts for Ctrl+Z/Ctrl+Shift+Z, _build_edit_buttons for Undo/Redo buttons. record_change() method available but not yet wired to widgets.
++- Visual Refresh track: DESIGN.md uses YAML front-matter with color tokens; design tokens map to tkinter colors (e.g., `--color-background` → `#050505`, `--color-danger` → `#FF2D55`). Tooltip background updated from `#333333` to `#0D0D0D` (surface), placeholder text from "gray" to `#555555` (text-muted). Badge colors in templates use semantic palette (Built-in: `#B366FF` ultraviolet, Custom: `#26FF8C` krypton).
+\ No newline at end of file
+
+[0m
+[0m$ [0mgit push
+To https://github.com/bodangren/opencode-configger.git
+   82df870..2d34dff  master -> master
+[0m
+[0m# [0mTodos
+[x] Phase 1: Define Visual Identity - Complete
+[x] Phase 2: Refactor UI Components - Update widgets.py with design tokens
+[x] Phase 2: Update main.py with design tokens
+[x] Phase 2: Update tabs with design tokens
+[x] Phase 2: Verify - Run tests and build
+[0m
+[0m← [0mEdit conductor/tracks.md
+Index: /home/daniel-bo/Desktop/opencode-configger/conductor/tracks.md
+===================================================================
+--- /home/daniel-bo/Desktop/opencode-configger/conductor/tracks.md
++++ /home/daniel-bo/Desktop/opencode-configger/conductor/tracks.md
+@@ -58,5 +58,5 @@
+ - [ ] **Track: Live Config Validation with OpenCode**
+   *Link: [./tracks/live_config_validation_20260424/](./tracks/live_config_validation_20260424/)*
+   Validate against running OpenCode instance, model name verification, provider connectivity tests, MCP server health checks.
+ 
+-- [~] [Visual Refresh: Define Unique Identity](tracks/visual_refresh_20260425/index.md)
++- [x] [Visual Refresh: Define Unique Identity](tracks/visual_refresh_20260425/spec.md)
+
+[0m
