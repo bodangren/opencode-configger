@@ -58,3 +58,5 @@ This file tracks all major tracks for the project.
 - [ ] **Track: Live Config Validation with OpenCode**
   *Link: [./tracks/live_config_validation_20260424/](./tracks/live_config_validation_20260424/)*
   Validate against running OpenCode instance, model name verification, provider connectivity tests, MCP server health checks.
+
+- [~] [Visual Refresh: Define Unique Identity](tracks/visual_refresh_20260425/index.md)

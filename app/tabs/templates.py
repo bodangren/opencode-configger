@@ -30,7 +30,7 @@ class TemplateCard(ttk.Frame):
             self,
             text=self.template.description,
             font=("TkDefaultFont", 9),
-            foreground="#555",
+            foreground="#555555",
             wraplength=280,
         )
         desc_label.pack(anchor="w", pady=(2, 4))
@@ -42,7 +42,7 @@ class TemplateCard(ttk.Frame):
                 tags_frame,
                 text=tag,
                 font=("TkDefaultFont", 8),
-                background="#e0e0e0",
+                background="#2A2A2A",
                 padding=(4, 1),
             )
             tag_lbl.pack(side="left", padx=(0, 4))
@@ -79,13 +79,13 @@ class TemplateDetailView(ttk.Frame):
         header.pack(fill=tk.X, padx=8, pady=(8, 4))
         ttk.Label(header, text=self.template.name, font=("TkDefaultFont", 12, "bold")).pack(side=tk.LEFT)
         if self.template.built_in:
-            badge = ttk.Label(header, text="Built-in", background="#4a90d9", foreground="white", padding=(6, 2))
+            badge = ttk.Label(header, text="Built-in", background="#B366FF", foreground="white", padding=(6, 2))
             badge.pack(side=tk.RIGHT, padx=(0, 4))
         else:
-            badge = ttk.Label(header, text="Custom", background="#5cb85c", foreground="white", padding=(6, 2))
+            badge = ttk.Label(header, text="Custom", background="#26FF8C", foreground="#050505", padding=(6, 2))
             badge.pack(side=tk.RIGHT, padx=(0, 4))
 
-        desc_lbl = ttk.Label(self, text=self.template.description, font=("TkDefaultFont", 9), foreground="#555", wraplength=320)
+        desc_lbl = ttk.Label(self, text=self.template.description, font=("TkDefaultFont", 9), foreground="#555555", wraplength=320)
         desc_lbl.pack(anchor="w", padx=8, pady=(0, 8))
 
         tags_frame = ttk.Frame(self)

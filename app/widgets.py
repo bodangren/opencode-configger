@@ -28,7 +28,7 @@ class ToolTip:
         tw.wm_geometry(f"+{x}+{y}")
         label = tk.Label(
             tw, text=self.text, justify=tk.LEFT,
-            background="#333333", foreground="#eeeeee",
+            background="#0D0D0D", foreground="#F2F2F2",
             relief=tk.SOLID, borderwidth=1,
             font=("TkDefaultFont", 9),
             wraplength=400, padx=6, pady=4,
@@ -62,7 +62,7 @@ class LabeledEntry(ttk.Frame):
         self.label = ttk.Label(self, text=field_def.key, width=20, anchor="w")
         self.label.pack(side=tk.LEFT, padx=(0, 8))
 
-        self._entry_frame = tk.Frame(self, highlightbackground="#cc0000", highlightthickness=0)
+        self._entry_frame = tk.Frame(self, highlightbackground="#FF2D55", highlightthickness=0)
         self._entry_frame.pack(side=tk.LEFT, fill=tk.X, expand=True)
         self._entry_frame.pack_propagate(False)
 
@@ -72,7 +72,7 @@ class LabeledEntry(ttk.Frame):
 
         if field_def.default is not None:
             self.entry.config(
-                foreground="gray"
+                foreground="#555555"
             )
             self.var.set("")
 
@@ -122,7 +122,7 @@ class LabeledCombo(ttk.Frame):
         self.label = ttk.Label(self, text=field_def.key, width=20, anchor="w")
         self.label.pack(side=tk.LEFT, padx=(0, 8))
 
-        self._combo_frame = tk.Frame(self, highlightbackground="#cc0000", highlightthickness=0)
+        self._combo_frame = tk.Frame(self, highlightbackground="#FF2D55", highlightthickness=0)
         self._combo_frame.pack(side=tk.LEFT, fill=tk.X, expand=True)
         self._combo_frame.pack_propagate(False)
 
@@ -508,7 +508,7 @@ class LabeledSpinbox(ttk.Frame):
         ttk.Label(self, text=field_def.key, width=20, anchor="w").pack(
             side=tk.LEFT, padx=(0, 8))
 
-        self._spinbox_frame = tk.Frame(self, highlightbackground="#cc0000", highlightthickness=0)
+        self._spinbox_frame = tk.Frame(self, highlightbackground="#FF2D55", highlightthickness=0)
         self._spinbox_frame.pack(side=tk.LEFT)
         self._spinbox_frame.pack_propagate(False)
 

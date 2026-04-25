@@ -104,14 +104,14 @@ class ExtensionsTab(ttk.Frame):
             frame,
             text="No extensions found",
             font=("TkDefaultFont", 11),
-            foreground="#888",
+            foreground="#888888",
         ).pack(pady=(20, 4))
         ttk.Label(
             frame,
             text="Install OpenCode plugins or configure MCP servers\n"
             "and click Refresh Extensions.",
             font=("TkDefaultFont", 9),
-            foreground="#aaa",
+            foreground="#AAAAAA",
         ).pack()
 
     def _add_plugin_section(self, plugin: PluginDescriptor) -> None:
@@ -137,7 +137,7 @@ class ExtensionsTab(ttk.Frame):
                 text="No machine-readable config keys found.\n"
                 "This plugin/server does not advertise its configuration options.",
                 wraplength=400,
-                foreground="#888",
+                foreground="#888888",
                 font=("TkDefaultFont", 9),
             ).pack(anchor="w", pady=2)
 

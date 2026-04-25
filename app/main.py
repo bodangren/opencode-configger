@@ -136,7 +136,7 @@ class ConfiggerApp:
 
         self.status_error_label = ttk.Label(
             self.status_bar, text="", anchor="e", padding=(0, 2),
-            foreground="#cc0000",
+            foreground="#FF2D55",
         )
         self.status_error_label.pack(side=tk.RIGHT, padx=(0, 8))
 

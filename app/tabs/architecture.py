@@ -76,8 +76,8 @@ class GraphCanvas:
             self._tooltip = tk.Toplevel(self.canvas)
             self._tooltip.withdraw()
             self._tooltip.overrideredirect(True)
-            self._tooltip_label = ttk.Label(self._tooltip, text="", background="#ffffcc",
-                                           relief="solid", padding=(4, 2))
+            self._tooltip_label = ttk.Label(self._tooltip, text="", background="#0D0D0D",
+                                           foreground="#F2F2F2", relief="solid", padding=(4, 2))
             self._tooltip_label.pack()
         self._tooltip_label.config(text=path)
         self._tooltip.geometry(f"+{screen_x + 12}+{screen_y + 12}")
@@ -207,11 +207,11 @@ class ArchitectureTab(ttk.Frame):
             header,
             text="Click a node to highlight connections. Scroll to zoom.",
             font=("TkDefaultFont", 8),
-            foreground="#888",
+            foreground="#888888",
         )
         self.hint_label.pack(side=tk.RIGHT, padx=(0, 8))
 
-        canvas = tk.Canvas(self, highlightthickness=0, background="#fafafa")
+        canvas = tk.Canvas(self, highlightthickness=0, background="#050505")
         hbar = ttk.Scrollbar(self, orient="horizontal", command=canvas.xview)
         vbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
         canvas.configure(
