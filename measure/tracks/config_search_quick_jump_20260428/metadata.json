@@ -1,0 +1,11 @@
+{
+  "track_id": "config_search_quick_jump_20260428",
+  "type": "feature",
+  "status": "pending",
+  "created_at": "2026-04-28T00:00:00Z",
+  "updated_at": "2026-04-28T00:00:00Z",
+  "description": "Global search bar to find any config key, value, or setting across all tabs with keyboard-driven quick-jump navigation.",
+  "estimated_tasks": 16,
+  "actual_tasks": 0,
+  "deviation_notes": ""
+}

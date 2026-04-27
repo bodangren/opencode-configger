@@ -34,7 +34,7 @@ This file tracks all major tracks for the project.
   Develop a more advanced model picker with search, filtering by provider, and integration with live provider APIs to show available models.
 
 - [x] **Track: Interactive Architecture Graph**
-  *Link: [./tracks/interactive_architecture_graph_20260424/](./tracks/interactive_architecture_graph_20260424/)*
+  *Link: [./archive/interactive_architecture_graph_20260424/](./archive/interactive_architecture_graph_20260424/)*
   Add a visual tab that renders a graph of the configured agents, providers, and tools to help users visualize their setup.
 
 - [x] **Track: Config Import/Export**
@@ -70,3 +70,11 @@ This file tracks all major tracks for the project.
 - [ ] **Track: Regex-Based Secret Detection**
   *Link: [./tracks/regex_secret_detection_20260426/](./tracks/regex_secret_detection_20260426/)*
   Upgrade SecretsMasker from substring to regex pattern matching.
+
+- [ ] **Track: Config Search & Quick-Jump**
+  *Link: [./tracks/config_search_quick_jump_20260428/](./tracks/config_search_quick_jump_20260428/)*
+  Global search bar to find any config key, value, or setting across all tabs with keyboard-driven quick-jump navigation.
+
+- [ ] **Track: Batch Config Operations**
+  *Link: [./tracks/batch_config_operations_20260428/](./tracks/batch_config_operations_20260428/)*
+  Batch apply templates, validate, and export multiple config files at once for team standardization workflows.
